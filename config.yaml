@@ -6,6 +6,35 @@ data:
   features_dir: "data/features/"
   nsl_kdd_train: "data/raw/KDDTrain+.txt"
   nsl_kdd_test: "data/raw/KDDTest+.txt"
+  # ------------------------------------------------------------------
+  # SWaT (Secure Water Treatment) — Phase 2
+  # Source: https://itrust.sutd.edu.sg/itrust-labs_datasets/ (request form)
+  # Kaggle: kaggle datasets download vishala28/swat-dataset-secure-water-treatment-system
+  # ------------------------------------------------------------------
+  swat:
+    csv_combined: "data/raw/swat_combined.csv"
+    csv_normal:   "data/raw/SWaT_Dataset_Normal_v1.csv"
+    csv_attack:   "data/raw/SWaT_Dataset_Attack_v0.csv"
+    xlsx_normal:  "data/raw/SWaT_Dataset_Normal_v1.xlsx"
+    xlsx_attack:  "data/raw/SWaT_Dataset_Attack_v0.xlsx"
+    npy_normal:   "data/raw/swat-2015-data.npy"
+    processed:    "data/processed/swat_processed.npz"
+  # ------------------------------------------------------------------
+  # BATADAL (Battle of Attack Detection Algorithms)
+  # Source: http://www.batadal.net/data.html
+  # ------------------------------------------------------------------
+  batadal:
+    train_1:  "data/raw/BATADAL_dataset03.csv"
+    train_2:  "data/raw/BATADAL_dataset04.csv"
+    test:     "data/raw/BATADAL_test_dataset.csv"
+  # ------------------------------------------------------------------
+  # WADI & HAI — future ICS dataset placeholders
+  # WADI: https://itrust.sutd.edu.sg (companion to SWaT)
+  # HAI: https://github.com/icsdataset/hai
+  # ------------------------------------------------------------------
+  wadi_csv:   "data/raw/WADI_attackdata.csv"
+  hai_train:  "data/raw/hai_train.csv"
+  hai_test:   "data/raw/hai_test.csv"
 
 optimization:
   bwoa:
@@ -14,6 +43,14 @@ optimization:
     alpha: 0.3
     min_accuracy: 0.75
     min_features: 10
+  # SWaT Phase 2: BWOA will select from 51 features
+  swat_bwoa:
+    n_agents: 30
+    max_iter: 100
+    alpha: 0.3
+    min_accuracy: 0.75
+    min_features: 15
+    target_features: 22
 
 model:
   cnn_lstm:
@@ -21,6 +58,16 @@ model:
     kernel_size: 3
     lstm_units: 128
     dropout_rate: 0.3
+  swat_transfer:
+    window_size: 10          # Sliding window (seconds) for sequence input
+    filters: 64
+    kernel_size: 3
+    lstm_units: 256          # Larger LSTM for SWaT's richer sensor space
+    dropout_rate: 0.3
+    freeze_cnn_blocks: true  # Keep CNN layers frozen during fine-tuning
+    learning_rate: 0.0001
+    normalize_method: "minmax"  # MinMax preferred for bounded sensor ranges
+    use_spectral_residual: false
 
 training:
   epochs: 50

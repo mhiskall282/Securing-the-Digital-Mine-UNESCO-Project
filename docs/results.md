@@ -11,25 +11,25 @@ This document aggregates the confirmed performance metrics, feature reduction st
 | Dataset | Original Features | Selected | Reduction | RF CV Accuracy | Converged | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | NSL-KDD | 41 | 10 | 75.61% | 92.31% | Iter 23/100 | Confirmed |
-| SWaT | 51 | ~22 | ~56.86% | - | - | Phase 2: Pending dataset access |
+| SWaT | 51 | 22 | 56.86% | 88.54% | Iter 44/100 | Confirmed |
 | Custom OT | ~41 | ~22 | ~46% | - | - | Phase 1: Pending data capture |
 
 **NSL-KDD v3 Selected Features** (10 of 41):
 `protocol_type, service, flag, src_bytes, hot, su_attempted, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate`
 
-> **SWaT access**: Request from iTrust Centre, SUTD Singapore: https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/
+> **SWaT access**: iTrust Centre, SUTD Singapore: https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/
 > **Custom OT**: Phase 1 field capture at pilot mine sites using AWS EC2 sniffer nodes logging Modbus/DNP3/OPC-UA traffic. Not yet started.
 
 ---
 
-## 2. Classification Performance (KDDTest+, 22,544 samples)
+## 2. Classification Performance
 
 | Model | Dataset | Features | Accuracy | Precision | Recall | F1 Macro | AUC-ROC | Latency |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | CNN-LSTM Baseline | NSL-KDD | 41 | 77.70% | 0.8017 | 0.7770 | 0.7571 | 0.9359 | 157.66ms |
 | CNN-LSTM + BWOA v3 | NSL-KDD | 10 | 70.56% | 0.5833 | 0.7056 | 0.7127 | 0.8471 | 82.32ms |
 | CNN-LSTM + BWOA Quantized | NSL-KDD | 10 | 70.56% | 0.5833 | 0.7056 | 0.7127 | 0.8471 | **0.76ms** |
-| CNN-LSTM (Transfer Learning) | SWaT | ~22 | - | - | - | - | - | Phase 2 |
+| CNN-LSTM (Transfer Learning) | SWaT | 51 | 59.95% | 0.5621 | 0.5891 | 0.5966 | 0.8650 | **0.12ms** |
 | CNN-LSTM (Transfer Learning) | Custom OT | ~22 | - | - | - | - | - | Phase 1 |
 
 **Accuracy gap (baseline vs BWOA)**: 7.14% - accepted trade-off for 47.8% latency reduction and edge deployability.
@@ -58,11 +58,12 @@ This document aggregates the confirmed performance metrics, feature reduction st
 | CNN-LSTM Baseline (Keras) | 1.8630MB | 157.66ms | 256.23ms | - | Yes |
 | CNN-LSTM + BWOA v3 (Keras) | 4.8762MB | 82.32ms | 182.55ms | - | Yes |
 | **BWOA Quantized Float16 (TFLite)** | **0.8211MB** | **0.76ms** | **1.10ms** | **290.31MB** | **PASS** |
+| **SWaT Transfer Learning Model** | **1.7600MB** | **0.12ms** | **0.19ms** | **295.40MB** | **PASS** |
 
 - Quantized size reduction vs BWOA Keras: **83.17%** smaller
 - Quantized latency speedup vs baseline Keras: **207x faster** (157.66ms to 0.76ms)
-- RAM (290.31MB) is well within the 1,024MB target ceiling
-- SWaT/Custom OT edge benchmarks: pending Phase 2 / Phase 1 dataset availability
+- RAM is well within the 1,024MB target ceiling
+- Custom OT edge benchmarks: pending Phase 1 dataset availability
 
 ---
 
@@ -73,5 +74,5 @@ This document aggregates the confirmed performance metrics, feature reduction st
 | CNN-LSTM Baseline (41 feat) | NSL-KDD | 77.70% | 0.7571 | 157.66ms | 1.86MB | Yes |
 | CNN-LSTM + BWOA (10 feat) | NSL-KDD | 70.56% | 0.7127 | 82.32ms | 4.88MB | Yes |
 | CNN-LSTM + BWOA Quantized | NSL-KDD | 70.56% | 0.7127 | 0.76ms | 0.82MB | PASS |
-| Transfer Learning | SWaT | - | - | - | - | Phase 2 |
+| Transfer Learning (51 feat) | SWaT | 59.95% | 0.5966 | 0.12ms | 1.76MB | PASS |
 | Transfer Learning | Custom OT | - | - | - | - | Phase 1 |

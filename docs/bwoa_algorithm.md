@@ -13,17 +13,17 @@ flowchart TD
     B --> C["Identify best agent (leader position X_best)"]
     C --> D{"For each iteration t"}
     D --> E["Update a: 2 to 0 linearly"]
-    E --> F{"Random p &lt; 0.5?"}
-    F -->|Yes| G{"abs(A) &lt; 1?"}
-    G -->|Yes bubble-net| H["Shrinking encircling: X = X_best - A x D"]
+    E --> F{"Random p < 0.5?"}
+    F -->|Yes| G{"abs(A) < 1?"}
+    G -->|Yes bubble-net| H["Shrinking encircling: X = X_best - A * D"]
     G -->|No search| I["Random agent search (Exploration phase)"]
-    F -->|No spiral| J["Spiral update: X = D x exp(b x l) x cos(2 x pi x l) + X_best"]
+    F -->|No spiral| J["Spiral update: X = D * exp(b * l) * cos(2 * pi * l) + X_best"]
     H --> K["Apply V-shaped Transfer Function"]
     I --> K
     J --> K
     K --> L["Flip bits probabilistically (Binary position update)"]
     L --> M["Evaluate fitness for updated agents"]
-    M --> N{"t &lt; max_iter?"}
+    M --> N{"t < max_iter?"}
     N -->|Yes| D
     N -->|No| O["Return best feature mask and fitness history"]
 ```
