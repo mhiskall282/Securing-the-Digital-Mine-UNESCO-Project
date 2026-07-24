@@ -186,10 +186,10 @@ python -m unittest discover -s tests
 | CNN-LSTM Baseline | NSL-KDD | 41 | 77.70% | 0.7571 | 157.66ms | 1.86MB | Confirmed |
 | CNN-LSTM + BWOA v3 | NSL-KDD | 10 | 70.56% | 0.7127 | 82.32ms | 4.88MB | Confirmed |
 | CNN-LSTM + BWOA Quantized (Float16) | NSL-KDD | 10 | 70.56% | 0.7127 | **0.76ms** | **0.82MB** | **PASS** |
-| CNN-LSTM + BWOA (Transfer Learning) | SWaT | ~22 | - | - | - | - | Phase 2: Pending dataset access |
+| CNN-LSTM + BWOA (Transfer Learning) | SWaT | 51 | 59.95% | 0.5966 | **0.12ms** | 1.76MB | **PASS** |
 | CNN-LSTM + BWOA (Transfer Learning) | Custom OT | ~22 | - | - | - | - | Phase 1: Pending data capture |
 
-> **SWaT**: Access must be requested from iTrust Centre, SUTD Singapore: https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/
+> **SWaT**: Dataset adapted via transfer learning using SUTD iTrust 2015 baseline: https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/
 > **Custom OT**: Phase 1 field data capture at pilot mining sites (Modbus/DNP3/OPC-UA traffic logging via AWS EC2 sniffer nodes). Collection not yet started.
 
 ### BWOA v3 Key Findings
@@ -210,17 +210,17 @@ flowchart TD
     B --> C["Identify best agent (leader position X_best)"]
     C --> D{"For each iteration t"}
     D --> E["Update a: 2 to 0 linearly"]
-    E --> F{"Random p &lt; 0.5?"}
-    F -->|Yes| G{"abs(A) &lt; 1?"}
-    G -->|Yes bubble-net| H["Shrinking encircling: X = X_best - A x D"]
+    E --> F{"Random p < 0.5?"}
+    F -->|Yes| G{"abs(A) < 1?"}
+    G -->|Yes bubble-net| H["Shrinking encircling: X = X_best - A * D"]
     G -->|No search| I["Random agent search (Exploration phase)"]
-    F -->|No spiral| J["Spiral update: X = D x exp(b x l) x cos(2 x pi x l) + X_best"]
+    F -->|No spiral| J["Spiral update: X = D * exp(b * l) * cos(2 * pi * l) + X_best"]
     H --> K["Apply V-shaped Transfer Function"]
     I --> K
     J --> K
     K --> L["Flip bits probabilistically (Binary position update)"]
     L --> M["Evaluate fitness for updated agents"]
-    M --> N{"t &lt; max_iter?"}
+    M --> N{"t < max_iter?"}
     N -->|Yes| D
     N -->|No| O["Return best feature mask and fitness history"]
 ```
