@@ -73,7 +73,29 @@ Loads and maps NSL-KDD data structures.
 ---
 
 ### `SWaTLoader` and `BATADALLoader`
-Loaders for SWaT and BATADAL industrial datasets conforming to the same interface as `NSLKDDLoader`.
+`from src.data.swat import SWaTLoader`  
+`from src.data.batadal import BATADALLoader`
+
+Loaders for SWaT and BATADAL industrial datasets. `SWaTLoader` features include:
+* `load(path: str) -> pd.DataFrame`: Ingests CSV, structured Excel (.xlsx), or numpy (.npy) formats. Auto-generates a high-fidelity synthetic mock if file is missing.
+* `load_combined(normal_path: str, attack_path: str) -> pd.DataFrame`: Combines separate normal and attack run data.
+* `preprocess(df: pd.DataFrame, return_timestamps: bool, apply_spectral_residual: bool) -> Tuple`: Cleans, drops timestamps, coerces numeric columns, and handles standard label typologies.
+* `train_test_split_temporal(X: np.ndarray, y: np.ndarray, train_ratio: float)`: Time-ordered split preserving sequential sensor telemetry.
+* `sliding_window(X: np.ndarray, y: np.ndarray, window_size: int, stride: int)`: Generates sequence window tensors for CNN-LSTM inputs.
+* `normalize(X_train: np.ndarray, X_test: np.ndarray, method: str)`: Normalizes using MinMax (preferred) or Standard scalers.
+* `_spectral_residual(X: np.ndarray, smooth_window: int)`: Saliency-based spectral residual transform to remove periodic normal patterns.
+
+---
+
+### `SWaTTransferLearner`
+`from src.models.swat_transfer import SWaTTransferLearner`
+
+Adapts a pre-trained IT network intrusion detector (NSL-KDD baseline) to the SWaT industrial sensor space.
+* `__init__(n_swat_features: int, window_size: int, pretrained_model_path: str, freeze_cnn_blocks: bool, learning_rate: float)`: Configures transfer settings.
+* `build_transfer_model() -> tf.keras.Model`: Loads pre-trained `.h5` layers, adapts input dimensions (from 41 to 51 features), copies compatible weights, and optionally freezes CNN layers.
+* `fine_tune(model, X_train, y_train, X_val, y_val, epochs, batch_size, patience, save_path)`: Retrains the LSTM and Dense layers using class weights for imbalance.
+* `find_optimal_threshold(model, X_val, y_val) -> Tuple[float, float]`: Searches for decision threshold maximizing F1 Macro score.
+* `evaluate(model, X_test, y_test, threshold) -> Dict[str, Any]`: Evaluates temporal test splits for accuracy, precision, recall, macro F1, and AUC-ROC.
 
 ---
 
