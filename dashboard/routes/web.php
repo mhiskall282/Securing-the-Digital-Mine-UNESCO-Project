@@ -27,6 +27,21 @@ Route::get('/research', function () {
     return view('dashboard.research');
 })->name('research');
 
+// CLI Download & Terminal Extraction Endpoint
+Route::get('/download/cli', function () {
+    $cliPath = base_path('../npm-packet-scanner/index.js');
+    if (!file_exists($cliPath)) {
+        $cliPath = base_path('npm-packet-scanner/index.js');
+    }
+    if (file_exists($cliPath)) {
+        return response()->file($cliPath, [
+            'Content-Type' => 'text/javascript',
+            'Content-Disposition' => 'attachment; filename="unesco-mine-sec-cli.js"'
+        ]);
+    }
+    return response()->json(['error' => 'CLI scanner package not found'], 404);
+})->name('download.cli');
+
 // Auth Routes (Guest Only)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

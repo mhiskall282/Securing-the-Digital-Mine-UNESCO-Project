@@ -12,8 +12,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy application files
+# Copy repository root files
 COPY . .
+
+# Set working directory to dashboard folder where composer.json & artisan exist
+WORKDIR /var/www/html/dashboard
 
 # Install PHP & Node dependencies and build production assets
 RUN composer install --no-dev --no-scripts --no-interaction \
