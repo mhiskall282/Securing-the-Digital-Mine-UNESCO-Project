@@ -1,7 +1,7 @@
 services:
-  # 1. Python Inference Backend Server (Render Pro Tier)
+  # 1. Python Inference Backend Server (Production Web Service)
   - type: web
-    name: api-service
+    name: api-service-prod
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python src/api_service.py"
@@ -11,9 +11,9 @@ services:
       - key: PORT
         value: "8001"
 
-  # 2. Laravel Livewire Multi-tenant Central Dashboard (Render Pro Tier)
+  # 2. Laravel Livewire Multi-tenant Central Dashboard (Production Web Service)
   - type: web
-    name: minesec-dashboard
+    name: minesec-dashboard-prod
     env: docker
     dockerfilePath: ./dashboard/Dockerfile
     plan: pro
@@ -26,30 +26,30 @@ services:
       - key: APP_KEY
         generateValue: true
       - key: MODEL_SERVER_URL
-        value: "http://api-service:8001/api/analyze"
+        value: "http://api-service-prod:8001/api/analyze"
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
         fromDatabase:
-          name: minesec-db
+          name: minesec-db-prod
           property: host
       - key: DB_PORT
         value: 5432
       - key: DB_DATABASE
         fromDatabase:
-          name: minesec-db
+          name: minesec-db-prod
           property: database
       - key: DB_USERNAME
         fromDatabase:
-          name: minesec-db
+          name: minesec-db-prod
           property: user
       - key: DB_PASSWORD
         fromDatabase:
-          name: minesec-db
+          name: minesec-db-prod
           property: password
 
-# 3. PostgreSQL Database Instance (Active Render Postgres Plan: pro-8gb)
+# 3. Managed PostgreSQL Database Cluster (Production Instance)
 databases:
-  - name: minesec-db
+  - name: minesec-db-prod
     plan: pro-8gb
     region: oregon
