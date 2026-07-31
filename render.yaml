@@ -48,8 +48,8 @@ services:
           name: minesec-db
           property: password
 
-# 3. PostgreSQL Database Instance (Render Pro Tier)
+# 3. PostgreSQL Database Instance (Active Render Postgres Plan: pro-8gb)
 databases:
   - name: minesec-db
-    plan: pro
+    plan: pro-8gb
     region: oregon
