@@ -1,22 +1,22 @@
 services:
-  # 1. Python Inference Backend Server (Pro Plus Tier: 8GB RAM, 4 CPU Cores)
+  # 1. Python Inference Backend Server (Render Pro Tier)
   - type: web
     name: api-service
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python src/api_service.py"
-    plan: pro_plus
+    plan: pro
     region: oregon
     envVars:
       - key: PORT
         value: "8001"
 
-  # 2. Laravel Livewire Multi-tenant Central Dashboard (Pro Plus Tier: 8GB RAM, 4 CPU Cores)
+  # 2. Laravel Livewire Multi-tenant Central Dashboard (Render Pro Tier)
   - type: web
     name: minesec-dashboard
     env: docker
     dockerfilePath: ./dashboard/Dockerfile
-    plan: pro_plus
+    plan: pro
     region: oregon
     envVars:
       - key: APP_ENV
@@ -48,8 +48,8 @@ services:
           name: minesec-db
           property: password
 
-# 3. PostgreSQL Database Instance (Pro Plus 8GB Tier)
+# 3. PostgreSQL Database Instance (Render Pro Tier)
 databases:
   - name: minesec-db
-    plan: pro_plus_8gb
+    plan: pro
     region: oregon
