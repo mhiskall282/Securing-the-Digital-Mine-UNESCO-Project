@@ -14,11 +14,10 @@ services:
   # 2. Laravel Livewire Multi-tenant Dashboard (Public Web Service)
   - type: web
     name: minesec-dashboard
-    env: php
+    env: docker
+    dockerfilePath: ./dashboard/Dockerfile
     plan: free
     region: oregon
-    buildCommand: "cd dashboard && composer install --no-dev --no-scripts --no-interaction && npm install && npm run build"
-    startCommand: "cd dashboard && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
     envVars:
       - key: APP_ENV
         value: production
