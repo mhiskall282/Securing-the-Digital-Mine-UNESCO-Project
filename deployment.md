@@ -1,106 +1,134 @@
-# Deployment Guide - Enterprise SaaS Suite & Render Cloud
+# Production & Edge Deployment Guide - MineSec SaaS & IoT Suite
 
-This guide provides step-by-step instructions to deploy the complete multi-tenant intrusion detection system (IDS) suite. The system consists of:
-1. **Python Inference Server** (Inference API server)
-2. **Local Sniffer Daemon** (Interface sniffer)
-3. **Laravel Livewire Multi-tenant Dashboard** (Central Portal)
-4. **NPM CLI Packet Scanner** (`unesco-mine-sec-cli`)
+This guide provides comprehensive, step-by-step instructions for deploying the **MineSec Multi-Tenant Intrusion Detection System (IDS)** across cloud platforms (Render.com, AWS) and resource-constrained edge gateways (Raspberry Pi 4/5).
 
 ---
 
-## System Requirements
-- **OS**: Windows, macOS, or Linux (Raspberry Pi OS supported)
-- **Node.js**: v20.19+ or v22.12+
-- **PHP**: v8.2+ (XAMPP recommended for Windows)
-- **Composer**: Dependency Manager for PHP
-- **Python**: v3.11+
-- **Database**: PostgreSQL (Production) / SQLite (Local dev testing)
+## 1. Architectural System Overview
+
+The system consists of 4 decoupled, production-ready modules:
+
+1. **Central SaaS Dashboard** (`dashboard/`): Laravel 12 + Livewire 3 real-time web portal with multi-tenancy, threat mitigation playbooks, and account administration.
+2. **FastAPI Deep Model Server** (`src/api_service.py`): Python microservice running quantized Float16 CNN-LSTM neural network inference on port 8001.
+3. **Embedded Sniffer Daemon** (`src/sniffer_daemon.py`): Real-time network interface listener supporting continuous monitoring and intermittent cron execution (`--cron` / `--once`).
+4. **Lightweight NPM Scanner CLI** (`npm-packet-scanner/`): Portable Node.js CLI tool (`unesco-mine-sec-cli`) with BWOA 10-feature pruning.
 
 ---
 
-## local Developer Quickstart (SQLite)
+## 2. Render.com PaaS Cloud Production Deployment (1-Click Blueprint)
 
-1. Navigate to the `dashboard/` directory:
+Deploy the central infrastructure automatically using Render's Infrastructure-as-Code Blueprint (`render.yaml`).
+
+### Deployment Steps:
+
+1. **Fork or Push Code to GitHub**:
+   Ensure your repository contains the updated `render.yaml` blueprint at the root directory.
+
+2. **Log in to Render.com**:
+   Go to [dashboard.render.com](https://dashboard.render.com) and navigate to **Blueprints**.
+
+3. **Connect Repository**:
+   Click **New Blueprint Instance**, select your GitHub repository, and click **Connect**.
+
+4. **Automated Resource Provisioning**:
+   Render automatically provisions:
+   - **PostgreSQL Database** (`minesec-db`): Managed database storing tenant accounts, devices, and live network flows.
+   - **Python Inference Service** (`api-service`): Runs `python src/api_service.py` on port 8001.
+   - **Laravel Dashboard Service** (`minesec-dashboard`): Builds Vite assets (`npm run build`), executes migrations (`php artisan migrate --force`), and serves the web portal.
+
+5. **Verify Central Web Gateway**:
+   Once provisioning completes, open your assigned HTTPS domain (e.g., `https://minesec-dashboard.onrender.com`).
+
+---
+
+## 3. Raspberry Pi 4/5 & Industrial Edge Deployment
+
+Deploying in low-power SCADA extraction zones or mine shafts requires running the BWOA scanner on Raspberry Pi gateways.
+
+### Step 1: Raspberry Pi OS Dependencies
+Run the following commands on the Raspberry Pi terminal:
+```bash
+sudo apt-get update && sudo apt-get install -y python3-pip python3-dev nodejs npm
+pip3 install tflite-runtime requests
+```
+
+### Step 2: Industrial Network Mirroring (SPAN/TAP Port)
+1. Connect the Raspberry Pi secondary network interface card (NIC) to the mirror port (SPAN) of the industrial SCADA switch.
+2. Ensure passive promiscuous mode is enabled:
+   ```bash
+   sudo ip link set eth1 promisc on
+   ```
+
+### Step 3: Install & Launch the Global CLI Scanner Client
+Install the packet scanner package globally:
+```bash
+cd npm-packet-scanner
+npm install -g ./
+```
+
+Launch the interactive scanner CLI:
+```bash
+unesco-mine-sec-cli
+```
+Input your central dashboard URL (`https://minesec-dashboard.onrender.com`), select `eth1`, and enter your Device Node API key generated from the dashboard.
+
+---
+
+## 4. Intermittent Cron Job Sniffer Setup
+
+For battery-powered or bandwidth-restricted remote nodes, run the sniffer daemon in intermittent cron mode:
+
+### Running an Intermittent Pass:
+```bash
+python src/sniffer_daemon.py --cron
+```
+*Executes a 5-sample flow evaluation burst into the database and exits cleanly.*
+
+### Scheduling via Linux Crontab:
+Edit the crontab table:
+```bash
+crontab -e
+```
+Add an entry to run every 15 minutes:
+```cron
+*/15 * * * * cd /home/pi/unesco-project && python3 src/sniffer_daemon.py --cron >> /var/log/sniffer_cron.log 2>&1
+```
+
+---
+
+## 5. Local Developer Environment Setup (SQLite)
+
+For local development and testing on Windows/Linux:
+
+1. **Initialize Environment**:
    ```bash
    cd dashboard
-   ```
-2. Copy the environment file:
-   ```bash
    copy .env.example .env
    ```
-3. Install dependencies:
+
+2. **Install PHP & Node Dependencies**:
    ```bash
-   C:\xampp\php\php.exe C:\xampp\php\composer.phar install --no-dev --no-scripts --no-interaction
+   composer install
+   npm install
    ```
-4. Create the SQLite database file:
+
+3. **Provision SQLite Database**:
    ```bash
    powershell -Command "New-Item -ItemType File -Path 'database/database.sqlite' -Force"
+   php artisan migrate:fresh --force
+   php artisan key:generate
    ```
-5. Run migrations to seed the SaaS schema:
+
+4. **Compile Production Assets**:
    ```bash
-   C:\xampp\php\php.exe artisan migrate:fresh --force
-   ```
-6. Setup storage folders:
-   ```bash
-   powershell -Command "New-Item -ItemType Directory -Path 'storage/framework/cache/data', 'storage/framework/sessions', 'storage/framework/views', 'storage/logs' -Force"
-   ```
-7. Generate the application key:
-   ```bash
-   C:\xampp\php\php.exe artisan key:generate
-   ```
-8. Build Vite assets:
-   ```bash
-   npm install
    npm run build
+   php artisan view:clear
    ```
-9. Start local servers:
-   - **Model Server**: `python src/api_service.py`
-   - **Sniffer Daemon**: `python src/sniffer_daemon.py`
-   - **Web Server**: `C:\xampp\php\php.exe artisan serve --port=8000`
 
----
+5. **Start Local Servers**:
+   - **FastAPI Model Server**: `python src/api_service.py`
+   - **Python Sniffer Daemon**: `python src/sniffer_daemon.py`
+   - **Laravel Web Dashboard**: `php artisan serve --port=8000`
 
-## Render Cloud Production Deployment
-
-We use Render Blueprints (`render.yaml`) to deploy the system to production with a PostgreSQL database cluster.
-
-### 1. Project Repository Preparation
-Ensure your repository contains the `render.yaml` configuration file at the root.
-
-### 2. Deployment Steps
-1. Log in to your **Render.com** account.
-2. Go to **Blueprints** and click **New Blueprint Instance**.
-3. Link your GitHub repository.
-4. Render will read `render.yaml` and provision:
-   - A PostgreSQL Database (`minesec-db`).
-   - A Private Python Web Service (`api-service`) exposing the CNN-LSTM model.
-   - A Public PHP Laravel Web Service (`minesec-dashboard`).
-5. Render will automatically migrate the database and build Vite assets on launch.
-
----
-
-## Obtaining API & Organization Tokens
-
-### 1. Registering your Organization
-1. Open the dashboard (e.g. `http://localhost:8000/signup`).
-2. Register your Organization Name and create an Administrator user profile.
-
-### 2. Generating Device API Keys
-1. Go to the **Device Nodes** tab inside the dashboard.
-2. Enter a name for your network node (e.g., *Mine Shaft 4 Sniffer*) and click **Generate Access Key**.
-3. Copy the resulting bearer token (e.g., `unesco_device_xxxxxxxx...`). **This token will only be shown once.**
-
-### 3. Deploying the CLI Client (NPM/Yarn/pnpm)
-Edge node installation:
-1. Navigate to the CLI directory:
-   `cd npm-packet-scanner`
-2. Install dependencies & run:
-   - **npm**: `npm install && node index.js`
-   - **Yarn**: `yarn install && node index.js`
-   - **pnpm**: `pnpm install && node index.js`
-3. Global installation (Optional):
-   - **npm**: `npm install -g ./`
-   - **Yarn**: `yarn global add file:./`
-   - **pnpm**: `pnpm add -g ./`
-   Then run globally with: `unesco-mine-sec-cli`
-4. Input the central dashboard URL, select the active network interface, and paste the generated Device API Key. Telemetry will begin streaming to the dashboard.
+6. **Access Dashboard**:
+   Open `http://localhost:8000` in your web browser.
