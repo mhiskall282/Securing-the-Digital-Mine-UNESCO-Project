@@ -1,17 +1,15 @@
 services:
   # 1. Python Inference Backend Server (Private Service)
-  - type: web
+  - type: pserv
     name: api-service
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python src/api_service.py"
     plan: free
     region: oregon
-    ipAccessControl:
-      # Only allow internal traffic or dashboard requests to hit port 8001
-      - type: allow
-        value: 0.0.0.0/0
-        description: "Allow REST requests"
+    envVars:
+      - key: PORT
+        value: "8001"
 
   # 2. Laravel Livewire Multi-tenant Dashboard (Public Web Service)
   - type: web
@@ -19,8 +17,8 @@ services:
     env: php
     plan: free
     region: oregon
-    buildCommand: "composer install --no-dev --no-scripts --no-interaction && npm install && npm run build"
-    startCommand: "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
+    buildCommand: "cd dashboard && composer install --no-dev --no-scripts --no-interaction && npm install && npm run build"
+    startCommand: "cd dashboard && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
     envVars:
       - key: APP_ENV
         value: production
@@ -28,6 +26,8 @@ services:
         value: "false"
       - key: APP_KEY
         generateValue: true
+      - key: MODEL_SERVER_URL
+        value: "http://api-service:8001/api/analyze"
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
