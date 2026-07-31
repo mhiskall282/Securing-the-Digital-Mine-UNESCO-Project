@@ -26,7 +26,7 @@ services:
       - key: APP_DEBUG
         value: "false"
       - key: APP_KEY
-        generateValue: true
+        value: "base64:UzNjdXJpbmc1VGhlMURpZ2l0YWwxTWluZTJTVUlURT0="
       - key: MODEL_SERVER_URL
         value: "http://api-service-prod:8001/api/analyze"
       - key: DB_CONNECTION
