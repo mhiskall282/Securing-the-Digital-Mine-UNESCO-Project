@@ -5,7 +5,7 @@ services:
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python src/api_service.py"
-    plan: starter
+    plan: standard
     region: oregon
     envVars:
       - key: PORT
@@ -16,7 +16,7 @@ services:
     name: minesec-dashboard
     env: docker
     dockerfilePath: ./dashboard/Dockerfile
-    plan: starter
+    plan: standard
     region: oregon
     envVars:
       - key: APP_ENV
@@ -48,8 +48,8 @@ services:
           name: minesec-db
           property: password
 
-# 3. PostgreSQL Database Instance
+# 3. PostgreSQL Database Instance (Active Standard High Tier)
 databases:
   - name: minesec-db
-    plan: starter
+    plan: standard_8gb
     region: oregon
