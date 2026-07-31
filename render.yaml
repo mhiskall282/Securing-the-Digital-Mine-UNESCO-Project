@@ -10,6 +10,8 @@ services:
     envVars:
       - key: PORT
         value: "8001"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
 
   # 2. Laravel Livewire Multi-tenant Central Dashboard (Production Web Service)
   - type: web
