@@ -5,7 +5,7 @@ import inquirer from 'inquirer';
 import fetch from 'node-fetch';
 import os from 'os';
 
-const DEFAULT_API_URL = 'http://localhost:8000/api/external/analyze';
+const DEFAULT_API_URL = 'https://minesec-dashboard-prod.onrender.com/api/external/analyze';
 const VERSION = '3.0.0-saas';
 
 // Command-line argument parsing

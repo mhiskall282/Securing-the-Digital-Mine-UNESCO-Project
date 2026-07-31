@@ -238,7 +238,7 @@ unesco-mine-sec-cli --url http://127.0.0.1:8000/api/external/analyze --key unesc
                             <tr>
                                 <td class="py-2 text-emerald-400">--url &lt;endpoint&gt;</td>
                                 <td class="py-2">-</td>
-                                <td class="py-2 text-gray-400">Target REST API endpoint (default: <code>http://localhost:8000/api/external/analyze</code>).</td>
+                                <td class="py-2 text-gray-400">Target REST API endpoint (default: <code>https://minesec-dashboard-prod.onrender.com/api/external/analyze</code>).</td>
                             </tr>
                             <tr>
                                 <td class="py-2 text-emerald-400">--key &lt;token&gt;</td>
@@ -377,7 +377,7 @@ unesco-mine-sec-cli</pre>
                 <div class="space-y-2">
                     <h4 class="text-xs font-mono text-gray-400">Request Example (curl)</h4>
                     <div class="bg-black/40 border border-[#2e2e33] rounded-xl p-4 font-mono text-[10px] text-gray-300 overflow-x-auto select-all">
-<pre>curl -X POST http://localhost:8000/api/external/analyze \
+<pre>curl -X POST https://minesec-dashboard-prod.onrender.com/api/external/analyze \
   -H "Authorization: Bearer unesco_demo_token_2026" \
   -H "Content-Type: application/json" \
   -d '{

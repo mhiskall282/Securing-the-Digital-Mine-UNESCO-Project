@@ -191,7 +191,7 @@
                             <span class="text-[#10b981]">$</span> npx unesco-mine-sec-cli
                         </div>
                         <div class="text-gray-400">
-                            ? Enter Dashboard REST API URL: <span class="text-[#10b981]">http://localhost:8000/api/external/analyze</span>
+                            ? Enter Dashboard REST API URL: <span class="text-[#10b981]">https://minesec-dashboard-prod.onrender.com/api/external/analyze</span>
                         </div>
                         <div class="text-gray-400">
                             ? Select Network Interface to sniff: <span class="text-[#10b981]">Wi-Fi 2</span>
