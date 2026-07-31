@@ -1,15 +1,11 @@
 FROM php:8.2-cli-alpine
 
-# Install system dependencies & PostgreSQL extensions
-RUN apk add --no-cache \
-    postgresql-dev \
-    libpng-dev \
-    zip \
-    unzip \
-    git \
-    nodejs \
-    npm \
-    && docker-php-ext-install pdo pdo_pgsql pgsql
+# Install fast pre-compiled extension installer helper
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
+# Install system utilities & PostgreSQL extensions rapidly
+RUN apk add --no-cache git nodejs npm zip unzip \
+    && install-php-extensions pdo_pgsql pgsql
 
 # Copy Composer binary from official image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
