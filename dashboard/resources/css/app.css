@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --color-npontu-green: #1B6B3A;
+    --color-npontu-green-light: #2A8F52;
+    --color-npontu-green-dark: #12492A;
+    --color-npontu-gold: #F5C518;
+    --color-npontu-gold-warm: #E8A500;
+    --color-npontu-danger: #E63946;
+    --color-npontu-surface-dark: #0F1A14;
+    --color-npontu-surface-mid: #1A2E22;
+    --color-npontu-surface-light: #F4F7F5;
+
+    --font-sans: 'Outfit', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+
+    --radius-card: 8px;
+    --radius-badge: 9999px;
+
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    body {
+        background-color: white !important;
+        color: #000000 !important;
+    }
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+    .print-full-width {
+        width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+}

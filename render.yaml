@@ -1,0 +1,56 @@
+services:
+  # 1. Python Inference Backend Server (Private Service)
+  - type: web
+    name: api-service
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python src/api_service.py"
+    plan: free
+    region: oregon
+    ipAccessControl:
+      # Only allow internal traffic or dashboard requests to hit port 8001
+      - type: allow
+        value: 0.0.0.0/0
+        description: "Allow REST requests"
+
+  # 2. Laravel Livewire Multi-tenant Dashboard (Public Web Service)
+  - type: web
+    name: minesec-dashboard
+    env: php
+    plan: free
+    region: oregon
+    buildCommand: "composer install --no-dev --no-scripts --no-interaction && npm install && npm run build"
+    startCommand: "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: minesec-db
+          property: host
+      - key: DB_PORT
+        value: 5432
+      - key: DB_DATABASE
+        fromDatabase:
+          name: minesec-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: minesec-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: minesec-db
+          property: password
+
+# 3. PostgreSQL Database Instance
+databases:
+  - name: minesec-db
+    plan: free
+    region: oregon

@@ -1,0 +1,26 @@
+# Tasks - Enterprise SaaS Upgrade
+
+- [ ] Database Schema & Migrations
+  - [ ] Write `2026_07_30_000000_create_multi_tenant_tables.php` migration for organizations, devices, and role columns
+- [ ] Models & Relations
+  - [ ] Implement `Organization.php`
+  - [ ] Implement `Device.php`
+- [ ] Authentication System
+  - [ ] Create `AuthController.php` for SaaS signup, login, and logout
+  - [ ] Create login and signup Blade views in Supabase-style design
+- [ ] Tenant Dashboard & Device Management
+  - [ ] Implement `DeviceManager.php` Livewire component
+  - [ ] Implement `device-manager.blade.php` view
+  - [ ] Update `LiveMonitor.php` to scope telemetry queries to the authenticated tenant
+- [ ] Global Admin Dashboard
+  - [ ] Implement `AdminDashboard.php` Livewire component to manage users, organizations, and toggle features
+  - [ ] Implement `admin-dashboard.blade.php` view
+- [ ] UI Revamp (Supabase Theme)
+  - [ ] Revamp `layouts/app.blade.php` using sleek dark colors (#0e0e0e, #1c1c1c) and emerald green accents (#10b981)
+  - [ ] Update home/overview, live monitor, and insights pages
+- [ ] Render Blueprint Configuration
+  - [ ] Create `render.yaml` for Postgres, Python ML API, and Laravel deployments
+  - [ ] Update `deployment.md`
+- [ ] Verification
+  - [ ] Compile assets
+  - [ ] Verify compilation success
