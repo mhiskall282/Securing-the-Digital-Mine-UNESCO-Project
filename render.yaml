@@ -1,22 +1,22 @@
 services:
-  # 1. Python Inference Backend Server (Private Service)
-  - type: pserv
+  # 1. Python Inference Backend Server (Public Web Service)
+  - type: web
     name: api-service
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python src/api_service.py"
-    plan: free
+    plan: starter
     region: oregon
     envVars:
       - key: PORT
         value: "8001"
 
-  # 2. Laravel Livewire Multi-tenant Dashboard (Public Web Service)
+  # 2. Laravel Livewire Multi-tenant Central Dashboard (Public Web Service)
   - type: web
     name: minesec-dashboard
     env: docker
     dockerfilePath: ./dashboard/Dockerfile
-    plan: free
+    plan: starter
     region: oregon
     envVars:
       - key: APP_ENV
@@ -51,5 +51,5 @@ services:
 # 3. PostgreSQL Database Instance
 databases:
   - name: minesec-db
-    plan: free
+    plan: starter
     region: oregon
