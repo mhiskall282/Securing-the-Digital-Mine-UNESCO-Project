@@ -18,6 +18,10 @@ COPY . .
 # Set working directory to dashboard folder where composer.json & artisan exist
 WORKDIR /var/www/html/dashboard
 
+# Pre-create Laravel framework storage directories & set permissions
+RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && chmod -R 777 storage bootstrap/cache
+
 # Install PHP & Node dependencies and build production assets
 RUN composer install --no-dev --no-scripts --no-interaction \
     && npm install \
@@ -26,4 +30,4 @@ RUN composer install --no-dev --no-scripts --no-interaction \
 # Expose Render PORT
 EXPOSE 8000
 
-CMD ["sh", "-c", "php artisan migrate --force && php artisan view:clear && php artisan serve --host=0.0.0.0 --port=$PORT"]
+CMD ["sh", "-c", "mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache && chmod -R 777 storage bootstrap/cache && php artisan migrate --force && php artisan view:clear && php artisan serve --host=0.0.0.0 --port=$PORT"]
