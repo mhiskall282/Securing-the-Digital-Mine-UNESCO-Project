@@ -4,6 +4,22 @@ This document outlines the high-level system architecture and research methodolo
 
 ---
 
+## Executive Summary & Scientific Proposal
+
+### Problem Solved
+African mining operations are digitalizing rapidly through IoT sensors, SCADA systems, and cloud connected digital twins, but cybersecurity for these operational technology environments lags behind conventional IT networks. Most intrusion detection systems are trained on IT traffic and fail to account for the distinct protocols and traffic patterns of industrial mining infrastructure, leaving these facilities exposed to cyberattacks that can halt production or endanger workers.
+
+### Main Scientific Hypothesis
+A Binary Whale Optimization Algorithm combined with a CNN-LSTM deep learning classifier, already validated on the NSL-KDD network intrusion benchmark, can be systematically retrained and adapted to detect intrusions in mining IoT and SCADA traffic. Feature selection via the metaheuristic reduces computational cost, while the CNN-LSTM captures the spatial and temporal patterns specific to industrial operational technology traffic.
+
+### Innovation & Differentiation
+Existing IDS solutions target generic IT traffic. This framework proposes a concrete, literature grounded adaptation pathway for OT and IIoT mining environments in Africa, where labeled industrial attack data is scarce and edge deployment constraints apply.
+
+### Implementation Prospects & Academic Network
+The framework will be piloted through a three phase roadmap: collaborative OT traffic data collection with mining operators, model retraining and validation on IIoT benchmarks, and edge deployment feasibility evaluation. The Russian-African academic network convened by this forum provides an immediate partnership pathway for Phase 1 data collection across both regions.
+
+---
+
 ## 1. Pipeline Architecture
 The system processes raw IoT/OT telemetry in a pipeline, mapping network packets onto compressed feature spaces for deep learning classification. The complete packet lifecycle from network sniffing to localized edge inference:
 
