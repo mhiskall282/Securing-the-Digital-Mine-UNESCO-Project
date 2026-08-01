@@ -96,9 +96,25 @@ Add an entry to run every 15 minutes:
 
 ---
 
-## 5. Local Developer Environment Setup (SQLite)
+## 5. Local & Containerized Environment Setup (SQLite Resilience)
 
-For local development and testing on Windows/Linux:
+### Automated Database Initialization & Resilience
+When executing locally or inside a Docker container (e.g. Render production instance):
+- **Missing DB File**: `AppServiceProvider.php` automatically detects missing SQLite database files and creates `database/database.sqlite` on disk.
+- **Auto-Migration & Seeding**: `AppServiceProvider.php` inspects `Schema::hasTable('users')`. If tables are absent, it programmatically invokes `php artisan migrate --force` and `php artisan db:seed --force` prior to servicing requests.
+- **Container Permissions**: The container startup script in `Dockerfile` enforces permissions (`chmod -R 777 storage bootstrap/cache database`).
+
+### Default Seeded Administrative Credentials
+When deploying with SQLite or executing database seeds:
+- **Admin User**: `admin@npontu.local` | Password: `password`
+- **Lead User**: `lead@npontu.local` | Password: `password`
+- **Agent User**: `agent@npontu.local` | Password: `password`
+
+---
+
+## 6. Local Developer Manual Setup
+
+For local testing on Windows/Linux:
 
 1. **Initialize Environment**:
    ```bash
@@ -112,21 +128,21 @@ For local development and testing on Windows/Linux:
    npm install
    ```
 
-3. **Provision SQLite Database**:
+3. **Provision Database**:
    ```bash
-   powershell -Command "New-Item -ItemType File -Path 'database/database.sqlite' -Force"
-   php artisan migrate:fresh --force
+   php artisan migrate --force
+   php artisan db:seed --force
    php artisan key:generate
    ```
 
-4. **Compile Production Assets**:
+4. **Compile Assets & Clear Cache**:
    ```bash
    npm run build
    php artisan view:clear
    ```
 
-5. **Start Local Servers**:
-   - **FastAPI Model Server**: `python src/api_service.py`
+5. **Start Services**:
+   - **FastAPI Inference Server**: `python src/api_service.py`
    - **Python Sniffer Daemon**: `python src/sniffer_daemon.py`
    - **Laravel Web Dashboard**: `php artisan serve --port=8000`
 

@@ -130,3 +130,53 @@ Checks edge hardware compatibility and handles quantization.
 * `benchmark_memory() -> Dict[str, float]`: Evaluates RAM allocation size.
 * `quantize_model(model: tf.keras.Model, quantization_type: str = "float16") -> str`: Creates TFLite files.
 * `check_deployment_readiness(latency_dict: Dict[str, float], memory_dict: Dict[str, float]) -> Tuple[bool, str]`: Evaluates readiness.
+
+---
+
+## 5. Microservices & Daemons (`src/`)
+
+### `ModelInferenceHandler` (`src/api_service.py`)
+FastAPI / HTTP server handling TFLite Float16 inference evaluations.
+
+#### Endpoints
+* `GET /api/health`: Returns model health, version (`v3.0.0-quantized`), and framework status.
+* `POST /api/analyze`: Accepts JSON payload containing BWOA selected network telemetry features (`serror_rate`, `same_srv_rate`, `hot`, `src_bytes`, etc.). Evaluates CNN-LSTM feature thresholds and returns:
+  ```json
+  {
+    "prediction": "Normal|DoS|Probe|U2R|R2L",
+    "confidence": 98.45,
+    "features_triggered": ["high_serror_rate"],
+    "latency_ms": 0.82
+  }
+  ```
+
+### `SnifferDaemon` (`src/sniffer_daemon.py`)
+OT/SCADA Promiscuous Network Sniffer Daemon.
+
+#### Execution Modes
+* Continuous Live Daemon: `python src/sniffer_daemon.py`
+* Intermittent Cron Pass: `python src/sniffer_daemon.py --cron`
+
+---
+
+## 6. Dashboard External REST API (`dashboard/app/Http/Controllers/Api/ExternalApiController.php`)
+
+### Device Authentication & Flow Telemetry Ingestion
+* `POST /api/external/analyze`
+  - **Headers**: `X-Device-Token: <api_token>`
+  - **Body**:
+    ```json
+    {
+      "protocol_type": "tcp",
+      "service": "http",
+      "flag": "SF",
+      "src_bytes": 1024,
+      "hot": 0,
+      "su_attempted": 0,
+      "serror_rate": 0.0,
+      "same_srv_rate": 1.0,
+      "diff_srv_rate": 0.0,
+      "dst_host_diff_srv_rate": 0.0
+    }
+    ```
+  - **Functionality**: Validates device token against `devices` table, forwards payload to `MODEL_SERVER_URL` (`http://api-service-prod:8001/api/analyze`), records flow telemetry to `live_network_flows` table under the device's `organization_id`, and triggers real-time Livewire event broadcast.
