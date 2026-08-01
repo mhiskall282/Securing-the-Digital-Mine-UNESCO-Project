@@ -40,4 +40,4 @@ RUN composer install --no-dev --no-scripts --no-interaction \
 # Expose Render PORT
 EXPOSE 8000
 
-CMD ["sh", "-c", "cp -n .env.example .env; mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache; chmod -R 777 storage bootstrap/cache; php artisan migrate --force; php artisan view:clear; php artisan serve --host=0.0.0.0 --port=$PORT"]
+CMD ["sh", "-c", "cp -n .env.example .env; mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache database; touch database/database.sqlite; chmod -R 777 storage bootstrap/cache database; php artisan migrate --force; php artisan db:seed --force; php artisan view:clear; php artisan serve --host=0.0.0.0 --port=$PORT"]

@@ -373,7 +373,22 @@ unesco-mine-sec-cli
 
 ---
 
-## 5. Contact & Support
+## 5. Database Initialization & Deployment Fixes
+
+### Automatic SQLite File Creation & Seeding
+When running the dashboard with SQLite (`DB_CONNECTION=sqlite`), such as in containerized deployments (Render) or local environments where `database.sqlite` is git-ignored:
+- **Runtime Resilience**: `AppServiceProvider` automatically detects if SQLite is enabled and auto-creates `database/database.sqlite` if it does not yet exist on disk, preventing runtime `Illuminate\Database\QueryException: Database file at path [...] does not exist` errors upon login or database access.
+- **Container Startup**: `Dockerfile` initializes directory permissions (`chmod -R 777 storage bootstrap/cache database`), touches `database/database.sqlite`, and automatically executes `php artisan migrate --force` and `php artisan db:seed --force` on container boot.
+
+### Default Seeded User Accounts
+For initial access or testing:
+- **Admin**: `admin@npontu.local` | Password: `password`
+- **Lead**: `lead@npontu.local` | Password: `password`
+- **Agent**: `agent@npontu.local` | Password: `password`
+
+---
+
+## 6. Contact & Support
 For pilot inquiries, enterprise licensing, or technical assistance:
 - **Email**: [hello@johnokyere.xyz](mailto:hello@johnokyere.xyz)
 - **Author**: John Okyere

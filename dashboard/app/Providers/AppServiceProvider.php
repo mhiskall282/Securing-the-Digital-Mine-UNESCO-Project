@@ -24,6 +24,18 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
+        // Auto-ensure SQLite database file exists if SQLite connection is used
+        if (config('database.default') === 'sqlite') {
+            $dbPath = config('database.connections.sqlite.database');
+            if ($dbPath && $dbPath !== ':memory:' && !file_exists($dbPath)) {
+                $directory = dirname($dbPath);
+                if (!is_dir($directory)) {
+                    @mkdir($directory, 0755, true);
+                }
+                @touch($dbPath);
+            }
+        }
+
         Blade::component('layouts.guest', 'guest-layout');
         Blade::component('layouts.app', 'app-layout');
     }
