@@ -89,6 +89,18 @@ flowchart TD
 │   ├── context.md
 │   ├── rules.md
 │   └── skills.md
+├── dashboard/                  # Laravel Livewire Multi-tenant SaaS Dashboard
+│   ├── app/                    # Controllers, Models, Livewire Components, Providers
+│   ├── bootstrap/              # Framework startup configuration
+│   ├── config/                 # Application & Database settings
+│   ├── database/               # Migrations, Seeders, Factories, SQLite DB
+│   │   └── .gitkeep
+│   ├── public/                 # Web server entrypoints and built assets
+│   ├── resources/              # Blade views, CSS, JavaScript
+│   ├── routes/                 # Web and API routing definitions
+│   ├── storage/                # Framework logs, sessions, and uploads
+│   ├── .env.example            # Environment configuration template
+│   └── Dockerfile              # Production Docker build specification
 ├── data/
 │   ├── features/
 │   │   └── .gitkeep
@@ -116,7 +128,11 @@ flowchart TD
 │   ├── 03_cnn_lstm_baseline.ipynb
 │   ├── 04_ot_traffic_adaptation.ipynb
 │   └── 05_edge_deployment_benchmark.ipynb
-├── src/
+├── npm-packet-scanner/         # Global CLI Packet Scanner Agent (unesco-mine-sec-cli)
+│   ├── index.js                # Core packet capture & stream logic
+│   ├── package.json            # Node.js binary configuration
+│   └── README.md               # CLI Agent installation & usage guide
+├── src/                        # Core Python ML Framework & Services
 │   ├── data/
 │   │   ├── __init__.py
 │   │   ├── batadal.py
@@ -135,18 +151,22 @@ flowchart TD
 │   │   ├── __init__.py
 │   │   ├── bwoa.py
 │   │   └── fitness.py
-│   └── utils/
-│       ├── __init__.py
-│       ├── logger.py
-│       └── visualizer.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── logger.py
+│   │   └── visualizer.py
+│   ├── api_service.py          # FastAPI ML Inference Server (Port 8001)
+│   └── sniffer_daemon.py       # OT/SCADA Packet Capture Daemon
 ├── tests/
 │   ├── test_bwoa.py
 │   ├── test_cnn_lstm.py
 │   └── test_metrics.py
-├── config.yaml
-├── LICENSE
-├── requirements.txt
-└── README.md
+├── config.yaml                 # Framework configuration parameters
+├── deployment.md               # Production deployment manual
+├── LICENSE                     # MIT License
+├── README.md                   # Project documentation
+├── render.yaml                 # Render Blueprint orchestration specification
+└── requirements.txt            # Python dependency specifications
 ```
 
 ---
