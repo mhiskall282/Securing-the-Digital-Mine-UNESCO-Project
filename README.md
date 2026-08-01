@@ -290,12 +290,12 @@ This repository hosts the **Securing the Digital Mine** intrusion detection syst
 
 ```mermaid
 flowchart TD
-    subgraph Edge Layer (Raspberry Pi Node)
+    subgraph Edge["Edge Layer (Raspberry Pi Node)"]
         A["Raw SPAN/Mirror Packets"] --> B["unesco-mine-sec-cli (Node)"]
         B --> C["BWOA Feature Pruner (10 Selected)"]
     end
 
-    subgraph Central API Gateway (SaaS Dashboard)
+    subgraph Central["Central API Gateway (SaaS Dashboard)"]
         C -- "POST /api/external/analyze (Device Token)" --> D["ExternalApiController"]
         D --> E["FastAPI / Python Model Server (Port 8001)"]
         E --> F["CNN-LSTM Inference Evaluation"]
