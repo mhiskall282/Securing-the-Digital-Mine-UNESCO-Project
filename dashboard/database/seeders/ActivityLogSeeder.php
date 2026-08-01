@@ -22,6 +22,9 @@ class ActivityLogSeeder extends Seeder
             $date = Carbon::today()->subDays($daysAgo)->format('Y-m-d');
 
             foreach ($activities as $activity) {
+                if (ActivityLog::where('activity_id', $activity->id)->where('date', $date)->exists()) {
+                    continue;
+                }
                 // Each activity starts as pending at the beginning of each day
                 // For past days, most are resolved; for today, some still pending
                 $actor = $users->random();

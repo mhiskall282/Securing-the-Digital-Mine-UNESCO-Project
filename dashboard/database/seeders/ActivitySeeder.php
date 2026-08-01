@@ -54,11 +54,14 @@ class ActivitySeeder extends Seeder
         ];
 
         foreach ($activities as $data) {
-            Activity::create([
-                ...$data,
-                'is_active' => true,
-                'created_by' => $lead->id,
-            ]);
+            Activity::firstOrCreate(
+                ['title' => $data['title']],
+                [
+                    ...$data,
+                    'is_active' => true,
+                    'created_by' => $lead->id,
+                ]
+            );
         }
     }
 }
