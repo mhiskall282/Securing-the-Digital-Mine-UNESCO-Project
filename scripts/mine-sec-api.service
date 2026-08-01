@@ -1,0 +1,17 @@
+[Unit]
+Description=Securing the Digital Mine - FastAPI ML Inference Microservice
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/unesco-project
+ExecStart=/opt/unesco-project/venv/bin/python src/api_service.py
+Restart=always
+RestartSec=5
+Environment=PORT=8001
+Environment=HOST=127.0.0.1
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

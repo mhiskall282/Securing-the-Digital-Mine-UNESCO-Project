@@ -111,6 +111,7 @@ flowchart TD
 ├── docs/
 │   ├── api_reference.md
 │   ├── architecture.md
+│   ├── aws_ec2_deployment.md   # AWS EC2 Cloud Deployment Guide
 │   ├── bwoa_algorithm.md
 │   ├── contribution_guide.md
 │   ├── dataset_guide.md
@@ -132,6 +133,10 @@ flowchart TD
 │   ├── index.js                # Core packet capture & stream logic
 │   ├── package.json            # Node.js binary configuration
 │   └── README.md               # CLI Agent installation & usage guide
+├── scripts/                    # AWS EC2 Infrastructure Automation Scripts
+│   ├── deploy_ec2.sh           # Automated 1-command deployment script
+│   ├── mine-sec-api.service    # Systemd process daemon unit file
+│   └── nginx_ec2.conf          # Nginx reverse proxy configuration template
 ├── src/                        # Core Python ML Framework & Services
 │   ├── data/
 │   │   ├── __init__.py

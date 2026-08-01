@@ -41,7 +41,29 @@ Deploy the central infrastructure automatically using Render's Infrastructure-as
 
 ---
 
-## 3. Raspberry Pi 4/5 & Industrial Edge Deployment
+## 3. AWS EC2 Cloud Production Deployment (1-Command Automation)
+
+For deploying the Python FastAPI Model Inference Server (`src/api_service.py`) and OT Sniffer Daemon on an AWS EC2 instance:
+
+### Recommended Instance & Setup:
+- **AMI**: Ubuntu 22.04 LTS (HVM)
+- **Instance Sizing**: `t3.medium` (2 vCPU, 4 GiB RAM)
+- **Security Group**: Inbound TCP ports `22` (SSH), `80` (HTTP), `443` (HTTPS).
+
+### One-Command Deployment:
+Connect to your EC2 instance via SSH and execute:
+```bash
+git clone https://github.com/mhiskall282/unesco-project.git
+cd unesco-project
+chmod +x scripts/deploy_ec2.sh
+./scripts/deploy_ec2.sh
+```
+
+For comprehensive step-by-step instructions, Nginx SSL configuration, and systemd service management, see the dedicated [AWS EC2 Deployment Guide](file:///c:/Users/user/Desktop/unesco-project/docs/aws_ec2_deployment.md).
+
+---
+
+## 4. Raspberry Pi 4/5 & Industrial Edge Deployment
 
 Deploying in low-power SCADA extraction zones or mine shafts requires running the BWOA scanner on Raspberry Pi gateways.
 
