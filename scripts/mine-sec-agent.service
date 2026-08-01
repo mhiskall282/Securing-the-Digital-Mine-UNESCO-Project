@@ -1,0 +1,16 @@
+[Unit]
+Description=Securing the Digital Mine - Raspberry Pi OT Edge Sniffer Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/unesco-project
+ExecStart=/opt/unesco-project/venv/bin/python src/sniffer_daemon.py
+Restart=always
+RestartSec=10
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

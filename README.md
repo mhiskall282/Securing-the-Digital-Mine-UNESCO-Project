@@ -116,6 +116,7 @@ flowchart TD
 │   ├── contribution_guide.md
 │   ├── dataset_guide.md
 │   ├── experiment_guide.md
+│   ├── raspberry_pi_deployment.md # Raspberry Pi Edge Deployment Guide
 │   └── results.md
 ├── figures/
 │   └── .gitkeep
@@ -133,9 +134,11 @@ flowchart TD
 │   ├── index.js                # Core packet capture & stream logic
 │   ├── package.json            # Node.js binary configuration
 │   └── README.md               # CLI Agent installation & usage guide
-├── scripts/                    # AWS EC2 Infrastructure Automation Scripts
-│   ├── deploy_ec2.sh           # Automated 1-command deployment script
-│   ├── mine-sec-api.service    # Systemd process daemon unit file
+├── scripts/                    # Automation & Deployment Scripts
+│   ├── deploy_ec2.sh           # AWS EC2 1-command deployment script
+│   ├── deploy_raspberry_pi.sh  # Raspberry Pi 1-command deployment script
+│   ├── mine-sec-api.service    # EC2 Systemd process daemon unit file
+│   ├── mine-sec-agent.service  # Raspberry Pi Systemd edge daemon unit file
 │   └── nginx_ec2.conf          # Nginx reverse proxy configuration template
 ├── src/                        # Core Python ML Framework & Services
 │   ├── data/

@@ -63,30 +63,25 @@ For comprehensive step-by-step instructions, Nginx SSL configuration, and system
 
 ---
 
-## 4. Raspberry Pi 4/5 & Industrial Edge Deployment
+## 4. Raspberry Pi 4/5 & Industrial Edge Deployment (1-Command Automation)
 
-Deploying in low-power SCADA extraction zones or mine shafts requires running the BWOA scanner on Raspberry Pi gateways.
+Deploying in low-power SCADA extraction zones or mine shafts requires running the BWOA scanner and TFLite classifier on Raspberry Pi gateways.
 
-### Step 1: Raspberry Pi OS Dependencies
-Run the following commands on the Raspberry Pi terminal:
+### Recommended Hardware & Setup:
+- **Hardware**: Raspberry Pi 4B (4GB/8GB RAM) or Raspberry Pi 5
+- **OS**: Raspberry Pi OS 64-bit (Debian 11/12)
+- **Network Interface**: Promiscuous mode enabled on SPAN/TAP mirror port (`eth1`).
+
+### One-Command Deployment:
+Connect to your Raspberry Pi via SSH or terminal and execute:
 ```bash
-sudo apt-get update && sudo apt-get install -y python3-pip python3-dev nodejs npm
-pip3 install tflite-runtime requests
+git clone https://github.com/mhiskall282/unesco-project.git
+cd unesco-project
+chmod +x scripts/deploy_raspberry_pi.sh
+./scripts/deploy_raspberry_pi.sh
 ```
 
-### Step 2: Industrial Network Mirroring (SPAN/TAP Port)
-1. Connect the Raspberry Pi secondary network interface card (NIC) to the mirror port (SPAN) of the industrial SCADA switch.
-2. Ensure passive promiscuous mode is enabled:
-   ```bash
-   sudo ip link set eth1 promisc on
-   ```
-
-### Step 3: Install & Launch the Global CLI Scanner Client
-Install the packet scanner package globally:
-```bash
-cd npm-packet-scanner
-npm install -g ./
-```
+For comprehensive details on TFLite quantization benchmarks, cron schedules, systemd service units, and CLI streaming, see the dedicated [Raspberry Pi Edge Deployment Guide](file:///c:/Users/user/Desktop/unesco-project/docs/raspberry_pi_deployment.md).
 
 Launch the interactive scanner CLI:
 ```bash
