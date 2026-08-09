@@ -17,6 +17,7 @@ African and Russian mining operations are digitalizing faster than their cyberse
 ---
 
 ## System Architecture
+
 The flowchart below illustrates the packet lifecycle from initial network ingestion down to edge prediction outputs:
 
 ```mermaid
@@ -35,6 +36,7 @@ flowchart TD
 ---
 
 ## Three-Phase Research Roadmap
+
 The development phases and timelines, showing the milestone presentation in October 2026:
 
 ```mermaid
@@ -54,6 +56,7 @@ gantt
 ---
 
 ## Pipeline Overview
+
 The modular structures of our data pipeline, model training, and edge evaluations:
 
 ```mermaid
@@ -83,6 +86,7 @@ flowchart TD
 ---
 
 ## Repository Structure
+
 ```text
 .
 ├── .ai/
@@ -182,7 +186,9 @@ flowchart TD
 ## Quick Start
 
 ### 1. Installation
+
 Clone the repository and install all dependencies:
+
 ```bash
 git clone https://github.com/mhiskall282/unesco-project.git
 cd unesco-project
@@ -190,13 +196,17 @@ pip install -r requirements.txt
 ```
 
 ### 2. Set Up Datasets
+
 Place raw datasets in the designated directories:
+
 - NSL-KDD: `data/raw/KDDTrain+.txt` and `data/raw/KDDTest+.txt`
 - SWaT: `data/raw/swat.csv`
 - BATADAL: `data/raw/batadal.csv`
 
 ### 3. Run Experiments
+
 Execute the notebooks sequentially or run unit tests to verify local setup:
+
 ```bash
 python -m unittest discover -s tests
 ```
@@ -209,27 +219,28 @@ python -m unittest discover -s tests
 
 ### Classification Performance
 
-| Model | Dataset | Features | Accuracy | F1 Macro | Latency | Size | Status |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| CNN-LSTM Baseline | NSL-KDD | 41 | 77.70% | 0.7571 | 157.66ms | 1.86MB | Confirmed |
-| CNN-LSTM + BWOA v3 | NSL-KDD | 10 | 70.56% | 0.7127 | 82.32ms | 4.88MB | Confirmed |
-| CNN-LSTM + BWOA Quantized (Float16) | NSL-KDD | 10 | 70.56% | 0.7127 | **0.76ms** | **0.82MB** | **PASS** |
-| CNN-LSTM + BWOA (Transfer Learning) | SWaT | 51 | 59.95% | 0.5966 | **0.12ms** | 1.76MB | **PASS** |
-| CNN-LSTM + BWOA (Transfer Learning) | Custom OT | ~22 | - | - | - | - | Phase 1: Pending data capture |
+| Model                                | Dataset   | Features | Accuracy | F1 Macro |  Latency   |    Size    |            Status             |
+| :------------------------------------ | :-------- | :------: | :------: | :------: | :--------: | :--------: | :----------------------------: |
+| CNN-LSTM Baseline                    | NSL-KDD   |    41    |  77.70%  |  0.7571  |  157.66ms  |   1.86MB   |           Confirmed           |
+| CNN-LSTM + BWOA v3                   | NSL-KDD   |    10    |  70.56%  |  0.7127  |  82.32ms   |   4.88MB   |           Confirmed           |
+| CNN-LSTM + BWOA Quantized (Float16)  | NSL-KDD   |    10    |  70.56%  |  0.7127  | **0.76ms** | **0.82MB** |            **PASS**           |
+| CNN-LSTM + BWOA (Transfer Learning)  | SWaT      |    51    |  59.95%  |  0.5966  | **0.12ms** |   1.76MB   |            **PASS**           |
+| CNN-LSTM + BWOA (Transfer Learning)  | Custom OT |   ~22    |    -     |    -     |     -      |     -      | Phase 1: Pending data capture |
 
 > **SWaT**: Dataset adapted via transfer learning using SUTD iTrust 2015 baseline: https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/
 > **Custom OT**: Phase 1 field data capture at pilot mining sites (Modbus/DNP3/OPC-UA traffic logging via AWS EC2 sniffer nodes). Collection not yet started.
 
 ### BWOA v3 Key Findings
+
 - **10 of 41 features selected** (75.61% reduction). RF CV validation: 92.31% (above 75% floor, PASS)
 - **Accuracy gap**: 7.14% below baseline (deliberate trade-off: 47.8% latency gain, edge deployment PASS)
 - **Selected features**: `protocol_type, service, flag, src_bytes, hot, su_attempted, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate`
 - **Quantized model**: 0.8211MB, 0.76ms mean / 1.10ms P95, 290.31MB RAM. Deployment: **PASS**
 
-
 ---
 
 ## BWOA Feature Selection
+
 The optimization lifecycle runs iteratively through encircling, exploration, and bubble-net search mechanisms:
 
 ```mermaid
@@ -257,22 +268,24 @@ flowchart TD
 
 ## SDG Alignment
 
-| SDG | Goal | How This Project Contributes |
-| :--- | :--- | :--- |
-| SDG 9 | Industry, Innovation and Infrastructure | Strengthens cybersecurity resilience of digitalizing mining infrastructure. |
-| SDG 8 | Decent Work and Economic Growth | Protects worker safety and operational continuity at mining operations. |
-| SDG 17 | Partnerships for the Goals | Russian-African collaborative data collection and research pathway. |
+| SDG    | Goal                                    | How This Project Contributes                                                |
+| :----- | :-------------------------------------- | :-------------------------------------------------------------------------- |
+| SDG 9  | Industry, Innovation and Infrastructure | Strengthens cybersecurity resilience of digitalizing mining infrastructure. |
+| SDG 8  | Decent Work and Economic Growth         | Protects worker safety and operational continuity at mining operations.     |
+| SDG 17 | Partnerships for the Goals              | Russian-African collaborative data collection and research pathway.         |
 
 ---
 
 ## Team
+
 - **John Okyere**: Team Lead, AI Security Researcher (University of Education, Winneba and Co-founder, Kayaba Labs; ICP Ambassador; johnokyere.xyz).
-- **[Team Member 2]**: Researcher, SCADA/IIoT Data Acquisition Specialist.
+- **Ezekeil Baah**: Machine Learning Engineer, Data Scientist, and Software Engineering (University of Education, Winneba and CEO of GALF Global Foundation).
 - **[Team Member 3]**: Edge Deployment and Quantization Engineer.
 
 ---
 
 ## Citation
+
 If you reference this research project in your publications, please cite the work below:
 
 ```bibtex
@@ -290,16 +303,18 @@ If you reference this research project in your publications, please cite the wor
 ---
 
 ## References
-1. Mirjalili, S., & Lewis, A. (2016). The whale optimization algorithm. *Advances in Engineering Software*, 95, 51:67. https://doi.org/10.1016/j.advengsoft.2016.01.008
-2. Kheddar, H., Himeur, Y., & Awad, A. I. (2023). Deep transfer learning for intrusion detection in industrial control networks. *Journal of Network and Computer Applications*. https://doi.org/10.48550/arXiv.2304.10550
-3. Alanazi, M., Mahmood, A., & Chowdhury, M. J. M. (2022). SCADA vulnerabilities and attacks. *Computers & Security*, 125, 103028. https://doi.org/10.1016/j.cose.2022.103028
-4. Almomani, O., Akour, I., & Habeb, A. (2025). Cyberattack detection for SCADA in IIoT. *Symmetry*, 17(4), 480. https://doi.org/10.3390/sym17040480
-5. Krishnaveni, S., Chen, T. M., Sivamohan, S., & Subbiah, S. (2025). Hybrid metaheuristic IDS for WSN. *Cluster Computing*, 28, 5248. https://doi.org/10.1007/s10586-025-05248-6
-6. Anand, M., & Arul, U. (2024). WOA enhanced LSTM for intrusion detection. *Cryptography*, 8(4), 73. https://doi.org/10.3390/cryptography8040073
+
+1. Mirjalili, S., & Lewis, A. (2016). The whale optimization algorithm. _Advances in Engineering Software_, 95, 51:67. https://doi.org/10.1016/j.advengsoft.2016.01.008
+2. Kheddar, H., Himeur, Y., & Awad, A. I. (2023). Deep transfer learning for intrusion detection in industrial control networks. _Journal of Network and Computer Applications_. https://doi.org/10.48550/arXiv.2304.10550
+3. Alanazi, M., Mahmood, A., & Chowdhury, M. J. M. (2022). SCADA vulnerabilities and attacks. _Computers & Security_, 125, 103028. https://doi.org/10.1016/j.cose.2022.103028
+4. Almomani, O., Akour, I., & Habeb, A. (2025). Cyberattack detection for SCADA in IIoT. _Symmetry_, 17(4), 480. https://doi.org/10.3390/sym17040480
+5. Krishnaveni, S., Chen, T. M., Sivamohan, S., & Subbiah, S. (2025). Hybrid metaheuristic IDS for WSN. _Cluster Computing_, 28, 5248. https://doi.org/10.1007/s10586-025-05248-6
+6. Anand, M., & Arul, U. (2024). WOA enhanced LSTM for intrusion detection. _Cryptography_, 8(4), 73. https://doi.org/10.3390/cryptography8040073
 
 ---
 
 ## License
+
 Distributed under the MIT License. See `LICENSE` for more details.
 
 
