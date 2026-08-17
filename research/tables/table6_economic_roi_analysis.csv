@@ -1,0 +1,4 @@
+Mining Asset Class,Hourly Downtime Cost,Typical Ransomware Outage,Total Financial Risk,Annual IDS Deployment Cost,Estimated ROI
+Autonomous Haulage Truck,"$12,500 / hr",24 hours,"$300,000","< $1,500",200x
+Crusher / Milling SCADA,"$25,000 / hr",18 hours,"$450,000","< $1,500",300x
+Ventilation & Safety Grid,"$50,000 / hr",8 hours (Life Safety),"$400,000 + Safety","< $1,500",260x + Life Safety

@@ -1,0 +1,11 @@
+Rank,Feature Name,Category,Gini Importance,Detection Role
+1,src_bytes,Volume / Traffic,0.2451,Volumetric DoS bursts
+2,service,Connection,0.1982,Target protocol filtering
+3,flag,Connection State,0.1420,Abnormal SYN/RST teardown
+4,serror_rate,Error Rate,0.1185,SYN flood / scan detection
+5,same_srv_rate,Traffic Rate,0.0894,Service repetition analysis
+6,diff_srv_rate,Traffic Rate,0.0652,Port sweeping / scanning
+7,dst_host_diff_srv_rate,Host Traffic,0.0521,Host reconnaissance mapping
+8,protocol_type,Protocol,0.0412,TCP/UDP/ICMP partitioning
+9,hot,Access Signal,0.0278,Sensitive directory access
+10,su_attempted,Privilege Signal,0.0205,Root escalation attempt

@@ -1,0 +1,6 @@
+Evaluation Criterion,Mean Score (1-5),Std Dev,Participant Feedback
+Alert Clarity & Human-Readability,4.8,0.4,Clear attack names rather than raw alert codes
+Dashboard Responsiveness,4.9,0.3,Sub-second live streaming updates
+Edge Setup Simplicity (CLI),4.7,0.5,Interactive adapter selection is intuitive
+Trust in Confidence Scoring,4.6,0.5,Helps distinguish high-risk DoS from benign shifts
+Overall Operational Utility,4.85,0.35,Immediate fit for remote mining edge gateways

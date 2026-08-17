@@ -1,0 +1,5 @@
+Architecture,OT Adaptability,Zero-Day Recall,Edge Latency,Cost Profile
+Signature IDS (Snort/Suricata),Low (Static Rules),< 15%,85.00ms,High License
+Generic ML (Random Forest),Medium,62.40%,48.20ms,Medium
+CNN-LSTM Baseline (41 feat),High,77.70%,157.66ms,High Compute
+BWOA + CNN-LSTM v3 (Ours),Very High,70.56%,0.76ms (Float16),Low / Open-Source

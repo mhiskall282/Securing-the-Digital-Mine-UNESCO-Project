@@ -1,0 +1,6 @@
+Class Category,Precision,Recall,F1 Score,Operational Significance
+Normal (Benign),0.9689,0.6839,0.8018,High precision benign filtering
+DoS (Denial of Service),0.7514,0.8904,0.8150,Intercepts 89% of volumetric attacks
+Probe (Reconnaissance),0.5488,0.7080,0.6183,Discovers port scanning & sweeping
+R2L (Remote to Local),0.5971,0.1449,0.2332,Minority intrusion vector
+U2R (User to Root),0.0134,0.3881,0.0258,67 test samples (extreme imbalance)
