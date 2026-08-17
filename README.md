@@ -330,6 +330,22 @@ Expected response:
 
 ### Option D: Deploy the CLI Agent on an Edge Device
 
+Install via GitHub Packages:
+
+```bash
+# Set GitHub Packages registry for the scope
+npm config set @mhiskall282:registry https://npm.pkg.github.com
+
+# Run directly via npx
+npx @mhiskall282/unesco-mine-sec-cli
+
+# Or install globally
+npm install -g @mhiskall282/unesco-mine-sec-cli
+unesco-mine-sec-cli
+```
+
+Or install from local source:
+
 ```bash
 cd npm-packet-scanner
 npm install && npm install -g ./

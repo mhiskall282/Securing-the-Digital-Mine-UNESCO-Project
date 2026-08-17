@@ -1,21 +1,30 @@
-# unesco-mine-sec-cli
+# @mhiskall282/unesco-mine-sec-cli
 
 An open-source network flow telemetry client for the **Securing the Digital Mine** intrusion detection system. 
 
 It sniffs active local interfaces, extracts the 10 selected features optimized via Binary Whale Optimization Algorithm (BWOA), and streams them in real-time to your dashboard's REST API for CNN-LSTM anomaly classification.
 
-## Installation
+## Installation via GitHub Packages
 
-You can run it instantly using `npx`:
+Configure npm to use GitHub Packages for the `@mhiskall282` scope:
 
 ```bash
-npx unesco-mine-sec-cli
+# Configure GitHub Packages registry for this scope
+npm config set @mhiskall282:registry https://npm.pkg.github.com
+
+# Run directly via npx
+npx @mhiskall282/unesco-mine-sec-cli
+
+# Or install globally
+npm install -g @mhiskall282/unesco-mine-sec-cli
+unesco-mine-sec-cli
 ```
 
-Or install it globally:
+## Local Installation
 
 ```bash
-npm install -g unesco-mine-sec-cli
+cd npm-packet-scanner
+npm install && npm install -g ./
 unesco-mine-sec-cli
 ```
 
