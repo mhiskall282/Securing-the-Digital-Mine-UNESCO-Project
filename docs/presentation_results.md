@@ -8,7 +8,14 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 ## Slide 1: Title & Project Scope
 ### Securing the Digital Mine: A Metaheuristic Optimized Deep Learning Framework for Intrusion Detection in IoT Enabled Mineral Resource Operations
 
-* **Team Lead**: John Okyere (Technical Lead, Kayaba Labs)
+* **Authors**:
+  * **John Okyere** (Team Lead & AI Security Researcher, Kayaba Labs & UEW)
+  * **Ezekeil Baah** (Machine Learning Engineer & Data Scientist, UEW)
+  * **Clement Baffour** (Edge Deployment & Quantization Engineer, UEW)
+  * **Parker Paa Annobil** (Machine Learning Engineer & Data Scientist, UEW)
+  * **George Akwesi Bonnah** (Cloud Services Engineer, UEW)
+* **Full Abstract**: [Google Drive Document](https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link)
+* **Presentation Slides**: [Google Drive Slides](https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link)
 * **Under the Auspices of**: UNESCO & Empress Catherine II Saint Petersburg Mining University, Russia
 * **Event Dates**: 12-17 October 2026
 * **Key Idea**: A lightweight, edge-deployable intrusion detection system (IDS) utilizing Binary Whale Optimization Algorithm (BWOA) for feature selection and CNN-LSTM for classification.
@@ -106,5 +113,5 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 
 ## Slide 9: Summary & Conclusions
 * **Lightweight Architecture**: Combining Binary Whale Optimization with LSTM sequence learning generates an accurate, high-throughput IDS.
-* **Quantization Success**: Model size reduced to under 320 KB and execution latency dropped to sub-millisecond ranges (0.14ms).
+* **Quantization Success**: Model size reduced to 0.82MB (83.2% compression) and execution latency dropped to 0.76ms (sub-100ms constraint PASS).
 * **Future Outlook**: Proceeding to validate the model's domain transfer capability using custom OT collectors at scale on Modbus RTU/TCP networks.

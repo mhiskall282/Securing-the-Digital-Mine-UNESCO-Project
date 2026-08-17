@@ -33,9 +33,16 @@ This process ensures that all research trials are fully documented and reproduci
 ---
 
 ## 4. Verification Checklists
-Before submitting pull requests:
+Before submitting pull requests, run the automated verification scripts:
 1. Run syntax verification checks on all modified code files:
    `python -m py_compile [modified_file.py]`
-2. Run the test suite to ensure all unit tests pass:
-   `python -m unittest discover -s tests`
-3. Verify that the notebooks run to completion without errors.
+2. Run the complete unit test suite (75 tests):
+   `python -m unittest discover -s tests -v`
+3. Validate ML inference API endpoints:
+   `python scripts/validate_api.py`
+4. Run deployment readiness dry-runs:
+   `bash scripts/validate_ec2_deployment.sh`
+   `bash scripts/validate_pi_deployment.sh`
+5. Verify Colab notebook structure and README links:
+   `python scripts/verify_colab_notebook.py`
+   `python scripts/verify_readme_links.py`

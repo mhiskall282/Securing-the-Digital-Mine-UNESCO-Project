@@ -76,3 +76,38 @@ This document aggregates the confirmed performance metrics, feature reduction st
 | CNN-LSTM + BWOA Quantized | NSL-KDD | 70.56% | 0.7127 | 0.76ms | 0.82MB | PASS |
 | Transfer Learning (51 feat) | SWaT | 59.95% | 0.5966 | 0.12ms | 1.76MB | PASS |
 | Transfer Learning | Custom OT | - | - | - | - | Phase 1 |
+
+---
+
+## 6. System Verification and Automated Testing
+
+All components in the framework undergo continuous validation:
+
+* **Unit Test Suite**: 75 of 75 unit tests passing (`Ran 75 tests in 125.632s, OK`). Covers data loaders, BWOA optimizer, CNN-LSTM variants (baseline, v4, attention), SWaT transfer learner, and evaluation metrics.
+* **ML Inference API Endpoints**: End-to-end endpoint verification via `scripts/validate_api.py` (Health, Features, Analyze, and 404 handler passing).
+* **AWS EC2 Cloud Deployment**: Validated via `scripts/validate_ec2_deployment.sh` (0 errors found, STATUS: READY).
+* **Raspberry Pi Edge Deployment**: Validated via `scripts/validate_pi_deployment.sh` (STATUS: READY).
+* **Colab GPU Pipeline**: Verified structure via `scripts/verify_colab_notebook.py` (22 cells verified, all pipeline stages present).
+* **Documentation & Links**: 24 of 24 internal links validated via `scripts/verify_readme_links.py`.
+
+---
+
+## 7. Research Team & Citation
+
+* **John Okyere** - Team Lead & AI Security Researcher (University of Education, Winneba & Kayaba Labs)
+* **Ezekeil Baah** - Machine Learning Engineer & Data Scientist (University of Education, Winneba)
+* **Clement Baffour** - Edge Deployment & Quantization Engineer (University of Education, Winneba)
+* **Parker Paa Annobil** - Machine Learning Engineer & Data Scientist (University of Education, Winneba)
+* **George Akwesi Bonnah** - Cloud Services Engineer (University of Education, Winneba)
+
+```bibtex
+@inproceedings{okyere2026securing,
+  author    = {Okyere, John and Baah, Ezekeil and Baffour, Clement and Annobil, Parker Paa and Bonnah, George Akwesi},
+  title     = {Securing the Digital Mine: A Metaheuristic Optimized Deep Learning Framework for Intrusion Detection in IoT Enabled Mineral Resource Operations},
+  booktitle = {Proceedings of the Russian-African Forum-Contest of Young Scientists: Future Engineers of the World: The Foundation of Sustainable Development},
+  publisher = {Empress Catherine II Saint Petersburg Mining University},
+  year      = {2026},
+  address   = {Saint Petersburg, Russia},
+  month     = {October}
+}
+```

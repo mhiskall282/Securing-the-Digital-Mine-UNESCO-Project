@@ -21,11 +21,11 @@ A candidate feature search wrapper based on whale hunting mechanics, adapted for
 ### `FeatureFitnessEvaluator`
 `from src.optimization.fitness import FeatureFitnessEvaluator`
 
-Computes feature selection quality.
+Computes feature selection quality with an accuracy floor constraint.
 
 #### Methods
-* `__init__(alpha: float = 0.88)`: Initializes weight constraints.
-* `calculate_fitness(features_mask: np.ndarray, X_train: np.ndarray, y_train: np.ndarray, X_val: np.ndarray, y_val: np.ndarray) -> float`: Evaluates sub-features fitness via Decision Trees.
+* `__init__(alpha: float = 0.3, min_accuracy: float = 0.75, min_features: int = 10)`: Initializes weight constraints (30% feature ratio penalty, 70% error rate penalty, with a 75% accuracy floor).
+* `calculate_fitness(features_mask: np.ndarray, X_train: np.ndarray, y_train: np.ndarray, X_val: np.ndarray, y_val: np.ndarray) -> float`: Evaluates candidate feature mask quality via stratified 3-fold cross validation.
 
 ---
 
@@ -44,7 +44,42 @@ def build_cnn_lstm(
     dropout_rate: float = 0.3
 ) -> tf.keras.Model:
 ```
-Assembles Conv1D and LSTM blocks. Returns compiled neural networks.
+Assembles Conv1D spatial extractor and LSTM temporal sequence blocks. Returns compiled Keras neural network.
+
+---
+
+### `build_cnn_lstm_v4`
+`from src.models.cnn_lstm import build_cnn_lstm_v4`
+
+```python
+def build_cnn_lstm_v4(
+    input_shape: Tuple[int, int],
+    n_classes: int,
+    filters: int = 64,
+    kernel_size: int = 3,
+    lstm_units: int = 256,
+    dropout_rate: float = 0.3,
+    l2_reg: float = 1e-4
+) -> tf.keras.Model:
+```
+Strengthened variant with self-attention mechanism, stacked LSTM sequence layers, and L2 kernel regularization.
+
+---
+
+### `build_cnn_lstm_with_attention`
+`from src.models.cnn_lstm import build_cnn_lstm_with_attention`
+
+```python
+def build_cnn_lstm_with_attention(
+    input_shape: Tuple[int, int],
+    n_classes: int,
+    filters: int = 64,
+    kernel_size: int = 3,
+    lstm_units: int = 128,
+    dropout_rate: float = 0.3
+) -> tf.keras.Model:
+```
+CNN-LSTM architecture with dot-product temporal attention layer for enhanced feature saliency weighting.
 
 ---
 
