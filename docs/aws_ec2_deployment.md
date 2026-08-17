@@ -165,3 +165,120 @@ sudo certbot renew --dry-run
 | `Connection refused (502 Bad Gateway)` | `api_service.py` process stopped or crashed | Run `sudo systemctl restart mine-sec-api` and inspect `journalctl -u mine-sec-api.service -n 50`. |
 | `Timeout / No response from public IP` | AWS Security Group inbound port 80/443 blocked | Check EC2 Security Group rules; ensure `0.0.0.0/0` is allowed for HTTP (port 80). |
 | `Permission denied` on `deploy_ec2.sh` | Missing execute permission | Run `chmod +x scripts/deploy_ec2.sh`. |
+| `503` from `/api/analyze` | TFLite model file not present on EC2 | Complete Section 8 below and restart the service. |
+
+---
+
+## 8. Load the Real TFLite Model on EC2
+
+The API service reads model paths from environment variables. Set these in the systemd unit file so the service finds the correct files after deployment:
+
+```bash
+# Edit the systemd unit file
+sudo nano /etc/systemd/system/mine-sec-api.service
+```
+
+Add the following `Environment=` lines in the `[Service]` block:
+
+```ini
+[Service]
+Environment="MODEL_PATH=/opt/unesco-project/models/cnn_lstm_bwoa_v3_quantized.tflite"
+Environment="FEATURE_MASK_PATH=/opt/unesco-project/data/features/nslkdd_bwoa_mask_v3.npy"
+Environment="SCALER_PATH=/opt/unesco-project/data/processed/scaler.pkl"
+```
+
+Reload and restart:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart mine-sec-api.service
+
+# Verify model is loaded:
+curl http://localhost:8001/api/health
+# Expected: {"status": "healthy", "model_ready": true, ...}
+```
+
+---
+
+## 9. SSL / HTTPS Setup with Let's Encrypt (Auto-Renewal)
+
+```bash
+# Install Certbot and the Nginx plugin
+sudo apt install certbot python3-certbot-nginx -y
+
+# Obtain and install a certificate (replace with your domain)
+sudo certbot --nginx -d yourdomain.com
+
+# Test auto-renewal
+sudo certbot renew --dry-run
+
+# Add automatic renewal to root crontab
+sudo crontab -e
+# Add this line:
+# 0 12 * * * /usr/bin/certbot renew --quiet
+```
+
+---
+
+## 10. Monitoring and Alerting
+
+### Check API response time
+Create `/home/ubuntu/curl-format.txt`:
+```
+     time_total: %{time_total}s\n
+```
+Then:
+```bash
+curl -w "@/home/ubuntu/curl-format.txt" -o /dev/null -s http://localhost:8001/api/health
+```
+
+### Monitor real-time inference logs
+```bash
+# Follow live journal output for the API service
+sudo journalctl -u mine-sec-api.service -f --since "1 hour ago"
+```
+
+### Set up downtime alerting via cron (every 5 minutes)
+```bash
+crontab -e
+# Add the following line (replace with your Slack webhook URL):
+*/5 * * * * curl -sf http://localhost:8001/api/health || curl -X POST https://hooks.slack.com/services/YOUR/WEBHOOK/URL -d '{"text":"Mine-Sec API is DOWN on EC2"}'
+```
+
+### Prometheus-ready health check endpoint
+The `/api/health` endpoint returns JSON with `"status": "healthy"` -- compatible with most uptime monitoring tools (UptimeRobot, Grafana, CloudWatch synthetics).
+
+---
+
+## 11. API Rate Limiting with Nginx
+
+Protect the public API from abuse and excessive traffic by adding rate limiting to the Nginx configuration. Edit `scripts/nginx_ec2.conf` or `/etc/nginx/sites-available/mine-sec`:
+
+```nginx
+# Define a rate limit zone: 100 requests/second per IP, stored in 10MB shared memory
+limit_req_zone $binary_remote_addr zone=api:10m rate=100r/s;
+
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location /api/ {
+        # Allow bursts up to 200 requests; nodelay prevents queuing
+        limit_req zone=api burst=200 nodelay;
+        proxy_pass http://127.0.0.1:8001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8001;
+    }
+}
+```
+
+Reload Nginx after editing:
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+

@@ -37,14 +37,14 @@ To compress the input space we executed the Binary Whale Optimization Algorithm.
 ## Slide 5 Speaker Script (60 seconds)
 **Word count target**: ~150 words  
 **Speaker Notes**:  
-Let us examine the classification results. The baseline model utilizing all 41 features achieved a test accuracy of 77.70 percent and a Macro F1 score of 0.7571 on the held-out KDDTest+ set of 22,544 samples. The BWOA optimized model utilizing only 10 features achieved 70.56 percent accuracy and a Macro F1 of 0.7127. The accuracy gap is 7.14 percent. This represents a deliberate engineering decision. By accepting this accuracy reduction, we achieve a 47.8 percent reduction in inference latency, dropping from 157.66 milliseconds to 82.32 milliseconds. After float16 quantization, latency drops further to just 0.76 milliseconds. This confirms that the 10-feature subset is sufficient for reliable real time intrusion detection at the edge, where the full 41-feature model would be computationally infeasible.
+Let us examine the classification results. The baseline model utilizing all 41 features achieved a test accuracy of 77.70 percent and a Macro F1 score of 0.7571 on the held-out KDDTest+ set of 22,544 samples. The BWOA optimized model utilizing only 10 features achieved 70.56 percent accuracy and a Macro F1 of 0.7127. The accuracy gap is 7.14 percent. This represents a deliberate engineering decision. By accepting this accuracy reduction, we achieve a 77.4 percent reduction in inference latency, dropping from 157.66 milliseconds to 35.60 milliseconds. After float16 quantization, latency drops further to just 0.76 milliseconds. This confirms that the 10-feature subset is sufficient for reliable real time intrusion detection at the edge, where the full 41-feature model would be computationally infeasible.
 
 ---
 
 ## Slide 6 Speaker Script (30 seconds)
 **Word count target**: ~75 words  
 **Speaker Notes**:  
-Our multi-class evaluation confirms strong performance on the most critical attack types. Normal traffic achieves a Precision of 0.9691 and F1 of 0.8065. Probe reconnaissance attacks are detected with an F1 of 0.6599 and recall of 0.7129. DoS, R2L, and U2R show lower scores due to NSL-KDD class imbalance: only 67 U2R samples exist in the entire test set. This is a known dataset limitation. We applied balanced class weights during training to prevent total collapse of minority classes.
+Our multi-class evaluation confirms strong performance on the most critical attack types. Normal traffic achieves a Precision of 0.9689 and F1 of 0.8018. DoS detection at F1=0.815 with 89% recall - our model catches 89% of all denial of service flows. R2L and U2R show lower scores due to NSL-KDD class imbalance: only 67 U2R samples exist in the entire test set. This is a known dataset limitation. We applied balanced class weights during training to prevent total collapse of minority classes.
 
 ---
 
@@ -92,12 +92,12 @@ In conclusion, we have built a lightweight, edge-ready cybersecurity framework f
 * **Baseline Accuracy (v3)**: 77.70% (F1: 0.7571, AUC-ROC: 0.9359)
 * **BWOA v3 Optimized**: 70.56% accuracy (F1: 0.7127, AUC-ROC: 0.8471)
 * **Accuracy gap**: 7.14% (deliberate trade-off for 47.8% latency reduction)
-* **Latency**: 82.32ms (BWOA Keras) / 0.76ms (Quantized TFLite)
+* **Latency**: 35.60ms (BWOA Keras) / 0.76ms (Quantized TFLite)
 * **Feature count**: 41 reduced to 10 (75.61% reduction)
 * **BWOA RF CV**: 92.31% validation accuracy (above 75% floor, PASS)
 * **Quantized model**: 0.8211MB, 0.76ms mean / 1.10ms P95, 290.31MB RAM
 * **Deployment**: PASS
-* **Per-class F1**: Normal=0.8065, DoS=0.3025, Probe=0.6599, R2L=0.1160, U2R=0.0293
+* **Per-class F1**: Normal=0.8018, DoS=0.8150, Probe=0.6183, R2L=0.2332, U2R=0.0258
 
 ---
 

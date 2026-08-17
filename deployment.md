@@ -1,167 +1,19 @@
-# Production & Edge Deployment Guide - MineSec SaaS & IoT Suite
+# Deployment Overview - Securing the Digital Mine
 
-This guide provides comprehensive, step-by-step instructions for deploying the **MineSec Multi-Tenant Intrusion Detection System (IDS)** across cloud platforms (Render.com, AWS) and resource-constrained edge gateways (Raspberry Pi 4/5).
+This repository supports two production deployment targets. Full step-by-step instructions, systemd service configuration, TFLite model transfer, SSL setup, and troubleshooting guides are available in the dedicated documents below.
 
----
+## Edge Deployment (Raspberry Pi 4/5)
 
-## 1. Architectural System Overview
+For deploying the TFLite float16 quantized CNN-LSTM classifier directly on resource-constrained industrial gateways at mine sites:
 
-The system consists of 4 decoupled, production-ready modules:
+**[docs/raspberry_pi_deployment.md](docs/raspberry_pi_deployment.md)**
 
-1. **Central SaaS Dashboard** (`dashboard/`): Laravel 12 + Livewire 3 real-time web portal with multi-tenancy, threat mitigation playbooks, and account administration.
-2. **FastAPI Deep Model Server** (`src/api_service.py`): Python microservice running quantized Float16 CNN-LSTM neural network inference on port 8001.
-3. **Embedded Sniffer Daemon** (`src/sniffer_daemon.py`): Real-time network interface listener supporting continuous monitoring and intermittent cron execution (`--cron` / `--once`).
-4. **Lightweight NPM Scanner CLI** (`npm-packet-scanner/`): Portable Node.js CLI tool (`unesco-mine-sec-cli`) with BWOA 10-feature pruning.
+Covers: prerequisites checklist, hardware setup, SPAN/TAP promiscuous mode, 1-command deployment script, execution modes (CLI / cron / systemd daemon), performance benchmarks, model transfer via `scp`, curl-based inference verification, hardware watchdog timer, and live alert forwarding to AWS EC2.
 
----
+## Cloud Deployment (AWS EC2)
 
-## 2. Render.com PaaS Cloud Production Deployment (1-Click Blueprint)
+For deploying the Python inference microservice and Nginx reverse proxy on Amazon Web Services:
 
-Deploy the central infrastructure automatically using Render's Infrastructure-as-Code Blueprint (`render.yaml`).
+**[docs/aws_ec2_deployment.md](docs/aws_ec2_deployment.md)**
 
-### Deployment Steps:
-
-1. **Fork or Push Code to GitHub**:
-   Ensure your repository contains the updated `render.yaml` blueprint at the root directory.
-
-2. **Log in to Render.com**:
-   Go to [dashboard.render.com](https://dashboard.render.com) and navigate to **Blueprints**.
-
-3. **Connect Repository**:
-   Click **New Blueprint Instance**, select your GitHub repository, and click **Connect**.
-
-4. **Automated Resource Provisioning**:
-   Render automatically provisions:
-   - **PostgreSQL Database** (`minesec-db`): Managed database storing tenant accounts, devices, and live network flows.
-   - **Python Inference Service** (`api-service`): Runs `python src/api_service.py` on port 8001.
-   - **Laravel Dashboard Service** (`minesec-dashboard`): Builds Vite assets (`npm run build`), executes migrations (`php artisan migrate --force`), and serves the web portal.
-
-5. **Verify Central Web Gateway**:
-   Once provisioning completes, open your assigned HTTPS domain (e.g., `https://minesec-dashboard.onrender.com`).
-
----
-
-## 3. AWS EC2 Cloud Production Deployment (1-Command Automation)
-
-For deploying the Python FastAPI Model Inference Server (`src/api_service.py`) and OT Sniffer Daemon on an AWS EC2 instance:
-
-### Recommended Instance & Setup:
-- **AMI**: Ubuntu 22.04 LTS (HVM)
-- **Instance Sizing**: `t3.medium` (2 vCPU, 4 GiB RAM)
-- **Security Group**: Inbound TCP ports `22` (SSH), `80` (HTTP), `443` (HTTPS).
-
-### One-Command Deployment:
-Connect to your EC2 instance via SSH and execute:
-```bash
-git clone https://github.com/mhiskall282/unesco-project.git
-cd unesco-project
-chmod +x scripts/deploy_ec2.sh
-./scripts/deploy_ec2.sh
-```
-
-For comprehensive step-by-step instructions, Nginx SSL configuration, and systemd service management, see the dedicated [AWS EC2 Deployment Guide](file:///c:/Users/user/Desktop/unesco-project/docs/aws_ec2_deployment.md).
-
----
-
-## 4. Raspberry Pi 4/5 & Industrial Edge Deployment (1-Command Automation)
-
-Deploying in low-power SCADA extraction zones or mine shafts requires running the BWOA scanner and TFLite classifier on Raspberry Pi gateways.
-
-### Recommended Hardware & Setup:
-- **Hardware**: Raspberry Pi 4B (4GB/8GB RAM) or Raspberry Pi 5
-- **OS**: Raspberry Pi OS 64-bit (Debian 11/12)
-- **Network Interface**: Promiscuous mode enabled on SPAN/TAP mirror port (`eth1`).
-
-### One-Command Deployment:
-Connect to your Raspberry Pi via SSH or terminal and execute:
-```bash
-git clone https://github.com/mhiskall282/unesco-project.git
-cd unesco-project
-chmod +x scripts/deploy_raspberry_pi.sh
-./scripts/deploy_raspberry_pi.sh
-```
-
-For comprehensive details on TFLite quantization benchmarks, cron schedules, systemd service units, and CLI streaming, see the dedicated [Raspberry Pi Edge Deployment Guide](file:///c:/Users/user/Desktop/unesco-project/docs/raspberry_pi_deployment.md).
-
-Launch the interactive scanner CLI:
-```bash
-unesco-mine-sec-cli
-```
-Input your central dashboard URL (`https://minesec-dashboard.onrender.com`), select `eth1`, and enter your Device Node API key generated from the dashboard.
-
----
-
-## 4. Intermittent Cron Job Sniffer Setup
-
-For battery-powered or bandwidth-restricted remote nodes, run the sniffer daemon in intermittent cron mode:
-
-### Running an Intermittent Pass:
-```bash
-python src/sniffer_daemon.py --cron
-```
-*Executes a 5-sample flow evaluation burst into the database and exits cleanly.*
-
-### Scheduling via Linux Crontab:
-Edit the crontab table:
-```bash
-crontab -e
-```
-Add an entry to run every 15 minutes:
-```cron
-*/15 * * * * cd /home/pi/unesco-project && python3 src/sniffer_daemon.py --cron >> /var/log/sniffer_cron.log 2>&1
-```
-
----
-
-## 5. Local & Containerized Environment Setup (SQLite Resilience)
-
-### Automated Database Initialization & Resilience
-When executing locally or inside a Docker container (e.g. Render production instance):
-- **Missing DB File**: `AppServiceProvider.php` automatically detects missing SQLite database files and creates `database/database.sqlite` on disk.
-- **Auto-Migration & Seeding**: `AppServiceProvider.php` inspects `Schema::hasTable('users')`. If tables are absent, it programmatically invokes `php artisan migrate --force` and `php artisan db:seed --force` prior to servicing requests.
-- **Container Permissions**: The container startup script in `Dockerfile` enforces permissions (`chmod -R 777 storage bootstrap/cache database`).
-
-### Default Seeded Administrative Credentials
-When deploying with SQLite or executing database seeds:
-- **Admin User**: `admin@npontu.local` | Password: `password`
-- **Lead User**: `lead@npontu.local` | Password: `password`
-- **Agent User**: `agent@npontu.local` | Password: `password`
-
----
-
-## 6. Local Developer Manual Setup
-
-For local testing on Windows/Linux:
-
-1. **Initialize Environment**:
-   ```bash
-   cd dashboard
-   copy .env.example .env
-   ```
-
-2. **Install PHP & Node Dependencies**:
-   ```bash
-   composer install
-   npm install
-   ```
-
-3. **Provision Database**:
-   ```bash
-   php artisan migrate --force
-   php artisan db:seed --force
-   php artisan key:generate
-   ```
-
-4. **Compile Assets & Clear Cache**:
-   ```bash
-   npm run build
-   php artisan view:clear
-   ```
-
-5. **Start Services**:
-   - **FastAPI Inference Server**: `python src/api_service.py`
-   - **Python Sniffer Daemon**: `python src/sniffer_daemon.py`
-   - **Laravel Web Dashboard**: `php artisan serve --port=8000`
-
-6. **Access Dashboard**:
-   Open `http://localhost:8000` in your web browser.
+Covers: EC2 instance provisioning, security group rules, 1-command deployment script, systemd service management, endpoint verification, SSL/HTTPS with Let's Encrypt, TFLite environment variable configuration, monitoring and alerting, and Nginx rate limiting.

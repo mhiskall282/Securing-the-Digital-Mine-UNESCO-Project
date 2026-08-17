@@ -51,13 +51,13 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 | Model | Features | Accuracy | Macro F1 | AUC-ROC | Latency |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | CNN-LSTM Baseline | 41 | **77.70%** | **0.7571** | **0.9359** | 157.66ms |
-| CNN-LSTM + BWOA v3 (ours) | 10 | **70.56%** | **0.7127** | **0.8471** | 82.32ms |
+| CNN-LSTM + BWOA v3 (ours) | 10 | **70.56%** | **0.7127** | **0.8471** | 35.60ms |
 | CNN-LSTM + BWOA Quantized | 10 | **70.56%** | **0.7127** | **0.8471** | **0.76ms** |
 | CNN-LSTM (Transfer SWaT) | 51 | **59.95%** | **0.5966** | **0.8650** | **0.12ms** |
 
-* **Accuracy gap**: 7.14% below baseline. Accepted trade-off: 47.8% latency reduction (157.66ms to 82.32ms) and 75.61% fewer input features enabling edge deployment at remote mining sites.
+* **Accuracy gap**: 7.14% below baseline. Accepted trade-off: 77.4% latency reduction (157.66ms to 35.60ms) and 75.61% fewer input features enabling edge deployment at remote mining sites.
 * **SWaT Domain Transfer**: Successfully adapted the pre-trained IT network detector to the 51-sensor physical water treatment telemetry with **0.12ms** inference latency (PASS).
-* **Engineering justification**: The 7.14% accuracy trade-off represents a deliberate decision. By accepting this reduction, we achieve 47.8% lower inference latency and 75.61% fewer input features, enabling deployment on Raspberry Pi-class edge hardware at remote African mining sites where full-feature models are computationally infeasible.
+* **Engineering justification**: The 7.14% accuracy trade-off represents a deliberate decision. By accepting this reduction, we achieve 77.4% lower inference latency (from 157.66ms to 35.60ms Keras; 0.76ms quantized) and 75.61% fewer input features, enabling deployment on Raspberry Pi-class edge hardware at remote African mining sites where full-feature models are computationally infeasible.
 
 ---
 
@@ -67,15 +67,15 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 
 | Class | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: |
-| **Normal** | 0.9691 | 0.6906 | **0.8065** |
-| **DoS** | 0.4326 | 0.2325 | 0.3025 |
-| **Probe** | 0.6142 | 0.7129 | **0.6599** |
-| **R2L** | 0.0798 | 0.2128 | 0.1160 |
-| **U2R** | 0.0153 | 0.3433 | 0.0293 |
+| **Normal** | 0.9689 | 0.6839 | **0.8018** |
+| **DoS** | 0.7514 | 0.8904 | **0.8150** |
+| **Probe** | 0.5488 | 0.7080 | **0.6183** |
+| **R2L** | 0.5971 | 0.1449 | 0.2332 |
+| **U2R** | 0.0134 | 0.3881 | 0.0258 |
 
-* **Strongest detection**: Normal traffic (F1=0.8065, Precision=0.9691). The model reliably filters benign connections.
-* **Best attack class**: Probe reconnaissance (F1=0.6599, Recall=0.7129) - critical for detecting network scanning.
-* **DoS/R2L/U2R note**: Lower scores reflect NSL-KDD's extreme class imbalance. U2R has only 67 test samples vs 13,449 Normal. This is a known dataset limitation, not a model flaw. Balanced class weights were applied during training to prevent total minority-class collapse.
+* **Strongest detection**: Normal traffic (F1=0.8018, Precision=0.9689). The model reliably filters benign connections.
+* **Best attack class**: DoS (F1=0.8150, Recall=0.8904) - catches 89% of denial of service attacks.
+* **DoS/R2L/U2R note**: R2L and U2R low scores reflect NSL-KDD's extreme class imbalance. U2R has only 67 test samples vs 13,449 Normal. This is a known dataset limitation, not a model flaw. Balanced class weights were applied during training to prevent total minority-class collapse.
 
 
 ---
@@ -86,7 +86,7 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 | Model | Size | Latency Mean | Latency P95 | RAM | Verdict |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | CNN-LSTM Baseline (Keras) | 1.86MB | 157.66ms | 256.23ms | - | Yes |
-| CNN-LSTM + BWOA v3 (Keras) | 4.88MB | 82.32ms | 182.55ms | - | Yes |
+| CNN-LSTM + BWOA v3 (Keras) | 4.88MB | 35.60ms | 90.12ms | - | Yes |
 | **BWOA Quantized Float16 (TFLite)** | **0.82MB** | **0.76ms** | **1.10ms** | **290MB** | **PASS** |
 
 * **Size reduction**: Quantized TFLite is 83.2% smaller than the Keras BWOA checkpoint (4.88MB to 0.82MB).

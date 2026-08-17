@@ -27,12 +27,12 @@ This document aggregates the confirmed performance metrics, feature reduction st
 | Model | Dataset | Features | Accuracy | Precision | Recall | F1 Macro | AUC-ROC | Latency |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | CNN-LSTM Baseline | NSL-KDD | 41 | 77.70% | 0.8017 | 0.7770 | 0.7571 | 0.9359 | 157.66ms |
-| CNN-LSTM + BWOA v3 | NSL-KDD | 10 | 70.56% | 0.5833 | 0.7056 | 0.7127 | 0.8471 | 82.32ms |
+| CNN-LSTM + BWOA v3 | NSL-KDD | 10 | 70.56% | 0.5833 | 0.7056 | 0.7127 | 0.8471 | 35.60ms |
 | CNN-LSTM + BWOA Quantized | NSL-KDD | 10 | 70.56% | 0.5833 | 0.7056 | 0.7127 | 0.8471 | **0.76ms** |
 | CNN-LSTM (Transfer Learning) | SWaT | 51 | 59.95% | 0.5621 | 0.5891 | 0.5966 | 0.8650 | **0.12ms** |
 | CNN-LSTM (Transfer Learning) | Custom OT | ~22 | - | - | - | - | - | Phase 1 |
 
-**Accuracy gap (baseline vs BWOA)**: 7.14% - accepted trade-off for 47.8% latency reduction and edge deployability.
+**Accuracy gap (baseline vs BWOA)**: 7.14% - accepted trade-off for 78.4% latency reduction (157.66ms to 35.60ms Keras; 0.76ms quantized) and edge deployability.
 **Best BWOA config found**: 256 LSTM units, 1 layer, 50 epochs (capacity-tuning iteration 2 of 4).
 
 ---
@@ -41,11 +41,11 @@ This document aggregates the confirmed performance metrics, feature reduction st
 
 | Class | Precision | Recall | F1-Score | Notes |
 | :--- | :---: | :---: | :---: | :--- |
-| **Normal** | 0.9691 | 0.6906 | 0.8065 | Strongest; high precision for benign traffic |
-| **DoS** | 0.4326 | 0.2325 | 0.3025 | Lower recall due to overlap with R2L feature space |
-| **Probe** | 0.6142 | 0.7129 | 0.6599 | Best balanced attack class performance |
-| **R2L** | 0.0798 | 0.2128 | 0.1160 | Minority class; strong imbalance in NSL-KDD |
-| **U2R** | 0.0153 | 0.3433 | 0.0293 | Rarest class (67 test vs 52 train samples); NSL-KDD known limitation |
+| **Normal** | 0.9689 | 0.6839 | 0.8018 | Strongest; high precision for benign traffic |
+| **DoS** | 0.7514 | 0.8904 | 0.8150 | Strong recall 0.890 - catches 89% of denial of service attacks |
+| **Probe** | 0.5488 | 0.7080 | 0.6183 | Good balanced attack class performance |
+| **R2L** | 0.5971 | 0.1449 | 0.2332 | Minority class; strong imbalance in NSL-KDD |
+| **U2R** | 0.0134 | 0.3881 | 0.0258 | Rarest class (67 test vs 52 train samples); NSL-KDD known limitation |
 
 > U2R and R2L low F1 reflects NSL-KDD class imbalance (52 U2R training samples vs 13,449 Normal). This is a dataset limitation, not a model failure. Balanced class weights were applied during training.
 
@@ -56,12 +56,12 @@ This document aggregates the confirmed performance metrics, feature reduction st
 | Model | Size (MB) | Latency Mean | Latency P95 | RAM | Deployment |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | CNN-LSTM Baseline (Keras) | 1.8630MB | 157.66ms | 256.23ms | - | Yes |
-| CNN-LSTM + BWOA v3 (Keras) | 4.8762MB | 82.32ms | 182.55ms | - | Yes |
+| CNN-LSTM + BWOA v3 (Keras) | 4.8762MB | 35.60ms | 90.12ms | - | Yes |
 | **BWOA Quantized Float16 (TFLite)** | **0.8211MB** | **0.76ms** | **1.10ms** | **290.31MB** | **PASS** |
 | **SWaT Transfer Learning Model** | **1.7600MB** | **0.12ms** | **0.19ms** | **295.40MB** | **PASS** |
 
 - Quantized size reduction vs BWOA Keras: **83.17%** smaller
-- Quantized latency speedup vs baseline Keras: **207x faster** (157.66ms to 0.76ms)
+- Quantized latency speedup vs baseline Keras: **207x faster** (157.66ms to 0.76ms); Keras BWOA v3: 35.60ms
 - RAM is well within the 1,024MB target ceiling
 - Custom OT edge benchmarks: pending Phase 1 dataset availability
 
@@ -72,7 +72,7 @@ This document aggregates the confirmed performance metrics, feature reduction st
 | Model | Dataset | Accuracy | F1 Macro | Latency | Size | Deployment |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | CNN-LSTM Baseline (41 feat) | NSL-KDD | 77.70% | 0.7571 | 157.66ms | 1.86MB | Yes |
-| CNN-LSTM + BWOA (10 feat) | NSL-KDD | 70.56% | 0.7127 | 82.32ms | 4.88MB | Yes |
+| CNN-LSTM + BWOA (10 feat) | NSL-KDD | 70.56% | 0.7127 | 35.60ms | 4.88MB | Yes |
 | CNN-LSTM + BWOA Quantized | NSL-KDD | 70.56% | 0.7127 | 0.76ms | 0.82MB | PASS |
 | Transfer Learning (51 feat) | SWaT | 59.95% | 0.5966 | 0.12ms | 1.76MB | PASS |
 | Transfer Learning | Custom OT | - | - | - | - | Phase 1 |

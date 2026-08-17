@@ -7,12 +7,25 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![UNESCO Forum](https://img.shields.io/badge/UNESCO-Russian--African%20Forum%202026-blue.svg)](https://youthafrica.spmi.ru)
 [![Track](https://img.shields.io/badge/Track%203-Smart%20Subsoil-green.svg)](https://youthafrica.spmi.ru/en/participants)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mhiskall282/unesco-project/blob/main/notebooks/00_colab_setup_and_train.ipynb)
+[![NPM](https://img.shields.io/badge/CLI-unesco--mine--sec--cli-red.svg)](npm-packet-scanner/)
 
 African and Russian mining operations are digitalizing faster than their cybersecurity posture can keep pace. This project adapts a Binary Whale Optimization Algorithm combined with a CNN-LSTM deep learning classifier, validated on NSL-KDD, toward the distinct traffic patterns of mining IoT and SCADA infrastructure. The framework is purpose-built for edge deployment in resource-constrained African mining environments.
 
 **Competition:** Russian-African Forum-Contest of Young Scientists 2026, Saint Petersburg Mining University, Russia  
 **Track:** Track 3 "Smart Subsoil", focusing on Digital Transformation and Automation in the Mineral Resources Complex  
 **Event Dates:** 12 to 17 October 2026
+
+---
+
+## Quick Start: Train on Google Colab (Recommended)
+No local setup required. Click the badge above or:
+1. Open [notebooks/00_colab_setup_and_train.ipynb](notebooks/00_colab_setup_and_train.ipynb) in Colab
+2. Runtime > Change runtime type > T4 GPU
+3. Runtime > Run all
+4. Download trained models from Cell 9
+
+Estimated time: 20-30 minutes on T4 GPU.
 
 ---
 
@@ -219,13 +232,13 @@ python -m unittest discover -s tests
 
 ### Classification Performance
 
-| Model                                | Dataset   | Features | Accuracy | F1 Macro |  Latency   |    Size    |            Status             |
-| :------------------------------------ | :-------- | :------: | :------: | :------: | :--------: | :--------: | :----------------------------: |
-| CNN-LSTM Baseline                    | NSL-KDD   |    41    |  77.70%  |  0.7571  |  157.66ms  |   1.86MB   |           Confirmed           |
-| CNN-LSTM + BWOA v3                   | NSL-KDD   |    10    |  70.56%  |  0.7127  |  82.32ms   |   4.88MB   |           Confirmed           |
-| CNN-LSTM + BWOA Quantized (Float16)  | NSL-KDD   |    10    |  70.56%  |  0.7127  | **0.76ms** | **0.82MB** |            **PASS**           |
-| CNN-LSTM + BWOA (Transfer Learning)  | SWaT      |    51    |  59.95%  |  0.5966  | **0.12ms** |   1.76MB   |            **PASS**           |
-| CNN-LSTM + BWOA (Transfer Learning)  | Custom OT |   ~22    |    -     |    -     |     -      |     -      | Phase 1: Pending data capture |
+| Model | Dataset | Features | Accuracy | F1 Macro | Latency | Size | Status |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| CNN-LSTM Baseline | NSL-KDD | 41 | 77.70% | 0.7571 | 157.66ms | 1.86MB | Confirmed |
+| CNN-LSTM + BWOA v3 | NSL-KDD | 10 | 70.56% | 0.7127 | 35.60ms | 4.88MB | Confirmed |
+| CNN-LSTM + BWOA Quantized (Float16) | NSL-KDD | 10 | 70.56% | 0.7127 | **0.76ms** | **0.82MB** | **PASS** |
+| CNN-LSTM + BWOA (Transfer Learning) | SWaT | 51 | 59.95% | 0.5966 | **0.12ms** | 1.76MB | **PASS** |
+| CNN-LSTM + BWOA (Transfer Learning) | Custom OT | ~22 | - | - | - | - | Phase 1: Pending data capture |
 
 > **SWaT**: Dataset adapted via transfer learning using SUTD iTrust 2015 baseline: https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/
 > **Custom OT**: Phase 1 field data capture at pilot mining sites (Modbus/DNP3/OPC-UA traffic logging via AWS EC2 sniffer nodes). Collection not yet started.
@@ -310,6 +323,15 @@ If you reference this research project in your publications, please cite the wor
 4. Almomani, O., Akour, I., & Habeb, A. (2025). Cyberattack detection for SCADA in IIoT. _Symmetry_, 17(4), 480. https://doi.org/10.3390/sym17040480
 5. Krishnaveni, S., Chen, T. M., Sivamohan, S., & Subbiah, S. (2025). Hybrid metaheuristic IDS for WSN. _Cluster Computing_, 28, 5248. https://doi.org/10.1007/s10586-025-05248-6
 6. Anand, M., & Arul, U. (2024). WOA enhanced LSTM for intrusion detection. _Cryptography_, 8(4), 73. https://doi.org/10.3390/cryptography8040073
+
+---
+
+## Deployment
+
+Full step-by-step guides for both deployment targets:
+
+- [Raspberry Pi Edge Deployment](docs/raspberry_pi_deployment.md) -- TFLite inference at 0.76ms on Pi 4/5
+- [AWS EC2 Cloud Deployment](docs/aws_ec2_deployment.md) -- Nginx reverse proxy, SSL, rate limiting
 
 ---
 

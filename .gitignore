@@ -48,9 +48,15 @@ data/features/*
 
 models/*
 !models/.gitkeep
+!models/README.md
 
 logs/*
 !logs/.gitkeep
+!logs/README.md
+
+# Scratch / temporary development files (not part of the project)
+scratch/
+.scratch/
 
 # OS files
 .DS_Store

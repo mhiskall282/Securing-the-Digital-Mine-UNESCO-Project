@@ -1,3 +1,8 @@
+## NOTE: requirements.txt is the canonical install method for this project.
+## Use: pip install -r requirements.txt
+## For GPU training on Google Colab, use: pip install -r colab_requirements.txt
+## This Pipfile is kept for reference only.
+
 [[source]]
 url = "https://pypi.org/simple"
 verify_ssl = true

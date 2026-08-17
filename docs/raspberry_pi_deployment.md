@@ -1,6 +1,25 @@
-# Raspberry Pi Edge Deployment Guide — Securing the Digital Mine
+# Raspberry Pi Edge Deployment Guide - Securing the Digital Mine
 
 This guide provides step-by-step instructions for deploying the **Securing the Digital Mine** Edge Classifier, BWOA Feature Pruner, and Packet Sniffer Agent (`unesco-mine-sec-cli` / `src/sniffer_daemon.py`) on resource-constrained industrial edge gateways (Raspberry Pi 4B / Pi 5).
+
+---
+
+## 0. Prerequisites Checklist
+
+Complete all items before proceeding to Section 1.
+
+- [ ] Raspberry Pi 4B (4GB/8GB RAM) or Pi 5 running 64-bit Raspberry Pi OS (Debian 12 Bookworm)
+- [ ] Static IP address assigned to the Pi on the local OT network (or DHCP reservation)
+- [ ] SSH access confirmed: `ssh pi@<PI_IP>` works from your development machine
+- [ ] Secondary NIC (`eth1`) physically connected to the SCADA switch SPAN/TAP mirror port
+- [ ] Python 3.11+ available: `python3 --version`
+- [ ] `libpcap-dev` installed: `sudo apt install libpcap-dev -y`
+- [ ] At least 500 MB free on the SD card: `df -h /`
+- [ ] Trained quantized model available on your development machine:
+  - `models/cnn_lstm_bwoa_v3_quantized.tflite` (0.82 MB)
+  - `data/features/nslkdd_bwoa_mask_v3.npy`
+  - `data/processed/scaler.pkl`
+  - (Run `notebooks/00_colab_setup_and_train.ipynb` on Google Colab if you do not have these yet)
 
 ---
 
@@ -141,3 +160,147 @@ Evaluating on KDDTest+ / SWaT datasets on Raspberry Pi 4B (1.5GHz ARM Cortex-A72
 | `Permission denied (raw socket)` | Sniffer requires root privileges for `libpcap` | Run daemon with `sudo` or execute via systemd service (`User=root`). |
 | `No network flows captured` | Network interface not in promiscuous mode or wrong NIC selected | Run `sudo ip link set eth1 promisc on` and verify with `tcpdump -i eth1 -c 5`. |
 | `tflite-runtime import error` | Python wheel mismatch on ARM64 | Run `pip install tflite-runtime` or use precompiled TFLite wheels for Raspberry Pi OS 64-bit. |
+| `503 Service Unavailable` from `/api/analyze` | TFLite model file missing | Complete Section 8 (model transfer) or set `MODEL_PATH` env var. |
+
+---
+
+## 8. Model Transfer to Raspberry Pi
+
+After training on Google Colab (or locally), transfer the quantized model and supporting files from your development machine to the Pi:
+
+```bash
+# From your development machine, transfer the quantized model:
+scp models/cnn_lstm_bwoa_v3_quantized.tflite pi@<PI_IP>:/opt/unesco-project/models/
+scp data/features/nslkdd_bwoa_mask_v3.npy pi@<PI_IP>:/opt/unesco-project/data/features/
+scp data/processed/scaler.pkl pi@<PI_IP>:/opt/unesco-project/data/processed/
+
+# Verify transfer on Pi:
+ssh pi@<PI_IP> "ls -lh /opt/unesco-project/models/*.tflite"
+```
+
+Expected output:
+```
+-rw-r--r-- 1 pi pi 841K Aug 17 10:22 /opt/unesco-project/models/cnn_lstm_bwoa_v3_quantized.tflite
+```
+
+After transfer, restart the API service so it loads the new model:
+```bash
+sudo systemctl restart mine-sec-api.service
+```
+
+---
+
+## 9. Verify Inference is Working
+
+### Health check
+```bash
+curl http://localhost:8001/api/health
+```
+Expected response:
+```json
+{"status": "healthy", "model_ready": true, "model_version": "v3.0.0-tflite-quantized", "framework": "TFLite Float16"}
+```
+
+### Feature list
+```bash
+curl http://localhost:8001/api/features
+```
+
+### Test with a simulated DoS flow (high serror_rate)
+```bash
+curl -X POST http://localhost:8001/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "protocol_type": 1,
+    "service": 21,
+    "flag": 10,
+    "src_bytes": 1032,
+    "hot": 0,
+    "su_attempted": 0,
+    "serror_rate": 0.88,
+    "same_srv_rate": 0.95,
+    "diff_srv_rate": 0.05,
+    "dst_host_diff_srv_rate": 0.02
+  }'
+```
+Expected response:
+```json
+{"prediction": "DoS", "confidence": ~96, "latency_ms": ~0.76, "model_version": "v3.0.0-tflite-quantized"}
+```
+
+---
+
+## 10. Hardware Watchdog Timer
+
+Enable the Raspberry Pi hardware watchdog to auto-reboot the device within 15 seconds if the CPU hangs or the kernel freezes:
+
+```bash
+# Enable hardware watchdog in firmware config
+echo 'dtparam=watchdog=on' | sudo tee -a /boot/config.txt
+
+# Install and configure the watchdog daemon
+sudo apt install watchdog -y
+sudo sed -i 's/#watchdog-device/watchdog-device/' /etc/watchdog.conf
+sudo sed -i 's/#max-load-1/max-load-1/' /etc/watchdog.conf
+
+# Enable and start
+sudo systemctl enable watchdog
+sudo systemctl start watchdog
+
+# Verify
+sudo systemctl status watchdog
+```
+
+The Pi will auto-reboot within 15 seconds if the CPU freezes. The `mine-sec-api.service` is configured with `Restart=always` so it recovers automatically after the reboot.
+
+---
+
+## 11. Forward Alerts to AWS EC2
+
+Any flow classified as non-Normal by the TFLite model can be forwarded in real time to a central AWS EC2 endpoint for logging, dashboarding, and aggregated threat intelligence.
+
+### Option A: Inline forwarding from `sniffer_daemon.py`
+
+Add the following snippet inside your `sniffer_daemon.py` alert handler (wherever a prediction is written to the database):
+
+```python
+import json, subprocess, tempfile, os
+
+def forward_alert_to_ec2(alert_payload: dict, ec2_domain: str, device_token: str):
+    """Forward a non-Normal inference result to the central EC2 dashboard."""
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tmp:
+        json.dump(alert_payload, tmp)
+        tmp_path = tmp.name
+    subprocess.Popen([
+        "curl", "-s", "-X", "POST",
+        f"https://{ec2_domain}/api/analyze",
+        "-H", f"Authorization: Bearer {device_token}",
+        "-H", "Content-Type: application/json",
+        "-d", f"@{tmp_path}",
+    ])
+```
+
+### Option B: Cron-based batch forwarding
+
+Save the latest alert to `/tmp/latest_alert.json` inside your daemon, then schedule:
+
+```bash
+# /etc/cron.d/mine-sec-alert-forward
+# Forward the latest alert every minute if it is non-Normal
+* * * * * pi [ -f /tmp/latest_alert.json ] && \
+  curl -s -X POST https://<EC2_DOMAIN>/api/analyze \
+    -H "Authorization: Bearer <DEVICE_TOKEN>" \
+    -H "Content-Type: application/json" \
+    -d @/tmp/latest_alert.json
+```
+
+### Monitor forwarding logs via systemd journal
+
+```bash
+# Real-time alert stream from the Pi edge agent
+sudo journalctl -u mine-sec-agent.service -f --since "1 hour ago"
+
+# Filter only non-Normal predictions
+sudo journalctl -u mine-sec-agent.service --since "1 hour ago" | grep -v '"prediction": "Normal"'
+```
+
