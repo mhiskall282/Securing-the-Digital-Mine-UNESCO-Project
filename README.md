@@ -496,6 +496,12 @@ The Russian-African academic network convened by Saint Petersburg Mining Univers
 
 - **Clement Baffour** - Edge Deployment and Quantization Engineer. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
 
+- **Parker Paa Annobil** - Machine Learning Engineer and Data Scientist. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
+
+- **George Akwesi Bonnah** - Cloud Services Engineer. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
+
+
+
 ---
 
 ## Citation
@@ -504,9 +510,8 @@ If you reference this research project in your publications, please cite the wor
 
 ```bibtex
 @inproceedings{okyere2026securing,
-  author    = {Okyere, John and Baah, Ezekeil and Baffour, Clement},
-  title     = {Securing the Digital Mine: A Metaheuristic Optimized Deep Learning Framework
-               for Intrusion Detection in IoT Enabled Mineral Resource Operations},
+  author    = {Okyere, John and Baah, Ezekeil and Baffour, Clement and Annobil, Parker Paa and Bonnah, George Akwesi},
+  title     = {Securing the Digital Mine: A Metaheuristic Optimized Deep Learning Framework for Intrusion Detection in IoT Enabled Mineral Resource Operations},
   booktitle = {Proceedings of the Russian-African Forum-Contest of Young Scientists: Future Engineers of the World: The Foundation of Sustainable Development},
   publisher = {Empress Catherine II Saint Petersburg Mining University},
   year      = {2026},

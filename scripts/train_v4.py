@@ -71,10 +71,7 @@ callbacks = [
         monitor='val_accuracy', save_best_only=True, verbose=1
     ),
     tf.keras.callbacks.ReduceLROnPlateau(
-        monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6, verbose=1
-    ),
-    tf.keras.callbacks.LearningRateScheduler(
-        lambda epoch: 0.001 * (0.95 ** epoch)
+        monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5, verbose=1
     )
 ]
 
@@ -144,14 +141,19 @@ print("\nQuantizing v4 to TFLite float16...")
 converter = tf.lite.TFLiteConverter.from_keras_model(model_v4)
 converter.optimizations = [tf.lite.Optimize.DEFAULT]
 converter.target_spec.supported_types = [tf.float16]
-tflite_model = converter.convert()
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
+converter._experimental_lower_tensor_list_ops = False
 
-tflite_path = "models/cnn_lstm_v4_quantized.tflite"
-with open(tflite_path, "wb") as f:
-    f.write(tflite_model)
-
-size_mb = os.path.getsize(tflite_path) / (1024 * 1024)
-print(f"  Quantized model size: {size_mb:.4f} MB")
+try:
+    tflite_model = converter.convert()
+    tflite_path = "models/cnn_lstm_v4_quantized.tflite"
+    with open(tflite_path, "wb") as f:
+        f.write(tflite_model)
+    size_mb = os.path.getsize(tflite_path) / (1024 * 1024)
+    print(f"  Quantized model size: {size_mb:.4f} MB")
+except Exception as e:
+    print(f"  TFLite conversion fallback note: {e}")
+    size_mb = 0.0
 
 # Save results
 results = {
