@@ -12,6 +12,9 @@ RestartSec=5
 Environment=PORT=8001
 Environment=HOST=127.0.0.1
 Environment=PYTHONUNBUFFERED=1
+Environment=MODEL_PATH=/opt/unesco-project/models/cnn_lstm_bwoa_v3_quantized.tflite
+Environment=FEATURE_MASK_PATH=/opt/unesco-project/data/features/nslkdd_bwoa_mask_v3.npy
+Environment=SCALER_PATH=/opt/unesco-project/data/processed/scaler.pkl
 
 [Install]
 WantedBy=multi-user.target

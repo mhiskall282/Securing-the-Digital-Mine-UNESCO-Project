@@ -17,7 +17,7 @@ All proposed changes must strictly respect the guidelines:
 * **PEP8 Compliance**: Standard indentation, naming conventions, and code formatting rules.
 * **Type Annotations**: Explicit type hinting on parameters and return signatures.
 * **Google-style Docstrings**: Class and function docstrings detailing inputs, outputs, and behaviors.
-* **Strict Punctuation Constraints**: Em dashes (—) are completely prohibited in code, comments, and markdown documentation. Use colons, commas, or semicolons instead.
+* **Strict Punctuation Constraints**: Em dashes are completely prohibited in code, comments, and markdown documentation. Use colons, commas, or semicolons instead.
 
 ---
 

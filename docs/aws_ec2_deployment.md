@@ -1,4 +1,4 @@
-# AWS EC2 Cloud Deployment Guide — Securing the Digital Mine
+# AWS EC2 Cloud Deployment Guide: Securing the Digital Mine
 
 This guide provides end-to-end instructions for deploying the **Securing the Digital Mine** Python ML Inference Microservice (`src/api_service.py`) and OT Sniffer Daemon on Amazon Web Services (AWS EC2).
 

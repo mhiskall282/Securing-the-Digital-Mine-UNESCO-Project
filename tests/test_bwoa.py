@@ -23,12 +23,13 @@ class TestBinaryWhaleOptimizer(unittest.TestCase):
         self.X_val = np.random.rand(20, self.n_features)
         self.y_val = np.random.randint(0, 2, size=(20,))
         
-        self.evaluator = FeatureFitnessEvaluator(alpha=0.88)
+        self.evaluator = FeatureFitnessEvaluator(alpha=0.3, min_accuracy=0.0, min_features=2)
         self.optimizer = BinaryWhaleOptimizer(
             n_agents=5,
             n_features=self.n_features,
             max_iter=3,
-            fitness_fn=self.evaluator.calculate_fitness
+            fitness_fn=self.evaluator.calculate_fitness,
+            minimum_features=2
         )
 
     def test_transfer_function_bounds(self) -> None:

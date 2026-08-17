@@ -27,6 +27,19 @@ class TestMetrics(unittest.TestCase):
         self.assertTrue(metrics["recall"] > 0.0)
         self.assertTrue(metrics["f1"] > 0.0)
 
+    def test_experiment_metrics_compute(self) -> None:
+        """Verifies ExperimentMetrics.compute produces complete report dictionary."""
+        from src.evaluation.metrics import ExperimentMetrics
+        y_true = np.array([0, 1, 2, 0, 1])
+        y_pred = np.array([0, 1, 2, 0, 0])
+        results = ExperimentMetrics.compute(y_true, y_pred)
+        self.assertIn("accuracy", results)
+        self.assertIn("precision", results)
+        self.assertIn("recall", results)
+        self.assertIn("f1", results)
+        self.assertIn("confusion_matrix", results)
+        self.assertAlmostEqual(results["accuracy"], 0.8)
+
 
 if __name__ == "__main__":
     unittest.main()
