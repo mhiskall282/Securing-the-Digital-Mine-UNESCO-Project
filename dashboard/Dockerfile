@@ -3,8 +3,8 @@ FROM php:8.2-cli-alpine
 # Install fast pre-compiled extension installer helper
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# Install system utilities & PostgreSQL extensions rapidly
-RUN apk add --no-cache git nodejs npm zip unzip curl \
+# Install system utilities, Git (for direct git clone) & PostgreSQL extensions
+RUN apk add --no-cache git nodejs npm zip unzip curl openssh-client \
     && install-php-extensions pdo_pgsql pgsql
 
 # Copy Composer binary from official image
@@ -18,7 +18,7 @@ ENV APP_ENV=production \
     CACHE_STORE=file \
     COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_PROCESS_TIMEOUT=2000 \
-    COMPOSER_MAX_PARALLEL_HTTP=4
+    COMPOSER_NO_INTERACTION=1
 
 WORKDIR /var/www/html/dashboard
 
@@ -26,13 +26,12 @@ WORKDIR /var/www/html/dashboard
 COPY dashboard/composer.json dashboard/composer.lock* ./
 COPY dashboard/package.json dashboard/package-lock.json* ./
 
-# Configure Composer & install dependencies with resilient fallback/retry to handle transient GitHub rate limits (HTTP 429)
-RUN composer config -g process-timeout 2000 \
-    && composer config -g secure-http true \
+# Install dependencies using --prefer-source (git clones) to completely bypass GitHub zip (codeload) HTTP 429 rate limit
+RUN composer config -g preferred-install auto \
+    && composer config -g process-timeout 2000 \
     && ( \
-        composer install --no-dev --no-scripts --no-interaction --prefer-dist --optimize-autoloader --no-progress || \
-        (echo "[!] Retrying composer install with backoff..." && sleep 6 && composer install --no-dev --no-scripts --no-interaction --prefer-dist --no-progress) || \
-        (echo "[!] Final retry with alternative sources..." && sleep 12 && composer install --no-dev --no-scripts --no-interaction --no-progress) \
+        composer install --no-dev --no-scripts --no-interaction --prefer-source --optimize-autoloader --no-progress || \
+        composer install --no-dev --no-scripts --no-interaction --prefer-dist --optimize-autoloader --no-progress \
     ) \
     && (npm ci || npm install)
 
