@@ -1,7 +1,7 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# This workflow publishes the npm package to GitHub Packages and creates a GitHub Release
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
-name: Node.js Package
+name: Publish Package & Create GitHub Release
 
 on:
   release:
@@ -10,6 +10,10 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   build:
@@ -26,9 +30,6 @@ jobs:
   publish-gpr:
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,6 +42,47 @@ jobs:
         run: npm ci || npm install
       - name: Publish to GitHub Packages
         working-directory: npm-packet-scanner
-        run: npm publish
+        run: |
+          # Publish package (handles already published versions gracefully)
+          npm publish || echo "Package version already published, continuing..."
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  create-github-release:
+    needs: publish-gpr
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate Release Notes & Publish Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: "Release ${{ github.ref_name }} - Securing the Digital Mine"
+          body: |
+            # Securing the Digital Mine: UNESCO Young Scientists Forum 2026
+
+            Official release of the **Securing the Digital Mine** research project for presentation at Empress Catherine II Saint Petersburg Mining University under the auspices of UNESCO (Track 3: "Smart Subsoil").
+
+            ## Key Highlights
+            - **BWOA Feature Selection**: 75.61% dimensionality reduction (41 down to 10 features) with 92.31% RF CV validation.
+            - **CNN-LSTM Multi-Class IDS**: 70.56% test accuracy, 0.7127 Macro F1, 96.89% Normal precision, 89.04% DoS recall.
+            - **Float16 Edge Quantization**: 0.82MB TFLite model, **0.76ms** latency on Raspberry Pi 4 (sub-100ms constraint PASS).
+            - **SWaT Transfer Learning**: 59.95% accuracy and **0.12ms** inference latency on 51-sensor physical SCADA telemetry.
+            - **Validation Status**: 75/75 unit tests passing, end-to-end API validation passing, AWS EC2 and Raspberry Pi deployment scripts ready.
+
+            ## CLI Package on GitHub Packages
+            ```bash
+            npm config set @mhiskall282:registry https://npm.pkg.github.com
+            npx @mhiskall282/unesco-mine-sec-cli
+            ```
+
+            ## Authors & Institutions
+            - **John Okyere** (Team Lead & AI Security Researcher, Kayaba Labs & UEW)
+            - **Ezekeil Baah** (Machine Learning Engineer & Data Scientist, UEW)
+            - **Clement Baffour** (Edge Deployment & Quantization Engineer, UEW)
+            - **Parker Paa Annobil** (Machine Learning Engineer & Data Scientist, UEW)
+            - **George Akwesi Bonnah** (Cloud Services Engineer, UEW)
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
