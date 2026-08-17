@@ -2,6 +2,14 @@
 
 This document aggregates the confirmed performance metrics, feature reduction statistics, and edge execution profiles from our v3 experiments. All NSL-KDD metrics are evaluated on the KDDTest+ held-out set (22,544 samples).
 
+> 📄 **Formal Research Documentation**:
+> * [Full 35-Page DSR Research Paper (DOCX)](../research/full_research_paper.docx)
+> * [Technical Report & Deployment Specifications (DOCX)](../research/technical_report.docx)
+> * [Product Requirements Document (PRD) (DOCX)](../research/PRD.docx)
+> * [Software Requirements Specification (SRS - IEEE 830) (DOCX)](../research/SRS.docx)
+> * [A0 Poster Presentation (High-Res PDF)](../research/poster_presentation.pdf) | [Poster (DOCX)](../research/poster_presentation.docx) | [Poster (PPTX)](../research/poster_presentation.pptx)
+> * [Research Papers & Specifications Index](research_papers_and_specifications.md)
+
 ---
 
 ## 1. BWOA Feature Selection

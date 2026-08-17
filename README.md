@@ -57,10 +57,32 @@ This project represents an official research delegation selected for presentatio
 * **Track**: **Track 3 ("Smart Subsoil")**: Digital Transformation and Automation in the Mineral Resources Complex
 * **Event Dates**: 12 to 17 October 2026
 * **Institutional Delegation**: **University of Education, Winneba** (Ghana) and **Kayaba Labs**
-* **Research Documentation**:
-  * [Full Research Abstract (PDF)](https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link)
-  * [Presentation Slide Deck (PDF)](https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link)
+* **Research Documentation & Scholarly Papers**:
+  * [Full 35-Page DSR Research Paper (DOCX)](research/full_research_paper.docx)
+  * [Technical Report & Deployment Specifications (DOCX)](research/technical_report.docx)
+  * [Product Requirements Document (PRD) (DOCX)](research/PRD.docx)
+  * [Software Requirements Specification (SRS - IEEE 830) (DOCX)](research/SRS.docx)
+  * [A0 Poster Presentation (High-Res PDF)](research/poster_presentation.pdf) | [Poster (DOCX)](research/poster_presentation.docx) | [Poster (PPTX)](research/poster_presentation.pptx)
+  * [Full Research Papers & Specifications Index](docs/research_papers_and_specifications.md)
   * [Saint Petersburg Mining University UNESCO Forum Portal](https://youthafrica.spmi.ru)
+
+---
+
+## Academic Research Papers & Engineering Specifications
+
+This repository provides complete, formal academic and engineering documentation compliant with the **Design Science Research (DSR)** framework (`research/Design Science projects.pdf`):
+
+| Deliverable Document | File Path | Format & Scope | Key Highlights |
+| :--- | :--- | :--- | :--- |
+| **Full Research Paper** | [`research/full_research_paper.docx`](research/full_research_paper.docx) | Word DOCX (~11,000 words, 35 pages) | Full 5-chapter DSR manuscript: 12pt Times New Roman, 1.5 line spacing, XML table borders, APA 7th citations, numbered equations, and Appendices A-H. |
+| **Technical Report** | [`research/technical_report.docx`](research/technical_report.docx) | Word DOCX | Architecture deep-dive, step-by-step Raspberry Pi & AWS EC2 deployment runbooks, and Appendices A-E. |
+| **Product Requirements (PRD)** | [`research/PRD.docx`](research/PRD.docx) | Word DOCX | Product vision, target user personas (SCADA engineer, SOC analyst, mine manager), functional & non-functional requirements, and release roadmap. |
+| **Software Requirements (SRS)** | [`research/SRS.docx`](research/SRS.docx) | Word DOCX (IEEE 830) | Formal IEEE 830 specification covering external interfaces, system features, and automated verification test gates (75 unit tests). |
+| **Poster Presentation (PDF)** | [`research/poster_presentation.pdf`](research/poster_presentation.pdf) | High-Res PDF (300 DPI) | Print-ready A0 portrait conference poster with UNESCO branding and large-format visual cards. |
+| **Poster Presentation (DOCX)** | [`research/poster_presentation.docx`](research/poster_presentation.docx) | Large Format DOCX | Large-format editable poster document with styled card panels and high-res figures. |
+| **Poster Presentation (PPTX)** | [`research/poster_presentation.pptx`](research/poster_presentation.pptx) | Editable PowerPoint | Fully editable vector slide template for conference presentation. |
+| **Presentation Slide Deck** | [`research/DigitalMine_Presentation (1).pdf`](research/DigitalMine_Presentation%20(1).pdf) | Slide Deck (PDF) | Official presentation slide deck for the UNESCO Russian-African Forum 2026. |
+| **Formal Abstract** | [`research/Abstract_DigitalMine_Final (2).pdf`](research/Abstract_DigitalMine_Final%20(2).pdf) | Abstract (PDF) | Official abstract approved for the forum proceedings. |
 
 ---
 
@@ -173,6 +195,38 @@ The figures below summarize the key empirical findings from feature optimization
 
 > **Figure 6: Attack Class Breakdown in Benchmark Telemetry.**
 > Illustrates the high class imbalance common in industrial network environments: Normal and DoS constitute the overwhelming majority of connections, while targeted attacks (R2L and U2R) represent minority fractions. This distribution informed our use of balanced class weight penalties during backpropagation.
+
+---
+
+### 7. Single-Sample Inference Latency vs SCADA Control Limit
+![Latency Comparison](research/figures/latency_comparison_barchart.png)
+
+> **Figure 7: Single-Sample Inference Latency Profile across IDS Implementations.**
+> Benchmarking execution time against the strict sub-100ms SCADA control loop ceiling. The unoptimized baseline CNN-LSTM requires 157.66ms (FAIL). BWOA feature selection reduces this to 35.60ms (PASS), while Float16 quantization on a Raspberry Pi 4B achieves an exceptional **0.76ms** (207x speedup, PASS).
+
+---
+
+### 8. Cyber-Physical Mineral Processing Circuit & Defense Boundary
+![Mining SCADA Circuit](research/figures/mining_scada_flowchart.png)
+
+> **Figure 8: Cyber-Physical Mineral Processing SCADA Circuit and Edge Defense Boundary.**
+> Depicts the physical extraction workflow from coarse jaw crushing and SAG milling to froth flotation cells and tailings storage facilities (TSF). The BWOA + CNN-LSTM edge IDS operates across substation switches to intercept unauthorized setpoint tampering and volumetric DoS floods in real time.
+
+---
+
+### 9. Multi-Tenant Real-Time SCADA Monitoring Dashboard Wireframe
+![Dashboard Wireframe](research/figures/dashboard_wireframe.png)
+
+> **Figure 9: Real-Time Multi-Tenant SCADA Monitoring Console Interface Design.**
+> Operator console displaying live Modbus/SCADA telemetry streams, color-coded anomaly alerts ('Normal', 'DoS Attack', 'Probe Scan'), confidence percentages, and sub-millisecond edge latency gauges.
+
+---
+
+### 10. UML Activity Diagram: Threat Detection & Mitigation Lifecycle
+![UML Activity Diagram](research/figures/uml_activity_diagram.png)
+
+> **Figure 10: UML Activity Diagram across Edge Sniffer, Inference API, and Operator Dashboard.**
+> Visualizes the swimlane workflow from promiscuous packet capture to automated BWOA feature extraction, Float16 neural classification, alert broadcasting, and automated PLC subnet isolation.
 
 ---
 

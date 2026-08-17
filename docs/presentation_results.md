@@ -16,6 +16,13 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
   * **George Akwesi Bonnah** (Cloud Services Engineer, UEW)
 * **Full Abstract**: [Google Drive Document](https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link)
 * **Presentation Slides**: [Google Drive Slides](https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link)
+* **Academic Deliverables**:
+  * [Full 35-Page DSR Research Paper (DOCX)](../research/full_research_paper.docx)
+  * [Technical Report & Deployment Specifications (DOCX)](../research/technical_report.docx)
+  * [Product Requirements Document (PRD) (DOCX)](../research/PRD.docx)
+  * [Software Requirements Specification (SRS - IEEE 830) (DOCX)](../research/SRS.docx)
+  * [A0 Poster Presentation (High-Res PDF)](../research/poster_presentation.pdf) | [Poster (DOCX)](../research/poster_presentation.docx) | [Poster (PPTX)](../research/poster_presentation.pptx)
+  * [Research Papers & Specifications Index](research_papers_and_specifications.md)
 * **Under the Auspices of**: UNESCO & Empress Catherine II Saint Petersburg Mining University, Russia
 * **Event Dates**: 12-17 October 2026
 * **Key Idea**: A lightweight, edge-deployable intrusion detection system (IDS) utilizing Binary Whale Optimization Algorithm (BWOA) for feature selection and CNN-LSTM for classification.
