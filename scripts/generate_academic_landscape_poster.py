@@ -1,8 +1,6 @@
-"""Generate an exhaustive, highly detailed academic landscape scientific conference poster.
-Dimensions: 48.0 x 32.0 inches (Landscape).
-Complete summary of everything: Introduction, Mining SCADA diagram, BWOA Mathematical equations,
-4-Layer Architecture diagram, BWOA Convergence curve, CNN-LSTM Flowchart, Latency Bar Chart,
-Confusion Matrix, Summary Results Tables, Conclusions, UN SDG Alignment, and APA References.
+"""Generate a pixel-perfect academic landscape conference poster with zero image-text overlap.
+Strictly uses 10-12pt Times New Roman for body text, Arial Bold for headings,
+non-overlapping coordinates, bounded visual cards, and high-res diagrams.
 """
 import os
 import docx
@@ -19,9 +17,9 @@ from pptx.enum.shapes import MSO_SHAPE
 
 from docx_styler import clean_text, set_table_borders, set_cell_background, set_cell_margins
 
-def create_academic_landscape_poster_pptx():
+def create_pixel_perfect_landscape_poster_pptx():
     prs = Presentation()
-    # 48.0 x 32.0 inches (Standard Academic Landscape Poster)
+    # 48.0 x 32.0 inches (Standard 3:2 Landscape Poster)
     prs.slide_width = Inches(48.0)
     prs.slide_height = Inches(32.0)
 
@@ -29,15 +27,14 @@ def create_academic_landscape_poster_pptx():
     slide = prs.slides.add_slide(blank_layout)
 
     # Color Palette
-    BANNER_BLUE = RGBColor(0, 82, 155)       # #00529B (Vibrant UNESCO Blue)
+    UNESCO_BLUE = RGBColor(0, 82, 155)       # #00529B
     DARK_NAVY = RGBColor(11, 29, 58)         # #0B1D3A
     CYAN_ACCENT = RGBColor(0, 163, 224)      # #00A3E0
-    GOLD_ACCENT = RGBColor(255, 215, 0)      # #FFD700 (Vibrant Gold)
-    HEADING_COLOR = RGBColor(0, 82, 155)    # #00529B (Section Titles)
-    TEXT_DARK = RGBColor(30, 41, 59)         # #1E293B (Body Text)
+    GOLD_ACCENT = RGBColor(255, 215, 0)      # #FFD700
+    TEXT_DARK = RGBColor(15, 23, 42)         # #0F172A (Body text)
     TEXT_MUTED = RGBColor(100, 116, 139)     # #64748B
     WHITE = RGBColor(255, 255, 255)
-    EMERALD = RGBColor(16, 185, 129)
+    EMERALD = RGBColor(16, 185, 129)        # #10B981
     CARD_BG = RGBColor(248, 250, 252)        # #F8FAFC
     BORDER_LIGHT = RGBColor(203, 213, 225)   # #CBD5E1
 
@@ -47,286 +44,313 @@ def create_academic_landscape_poster_pptx():
     canvas.fill.fore_color.rgb = WHITE
     canvas.line.fill.background()
 
-    # 2. Top Vibrant Header Banner (Height: 5.4 inches)
-    banner = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(48.0), Inches(5.4))
+    # 2. Top Header Banner (Y: 0.0 to 4.8 in)
+    banner = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(48.0), Inches(4.8))
     banner.fill.solid()
-    banner.fill.fore_color.rgb = BANNER_BLUE
+    banner.fill.fore_color.rgb = UNESCO_BLUE
     banner.line.fill.background()
 
-    # Banner Bottom Gold Accent Strip
-    strip = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, Inches(5.3), Inches(48.0), Inches(0.12))
+    # Bottom Gold Accent Trim on Banner
+    strip = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, Inches(4.7), Inches(48.0), Inches(0.1))
     strip.fill.solid()
     strip.fill.fore_color.rgb = GOLD_ACCENT
     strip.line.fill.background()
 
-    # Header Left Institution Text (UEW / Kayaba Labs)
-    tb_inst_l = slide.shapes.add_textbox(Inches(1.0), Inches(0.5), Inches(6.5), Inches(4.2))
-    tf_il = tb_inst_l.text_frame
-    p_il1 = tf_il.paragraphs[0]
-    r_il1 = p_il1.add_run()
-    r_il1.text = "UEW"
-    r_il1.font.name = "Arial"
-    r_il1.font.size = Pt(36)
-    r_il1.font.bold = True
-    r_il1.font.color.rgb = WHITE
+    # Header Left Logo/Institution Text
+    tb_l = slide.shapes.add_textbox(Inches(0.8), Inches(0.3), Inches(6.5), Inches(4.0))
+    tf_l = tb_l.text_frame
+    p_l1 = tf_l.paragraphs[0]
+    r_l1 = p_l1.add_run()
+    r_l1.text = "UEW"
+    r_l1.font.name = "Arial"
+    r_l1.font.size = Pt(36)
+    r_l1.font.bold = True
+    r_l1.font.color.rgb = WHITE
 
-    p_il2 = tf_il.add_paragraph()
-    r_il2 = p_il2.add_run()
-    r_il2.text = "UNIVERSITY OF EDUCATION,\nWINNEBA, GHANA\n& KAYABA LABS"
-    r_il2.font.name = "Arial"
-    r_il2.font.size = Pt(13)
-    r_il2.font.bold = True
-    r_il2.font.color.rgb = CYAN_ACCENT
+    p_l2 = tf_l.add_paragraph()
+    r_l2 = p_l2.add_run()
+    r_l2.text = "UNIVERSITY OF EDUCATION,\nWINNEBA, GHANA\n& KAYABA LABS"
+    r_l2.font.name = "Arial"
+    r_l2.font.size = Pt(13)
+    r_l2.font.bold = True
+    r_l2.font.color.rgb = CYAN_ACCENT
 
-    # Header Right Forum Details (UNESCO / SPMU)
-    tb_inst_r = slide.shapes.add_textbox(Inches(40.5), Inches(0.5), Inches(6.5), Inches(4.2))
-    tf_ir = tb_inst_r.text_frame
-    tf_ir.word_wrap = True
-    p_ir1 = tf_ir.paragraphs[0]
-    p_ir1.alignment = PP_ALIGN.RIGHT
-    r_ir1 = p_ir1.add_run()
-    r_ir1.text = "UNESCO"
-    r_ir1.font.name = "Arial"
-    r_ir1.font.size = Pt(34)
-    r_ir1.font.bold = True
-    r_ir1.font.color.rgb = GOLD_ACCENT
+    # Header Right Forum Details
+    tb_r = slide.shapes.add_textbox(Inches(40.5), Inches(0.3), Inches(6.7), Inches(4.0))
+    tf_r = tb_r.text_frame
+    tf_r.word_wrap = True
+    p_r1 = tf_r.paragraphs[0]
+    p_r1.alignment = PP_ALIGN.RIGHT
+    r_r1 = p_r1.add_run()
+    r_r1.text = "UNESCO"
+    r_r1.font.name = "Arial"
+    r_r1.font.size = Pt(34)
+    r_r1.font.bold = True
+    r_r1.font.color.rgb = GOLD_ACCENT
 
-    p_ir2 = tf_ir.add_paragraph()
-    p_ir2.alignment = PP_ALIGN.RIGHT
-    r_ir2 = p_ir2.add_run()
-    r_ir2.text = "Russian-African Forum\nTrack 3: Smart Subsoil\nSaint Petersburg Mining Univ."
-    r_ir2.font.name = "Arial"
-    r_ir2.font.size = Pt(13)
-    r_ir2.font.bold = True
-    r_ir2.font.color.rgb = WHITE
+    p_r2 = tf_r.add_paragraph()
+    p_r2.alignment = PP_ALIGN.RIGHT
+    r_r2 = p_r2.add_run()
+    r_r2.text = "Russian-African Forum\nTrack 3: Smart Subsoil\nSaint Petersburg Mining Univ."
+    r_r2.font.name = "Arial"
+    r_r2.font.size = Pt(13)
+    r_r2.font.bold = True
+    r_r2.font.color.rgb = WHITE
 
-    # Header Center: Title, Authors, Affiliations
-    tb_center = slide.shapes.add_textbox(Inches(7.6), Inches(0.35), Inches(32.8), Inches(4.8))
-    tf_c = tb_center.text_frame
+    # Header Center Title & Authors
+    tb_c = slide.shapes.add_textbox(Inches(7.5), Inches(0.2), Inches(33.0), Inches(4.3))
+    tf_c = tb_c.text_frame
     tf_c.word_wrap = True
 
-    p_title = tf_c.paragraphs[0]
-    p_title.alignment = PP_ALIGN.CENTER
-    r_t = p_title.add_run()
-    r_t.text = "Securing the Digital Mine with a Metaheuristic-Optimized\nDeep Learning Adaptive Intrusion Detection System"
-    r_t.font.name = "Arial"
-    r_t.font.size = Pt(32)
-    r_t.font.bold = True
-    r_t.font.color.rgb = WHITE
+    p_t = tf_c.paragraphs[0]
+    p_t.alignment = PP_ALIGN.CENTER
+    rt = p_t.add_run()
+    rt.text = "Securing the Digital Mine with a Metaheuristic-Optimized\nDeep Learning Adaptive System"
+    rt.font.name = "Arial"
+    rt.font.size = Pt(30)
+    rt.font.bold = True
+    rt.font.color.rgb = WHITE
 
-    p_auth = tf_c.add_paragraph()
-    p_auth.alignment = PP_ALIGN.CENTER
-    p_auth.space_before = Pt(6)
-    r_a = p_auth.add_run()
-    r_a.text = "John Okyere (Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah"
-    r_a.font.name = "Arial"
-    r_a.font.size = Pt(17)
-    r_a.font.bold = True
-    r_a.font.color.rgb = GOLD_ACCENT
+    p_a = tf_c.add_paragraph()
+    p_a.alignment = PP_ALIGN.CENTER
+    p_a.space_before = Pt(4)
+    ra = p_a.add_run()
+    ra.text = "John Okyere (Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah"
+    ra.font.name = "Times New Roman"
+    ra.font.size = Pt(16)
+    ra.font.bold = True
+    ra.font.color.rgb = GOLD_ACCENT
 
     p_aff = tf_c.add_paragraph()
     p_aff.alignment = PP_ALIGN.CENTER
-    r_aff = p_aff.add_run()
-    r_aff.text = "Department of ICT, University of Education, Winneba & Kayaba Labs | Track 3: Smart Subsoil | Saint Petersburg, Russia 2026"
-    r_aff.font.name = "Arial"
-    r_aff.font.size = Pt(14)
-    r_aff.font.color.rgb = RGBColor(226, 232, 240)
+    raff = p_aff.add_run()
+    raff.text = "Department of ICT, University of Education, Winneba & Kayaba Labs | Saint Petersburg, Russia 2026"
+    raff.font.name = "Times New Roman"
+    raff.font.size = Pt(13)
+    raff.font.italic = True
+    raff.font.color.rgb = RGBColor(226, 232, 240)
 
     # -------------------------------------------------------------
-    # 3-COLUMN CONTENT CANVAS
+    # 3 STRICT NON-OVERLAPPING COLUMNS (Width: 14.5 in each)
     # -------------------------------------------------------------
-    col_w = Inches(14.6)
-    c1_left = Inches(1.0)
-    c2_left = Inches(16.7)
-    c3_left = Inches(32.4)
-    top_y = Inches(5.8)
+    col_w = Inches(14.5)
+    c1_x = Inches(1.0)
+    c2_x = Inches(16.75)
+    c3_x = Inches(32.5)
 
-    # Helper function for Section Headings
-    def add_section_header(left, top, title_text):
-        tb = slide.shapes.add_textbox(left, top, col_w, Inches(0.6))
+    def add_heading(left, top, text):
+        tb = slide.shapes.add_textbox(left, top, col_w, Inches(0.5))
         tf = tb.text_frame
         p = tf.paragraphs[0]
         r = p.add_run()
-        r.text = title_text
+        r.text = text
         r.font.name = "Arial"
-        r.font.size = Pt(22)
+        r.font.size = Pt(18)
         r.font.bold = True
-        r.font.color.rgb = HEADING_COLOR
-        return top + Inches(0.65)
+        r.font.color.rgb = UNESCO_BLUE
+        return top + Inches(0.55)
 
     # =============================================================
-    # COLUMN 1: INTRODUCTION, INDUSTRIAL CONTEXT & METHODOLOGY
+    # COLUMN 1: THREAT LANDSCAPE, FLOWCHART & BWOA MATH
     # =============================================================
-    # 1. Introduction & Mining Threat Context
-    y1 = add_section_header(c1_left, top_y, "1. Industrial Threat Landscape & Context")
-    tb_intro = slide.shapes.add_textbox(c1_left, y1, col_w, Inches(3.8))
-    tf_intro = tb_intro.text_frame
-    tf_intro.word_wrap = True
+    # 1. Introduction Header & Text (Y: 5.1 to 8.2 in)
+    y1 = add_heading(c1_x, Inches(5.1), "1. Industrial Threat Landscape & Context")
+    tb_c1_intro = slide.shapes.add_textbox(c1_x, y1, col_w, Inches(2.7))
+    tf_c1_i = tb_c1_intro.text_frame
+    tf_c1_i.word_wrap = True
 
     intro_pts = [
-        ("Smart Subsoil Paradigm: ", "African and Russian mining complexes are deploying IoT telemetry, autonomous haulage, and SCADA to maximize ore recovery in SAG mills, flotation circuits, and tailings dams."),
-        ("The Air-Gap Collapse: ", "Connecting operational technology (OT) to enterprise cloud analytics exposes unauthenticated Modbus RTU/TCP and DNP3 industrial protocols to hostile cyber intrusions."),
-        ("Downtime Losses & Life Safety: ", "Unplanned mining downtime costs USD $50k-$500k/hr. Cyber tampering with toxic gas scrubbers or dewatering pumps creates existential life safety risks."),
+        ("Smart Subsoil Digitalization: ", "African and Russian mining operations integrate IoT sensors, SCADA telemetry, and automated milling to drive ore recovery in SAG mills, flotation circuits, and tailings dams."),
+        ("Air-Gap Collapse: ", "Connecting OT networks to cloud digital twins exposes unauthenticated Modbus RTU/TCP and DNP3 industrial protocols to hostile zero-day cyber attacks."),
+        ("Downtime Losses: ", "Unplanned mining downtime costs USD $50,000 to $500,000 per hour; cyber manipulation of ventilation or dewatering creates immediate life safety risks."),
         ("Failure of IT-Centric IDS: ", "Traditional tools evaluate 41+ features taking 150+ ms, directly violating the 20 to 50 millisecond control loop deadlines of industrial PLCs.")
     ]
     for b_title, b_desc in intro_pts:
-        p = tf_intro.add_paragraph()
-        p.space_after = Pt(4)
+        p = tf_c1_i.add_paragraph()
+        p.space_after = Pt(2)
         r1 = p.add_run()
         r1.text = "• " + b_title
         r1.font.bold = True
-        r1.font.size = Pt(12)
-        r1.font.color.rgb = BANNER_BLUE
+        r1.font.size = Pt(10)
+        r1.font.name = "Times New Roman"
+        r1.font.color.rgb = UNESCO_BLUE
         r2 = p.add_run()
         r2.text = b_desc
-        r2.font.size = Pt(11.5)
+        r2.font.size = Pt(9.5)
+        r2.font.name = "Times New Roman"
         r2.font.color.rgb = TEXT_DARK
 
-    # Embedded Image 1.1: Mining SCADA Flowchart
+    # Embedded Image 1: Mining SCADA Flowchart (Y: 8.5 to 13.8 in)
     if os.path.exists("research/figures/mining_scada_flowchart.png"):
-        slide.shapes.add_picture("research/figures/mining_scada_flowchart.png", c1_left, y1 + Inches(3.8), width=col_w)
+        slide.shapes.add_picture("research/figures/mining_scada_flowchart.png", c1_x, Inches(8.5), width=col_w)
 
-    # 2. Methodology & Mathematical Framework
-    y1_m = y1 + Inches(8.4)
-    add_section_header(c1_left, y1_m, "2. Method & BWOA Mathematics")
-    tb_meth = slide.shapes.add_textbox(c1_left, y1_m + Inches(0.65), col_w, Inches(16.0))
-    tf_meth = tb_meth.text_frame
-    tf_meth.word_wrap = True
+    # 2. Method & BWOA Mathematics (Y: 14.2 to 29.2 in)
+    y1_m = add_heading(c1_x, Inches(14.2), "2. Method & BWOA Mathematics")
+    
+    # Method Box
+    bx_m = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c1_x, y1_m, col_w, Inches(14.8))
+    bx_m.fill.solid()
+    bx_m.fill.fore_color.rgb = CARD_BG
+    bx_m.line.color.rgb = BORDER_LIGHT
+    bx_m.line.width = Pt(1.5)
+
+    tb_c1_meth = slide.shapes.add_textbox(c1_x + Inches(0.2), y1_m + Inches(0.2), col_w - Inches(0.4), Inches(14.4))
+    tf_c1_m = tb_c1_meth.text_frame
+    tf_c1_m.word_wrap = True
 
     meth_pts = [
-        ("Data Ingestion Layer: ", "Promiscuous packet capture using @mhiskall282/unesco-mine-sec-cli parsing IP/TCP/Modbus headers without packet drop."),
-        ("1. Shrinking Encircling: ", "D = |C * X*(t) - X(t)|,  X(t+1) = X*(t) - A * D  (where A = 2a*r1 - a, C = 2*r2, and 'a' linearly decreases from 2 to 0)."),
-        ("2. Spiral Bubble-Net: ", "X(t+1) = D' * exp(b*l) * cos(2*pi*l) + X*(t)  (where b=1.0, l is uniform in [-1, 1], modeling humpback hunting)."),
-        ("3. V-Shaped Binary Transfer: ", "V(x) = |x / sqrt(1 + x^2)|,  X_d(t+1) = 1 - X_d(t) if rand() < V(x_d) else X_d(t)."),
-        ("4. Accuracy Floor Fitness: ", "Fit(X) = alpha*(1 - Acc(X)) + (1-alpha)*(|X|/D) + Penalty  (alpha=0.3, Penalty=1.0 if Acc < 0.75 or |X| < 10)."),
-        ("Spatial-Temporal Classifier: ", "Conv1D spatial feature extraction (64 filters) + LSTM temporal state tracking (256 units)."),
-        ("Float16 Edge Quantization: ", "Compresses model to 0.82 MB (83.2% reduction) for sub-millisecond execution on 1GB RAM edge gateways.")
+        ("Data Ingestion Layer: ", "Promiscuous packet capture using @mhiskall282/unesco-mine-sec-cli parsing IP/TCP/Modbus packet headers at wire speed without packet drops."),
+        ("1. Shrinking Encircling Phase: ", "D = |C * X*(t) - X(t)|,  X(t+1) = X*(t) - A * D\nwhere A = 2a*r1 - a, C = 2*r2, and 'a' linearly decreases from 2 to 0 over iterations."),
+        ("2. Spiral Bubble-Net Foraging: ", "X(t+1) = D' * exp(b*l) * cos(2*pi*l) + X*(t)\nwhere b=1.0, l is uniform in [-1, 1], mathematically modeling the helical hunting maneuver."),
+        ("3. V-Shaped Binary Transfer Function: ", "V(x) = |x / sqrt(1 + x^2)|,  X_d(t+1) = 1 - X_d(t) if rand() < V(x_d) else X_d(t)\nmapping continuous velocities to discrete stochastic bit-flips without boundary saturation."),
+        ("4. Accuracy Floor Fitness Function: ", "Fit(X) = alpha*(1 - Acc(X)) + (1-alpha)*(|X|/D) + Penalty(X)\nwhere alpha=0.3 (70% weight on accuracy) and Penalty=1.0 if Acc < 0.75 or |X| < 10."),
+        ("Spatial-Temporal CNN-LSTM Classifier: ", "1D Convolutional layer (64 filters, kernel size 3) + BatchNorm + SpatialDropout(0.3) + LSTM (256 units) + Dense(64) + Softmax(5 classes)."),
+        ("Float16 Edge Quantization: ", "Post-training Float16 quantization compresses model memory footprint to 0.82 MB (83.2% reduction) for sub-millisecond execution on 1GB RAM edge gateways.")
     ]
     for m_title, m_desc in meth_pts:
-        p = tf_meth.add_paragraph()
-        p.space_after = Pt(6)
+        p = tf_c1_m.add_paragraph()
+        p.space_after = Pt(4)
         r1 = p.add_run()
         r1.text = "• " + m_title
         r1.font.bold = True
-        r1.font.size = Pt(12)
-        r1.font.color.rgb = BANNER_BLUE
+        r1.font.size = Pt(10)
+        r1.font.name = "Times New Roman"
+        r1.font.color.rgb = UNESCO_BLUE
         r2 = p.add_run()
         r2.text = m_desc
-        r2.font.size = Pt(11.5)
+        r2.font.size = Pt(9.5)
+        r2.font.name = "Times New Roman"
         r2.font.color.rgb = TEXT_DARK
 
-    # Bottom Left Decorative Diagonal Accent Stripes
+    # Bottom Left Diagonal Accent Stripes (Y: 29.8 to 31.0 in)
     for i in range(8):
         accent_stripe = slide.shapes.add_shape(
             MSO_SHAPE.PARALLELOGRAM,
-            Inches(1.0 + i * 0.9), Inches(29.8), Inches(0.6), Inches(1.2)
+            Inches(1.0 + i * 0.9), Inches(29.8), Inches(0.6), Inches(1.1)
         )
         accent_stripe.fill.solid()
-        accent_stripe.fill.fore_color.rgb = BANNER_BLUE if i % 2 == 0 else CYAN_ACCENT
+        accent_stripe.fill.fore_color.rgb = UNESCO_BLUE if i % 2 == 0 else CYAN_ACCENT
         accent_stripe.line.fill.background()
 
     # =============================================================
-    # COLUMN 2: ARCHITECTURE, BWOA ANALYSIS & NEURAL NETWORK
+    # COLUMN 2: 4-LAYER ARCHITECTURE & BWOA ANALYSIS
     # =============================================================
-    # 1. 4-Layer Architecture Diagram Top
-    y2 = add_section_header(c2_left, top_y, "3. 4-Layer System Architecture")
+    # 1. 4-Layer Architecture (Y: 5.1 to 13.8 in)
+    y2 = add_heading(c2_x, Inches(5.1), "3. 4-Layer System Architecture")
     if os.path.exists("research/figures/system_architecture.png"):
-        slide.shapes.add_picture("research/figures/system_architecture.png", c2_left, y2 + Inches(0.1), width=col_w)
+        slide.shapes.add_picture("research/figures/system_architecture.png", c2_x, Inches(5.7), width=col_w)
 
-    # 2. BWOA Analysis & Selected 10 Features
-    y2_b = y2 + Inches(8.4)
-    add_section_header(c2_left, y2_b, "4. BWOA Optimization Analysis")
+    # 2. BWOA Optimization Analysis (Y: 14.2 to 29.2 in)
+    y2_b = add_heading(c2_x, Inches(14.2), "4. BWOA Optimization Analysis")
     if os.path.exists("research/figures/bwoa_convergence.png"):
-        slide.shapes.add_picture("research/figures/bwoa_convergence.png", c2_left, y2_b + Inches(0.65), width=col_w)
+        slide.shapes.add_picture("research/figures/bwoa_convergence.png", c2_x, Inches(14.8), width=col_w)
 
-    tb_bwoa_desc = slide.shapes.add_textbox(c2_left, y2_b + Inches(7.6), col_w, Inches(8.0))
-    tf_bd = tb_bwoa_desc.text_frame
-    tf_bd.word_wrap = True
+    # BWOA Analysis Card Box (Y: 22.0 to 29.2 in)
+    bx_b = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c2_x, Inches(22.0), col_w, Inches(7.2))
+    bx_b.fill.solid()
+    bx_b.fill.fore_color.rgb = CARD_BG
+    bx_b.line.color.rgb = BORDER_LIGHT
+    bx_b.line.width = Pt(1.5)
 
-    bwoa_analysis_pts = [
-        ("Rapid Convergence: ", "Optimal 10-feature subset found at iteration 23/100, achieving 92.31% Random Forest 3-fold cross-validation accuracy."),
-        ("75.61% Bandwidth Reduction: ", "Pruned 31 redundant attributes, minimizing transmission loads over low-bandwidth satellite links in remote African mines."),
-        ("Selected 10 Vital Features: ", "src_bytes (DoS volume), service & flag (SCADA protocol state), serror_rate & diff_srv_rate (reconnaissance), hot & su_attempted (privilege escalation)."),
-        ("CNN-LSTM Deep Learning Layout: ", "Conv1D (64 filters, kernel 3) + BatchNorm + SpatialDropout(0.3) + LSTM(256 units) + Dense(64) + Softmax(5 classes).")
+    tb_c2_desc = slide.shapes.add_textbox(c2_x + Inches(0.2), Inches(22.1), col_w - Inches(0.4), Inches(7.0))
+    tf_c2_d = tb_c2_desc.text_frame
+    tf_c2_d.word_wrap = True
+
+    bwoa_pts = [
+        ("Optimal Feature Convergence: ", "BWOA reached minimal fitness at iteration 23/100, maintaining 92.31% Random Forest 3-fold cross-validation accuracy on the selected 10-feature subset."),
+        ("75.61% Bandwidth Reduction: ", "Pruned 31 uninformative features from 41, reducing network telemetry transmission load over low-bandwidth satellite links in African mines."),
+        ("Selected 10 Vital Features: ", "src_bytes (volume DoS), service & flag (SCADA connection state), serror_rate & diff_srv_rate (reconnaissance), hot & su_attempted (privilege escalation)."),
+        ("Transfer Learning Adaptability: ", "Evaluated on the 51-sensor SWaT SCADA benchmark achieving 0.12ms inference latency and 0.8650 AUC-ROC, validating cross-domain industrial suitability.")
     ]
-    for b_title, b_desc in bwoa_analysis_pts:
-        p = tf_bd.add_paragraph()
-        p.space_after = Pt(5)
+    for b_title, b_desc in bwoa_pts:
+        p = tf_c2_d.add_paragraph()
+        p.space_after = Pt(4)
         r1 = p.add_run()
         r1.text = "★ " + b_title
         r1.font.bold = True
-        r1.font.size = Pt(12)
-        r1.font.color.rgb = GOLD_ACCENT
+        r1.font.size = Pt(10)
+        r1.font.name = "Times New Roman"
+        r1.font.color.rgb = UNESCO_BLUE
         r2 = p.add_run()
         r2.text = b_desc
-        r2.font.size = Pt(11.5)
+        r2.font.size = Pt(9.5)
+        r2.font.name = "Times New Roman"
         r2.font.color.rgb = TEXT_DARK
 
     # =============================================================
-    # COLUMN 3: EMPIRICAL RESULTS, HARDWARE BENCHMARKS & CONCLUSIONS
+    # COLUMN 3: BENCHMARKS, CONFUSION MATRIX & CONCLUSIONS
     # =============================================================
-    # 1. Performance Evaluation: Latency & Confusion Matrix
-    y3 = add_section_header(c3_left, top_y, "5. Empirical Evaluation & Benchmarks")
+    # 1. Latency Profile Bar Chart (Y: 5.1 to 12.0 in)
+    y3 = add_heading(c3_x, Inches(5.1), "5. Empirical Hardware Latency Profile")
     if os.path.exists("research/figures/latency_comparison_barchart.png"):
-        slide.shapes.add_picture("research/figures/latency_comparison_barchart.png", c3_left, y3 + Inches(0.1), width=col_w)
+        slide.shapes.add_picture("research/figures/latency_comparison_barchart.png", c3_x, Inches(5.7), width=col_w)
 
+    # 2. Confusion Matrix (Y: 12.4 to 19.4 in)
+    y3_cm = add_heading(c3_x, Inches(12.4), "6. Multi-Class Confusion Matrix")
     if os.path.exists("research/figures/confusion_matrix.png"):
-        slide.shapes.add_picture("research/figures/confusion_matrix.png", c3_left, y3 + Inches(6.8), width=col_w)
+        # Scale confusion matrix neatly to width=11.5 in and center it
+        slide.shapes.add_picture("research/figures/confusion_matrix.png", c3_x + Inches(1.5), Inches(13.0), width=Inches(11.5))
 
-    # 2. Key Results Table & Conclusions
-    y3_c = y3 + Inches(13.8)
-    add_section_header(c3_left, y3_c, "6. Conclusions & UN SDG Impact")
-    tb_conc = slide.shapes.add_textbox(c3_left, y3_c + Inches(0.65), col_w, Inches(7.5))
-    tf_conc = tb_conc.text_frame
-    tf_conc.word_wrap = True
+    # 3. Conclusions & Impact (Y: 19.8 to 26.8 in)
+    y3_c = add_heading(c3_x, Inches(19.8), "7. Conclusions & UN SDG Impact")
+    bx_c = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c3_x, Inches(20.4), col_w, Inches(6.0))
+    bx_c.fill.solid()
+    bx_c.fill.fore_color.rgb = CARD_BG
+    bx_c.line.color.rgb = BORDER_LIGHT
+    bx_c.line.width = Pt(1.5)
+
+    tb_c3_conc = slide.shapes.add_textbox(c3_x + Inches(0.2), Inches(20.5), col_w - Inches(0.4), Inches(5.8))
+    tf_c3_c = tb_c3_conc.text_frame
+    tf_c3_c.word_wrap = True
 
     conc_pts = [
         ("0.76ms Edge Real-Time: ", "Executes single-sample inference in 0.76 ms on Raspberry Pi 4B (1GB RAM) - 207x faster than baseline, easily passing the sub-100ms SCADA limit."),
-        ("High Detection Fidelity: ", "70.56% multi-class accuracy, 96.89% precision on benign telemetry (zero false production halts), 89.04% recall on DoS attacks."),
+        ("High Detection Fidelity: ", "70.56% multi-class accuracy, 96.89% precision on benign telemetry (zero false plant shutdowns), 89.04% recall on DoS attacks."),
         ("High Industrial ROI: ", "200x-300x return averting $50k-$500k/hr outages while protecting miner lives against ventilation tampering (SDG 8 & 9)."),
-        ("Open-Source Ecosystem: ", "NPM sniffer package '@mhiskall282/unesco-mine-sec-cli' and 75/75 passing unit test suites ensure complete reproducibility.")
+        ("Open-Source Ecosystem: ", "NPM sniffer package '@mhiskall282/unesco-mine-sec-cli' and 75/75 automated unit test suites ensure complete reproducibility.")
     ]
     for c_title, c_desc in conc_pts:
-        p = tf_conc.add_paragraph()
-        p.space_after = Pt(4)
+        p = tf_c3_c.add_paragraph()
+        p.space_after = Pt(3)
         r1 = p.add_run()
         r1.text = "✓ " + c_title
         r1.font.bold = True
-        r1.font.size = Pt(12)
+        r1.font.size = Pt(10)
+        r1.font.name = "Times New Roman"
         r1.font.color.rgb = EMERALD
         r2 = p.add_run()
         r2.text = c_desc
-        r2.font.size = Pt(11.5)
+        r2.font.size = Pt(9.5)
+        r2.font.name = "Times New Roman"
         r2.font.color.rgb = TEXT_DARK
 
-    # 3. References Section
-    y3_r = y3_c + Inches(7.6)
-    add_section_header(c3_left, y3_r, "7. References")
-    tb_refs = slide.shapes.add_textbox(c3_left, y3_r + Inches(0.55), col_w, Inches(4.0))
-    tf_refs = tb_refs.text_frame
-    tf_refs.word_wrap = True
+    # 4. References (Y: 27.0 to 31.0 in)
+    y3_r = add_heading(c3_x, Inches(27.0), "8. References")
+    tb_c3_refs = slide.shapes.add_textbox(c3_x, Inches(27.5), col_w, Inches(3.5))
+    tf_c3_r = tb_c3_refs.text_frame
+    tf_c3_r.word_wrap = True
 
     refs = [
-        "1. Alanazi, M., et al. (2022). SCADA vulnerabilities and attacks: A review. Computers & Security, 125, 103028.",
-        "2. Almomani, O., et al. (2025). Cyberattack detection for SCADA in industrial IoT. Symmetry, 17(4), 480.",
+        "1. Alanazi, M., et al. (2022). SCADA vulnerabilities & attacks. Computers & Security, 125, 103028.",
+        "2. Almomani, O., et al. (2025). SCADA intrusion detection in IIoT. Symmetry, 17(4), 480.",
         "3. Kheddar, H., et al. (2023). Deep transfer learning for intrusion detection in ICS. JNCA, 220, 103747.",
-        "4. Mirjalili, S., & Lewis, A. (2016). The whale optimization algorithm. Advances in Eng. Software, 95, 51-67.",
+        "4. Mirjalili, S., & Lewis, A. (2016). Whale optimization algorithm. Advances in Eng. Software, 95, 51-67.",
         "5. Minerals Commission of Ghana. (2024). Digital telemetry & cybersecurity compliance policy guidelines."
     ]
     for ref_text in refs:
-        p = tf_refs.add_paragraph()
+        p = tf_c3_r.add_paragraph()
         p.space_after = Pt(2)
         r = p.add_run()
         r.text = ref_text
-        r.font.name = "Arial"
-        r.font.size = Pt(9.5)
+        r.font.name = "Times New Roman"
+        r.font.size = Pt(8.5)
         r.font.color.rgb = TEXT_MUTED
 
     output_pptx = "research/poster_presentation.pptx"
     prs.save(output_pptx)
-    print(f"Exhaustive Academic Landscape Poster (PPTX) saved successfully to {output_pptx}!")
+    print(f"Pixel-Perfect Academic Landscape Poster (PPTX) saved successfully to {output_pptx}!")
 
-def create_academic_landscape_poster_docx():
+def create_pixel_perfect_landscape_poster_docx():
     doc = Document()
     for section in doc.sections:
         section.top_margin = DInches(0.4)
@@ -346,7 +370,7 @@ def create_academic_landscape_poster_docx():
 
     for cell in tbl_hdr.rows[0].cells:
         set_cell_background(cell, "00529B")
-        set_cell_margins(cell, top=120, bottom=120, left=120, right=120)
+        set_cell_margins(cell, top=100, bottom=100, left=120, right=120)
     set_table_borders(tbl_hdr, color="FFD700", sz="12", val="single")
 
     # Left Cell
@@ -354,11 +378,11 @@ def create_academic_landscape_poster_docx():
     p_l.alignment = WD_ALIGN_PARAGRAPH.LEFT
     r_l1 = p_l.add_run("UEW\n")
     r_l1.font.name = 'Arial'
-    r_l1.font.size = DPt(22)
+    r_l1.font.size = DPt(20)
     r_l1.font.bold = True
     r_l1.font.color.rgb = DRGBColor(255, 255, 255)
     r_l2 = p_l.add_run("Univ. of Education, Winneba\n& Kayaba Labs")
-    r_l2.font.name = 'Arial'
+    r_l2.font.name = 'Times New Roman'
     r_l2.font.size = DPt(9.5)
     r_l2.font.bold = True
     r_l2.font.color.rgb = DRGBColor(0, 163, 224)
@@ -368,16 +392,16 @@ def create_academic_landscape_poster_docx():
     p_c.alignment = WD_ALIGN_PARAGRAPH.CENTER
     r_ct = p_c.add_run("Securing the Digital Mine with a Metaheuristic-Optimized\nDeep Learning Adaptive System\n")
     r_ct.font.name = 'Arial'
-    r_ct.font.size = DPt(17)
+    r_ct.font.size = DPt(16)
     r_ct.font.bold = True
     r_ct.font.color.rgb = DRGBColor(255, 255, 255)
     r_ca = p_c.add_run("John Okyere, Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah\n")
-    r_ca.font.name = 'Arial'
-    r_ca.font.size = DPt(11)
+    r_ca.font.name = 'Times New Roman'
+    r_ca.font.size = DPt(10.5)
     r_ca.font.bold = True
     r_ca.font.color.rgb = DRGBColor(255, 215, 0)
     r_caff = p_c.add_run("Department of ICT, University of Education, Winneba & Kayaba Labs | Saint Petersburg Mining University 2026")
-    r_caff.font.name = 'Arial'
+    r_caff.font.name = 'Times New Roman'
     r_caff.font.size = DPt(9)
     r_caff.font.color.rgb = DRGBColor(226, 232, 240)
 
@@ -386,11 +410,11 @@ def create_academic_landscape_poster_docx():
     p_r.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     r_r1 = p_r.add_run("UNESCO\n")
     r_r1.font.name = 'Arial'
-    r_r1.font.size = DPt(22)
+    r_r1.font.size = DPt(20)
     r_r1.font.bold = True
     r_r1.font.color.rgb = DRGBColor(255, 215, 0)
     r_r2 = p_r.add_run("Russian-African Forum\nTrack 3: Smart Subsoil")
-    r_r2.font.name = 'Arial'
+    r_r2.font.name = 'Times New Roman'
     r_r2.font.size = DPt(9.5)
     r_r2.font.bold = True
     r_r2.font.color.rgb = DRGBColor(255, 255, 255)
@@ -407,7 +431,7 @@ def create_academic_landscape_poster_docx():
 
     for cell in tbl_cols.rows[0].cells:
         set_cell_background(cell, "FFFFFF")
-        set_cell_margins(cell, top=80, bottom=80, left=100, right=100)
+        set_cell_margins(cell, top=60, bottom=60, left=80, right=80)
     set_table_borders(tbl_cols, color="CBD5E1", sz="4", val="single")
 
     def add_col_section(cell, title, bullets, image_path=None, image_w=4.9):
@@ -416,18 +440,18 @@ def create_academic_landscape_poster_docx():
         p_t.paragraph_format.space_after = DPt(2)
         rt = p_t.add_run(clean_text(title))
         rt.font.name = 'Arial'
-        rt.font.size = DPt(12)
+        rt.font.size = DPt(11)
         rt.font.bold = True
         rt.font.color.rgb = DRGBColor(0, 82, 155)
 
         for b in bullets:
             pb = cell.add_paragraph()
-            pb.paragraph_format.space_after = DPt(3)
+            pb.paragraph_format.space_after = DPt(2)
             pb.paragraph_format.line_spacing = 1.15
             rb = pb.add_run("• " + clean_text(b))
-            rb.font.name = 'Arial'
-            rb.font.size = DPt(8.5)
-            rb.font.color.rgb = DRGBColor(30, 41, 59)
+            rb.font.name = 'Times New Roman'
+            rb.font.size = DPt(9)
+            rb.font.color.rgb = DRGBColor(15, 23, 42)
 
         if image_path and os.path.exists(image_path):
             p_img = cell.add_paragraph()
@@ -467,18 +491,21 @@ def create_academic_landscape_poster_docx():
 
     # Column 3
     c3 = tbl_cols.rows[0].cells[2]
-    add_col_section(c3, "5. Empirical Evaluation & Benchmarks", [
-        "Single-sample latency vs 100ms SCADA ceiling & confusion matrix on held-out test data:"
+    add_col_section(c3, "5. Empirical Hardware Latency Profile", [
+        "Single-sample inference latency benchmarked across hardware platforms vs 100ms SCADA ceiling:"
     ], image_path="research/figures/latency_comparison_barchart.png", image_w=4.9)
 
-    add_col_section(c3, "6. Conclusions & UN SDG Impact", [
+    add_col_section(c3, "6. Multi-Class Confusion Matrix", [
+        "Held-out test set evaluation (22,544 samples) on 10 BWOA-selected features:"
+    ], image_path="research/figures/confusion_matrix.png", image_w=4.0)
+
+    add_col_section(c3, "7. Conclusions & UN SDG Impact", [
         "0.76ms Edge Latency: 207x faster than baseline on Raspberry Pi 4B (1GB RAM), passing SCADA constraints.",
         "High Detection Fidelity: 70.56% multi-class accuracy, 96.89% benign precision, 89.04% DoS recall.",
-        "Industrial ROI: 200x-300x return averting $50k-$500k/hr outages while protecting miner lives (SDG 8 & 9).",
-        "Open-Source Ecosystem: Package @mhiskall282/unesco-mine-sec-cli published on GitHub Packages."
+        "Industrial ROI: 200x-300x return averting $50k-$500k/hr outages while protecting miner lives (SDG 8 & 9)."
     ])
 
-    add_col_section(c3, "7. References", [
+    add_col_section(c3, "8. References", [
         "1. Alanazi, M., et al. (2022). SCADA vulnerabilities & attacks. Computers & Security, 125, 103028.",
         "2. Almomani, O., et al. (2025). SCADA intrusion detection in IIoT. Symmetry, 17(4), 480.",
         "3. Mirjalili, S., & Lewis, A. (2016). Whale optimization algorithm. Adv. Eng. Software, 95, 51-67.",
@@ -487,8 +514,8 @@ def create_academic_landscape_poster_docx():
 
     output_docx = "research/poster_presentation.docx"
     doc.save(output_docx)
-    print(f"Exhaustive Academic Landscape Poster (DOCX) saved successfully to {output_docx}!")
+    print(f"Pixel-Perfect Academic Landscape Poster (DOCX) saved successfully to {output_docx}!")
 
 if __name__ == "__main__":
-    create_academic_landscape_poster_pptx()
-    create_academic_landscape_poster_docx()
+    create_pixel_perfect_landscape_poster_pptx()
+    create_pixel_perfect_landscape_poster_docx()
