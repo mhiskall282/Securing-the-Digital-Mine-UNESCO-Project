@@ -3,8 +3,8 @@ FROM php:8.2-cli-alpine
 # Install fast pre-compiled extension installer helper
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# Install system utilities, Git (for direct git clone) & PostgreSQL extensions
-RUN apk add --no-cache git nodejs npm zip unzip curl openssh-client \
+# Install system utilities & PostgreSQL extensions
+RUN apk add --no-cache git nodejs npm zip unzip curl \
     && install-php-extensions pdo_pgsql pgsql
 
 # Copy Composer binary from official image
@@ -16,27 +16,11 @@ ENV APP_ENV=production \
     APP_KEY=base64:UzNjdXJpbmc1VGhlMURpZ2l0YWwxTWluZTJTVUlURT0= \
     SESSION_DRIVER=cookie \
     CACHE_STORE=file \
-    COMPOSER_ALLOW_SUPERUSER=1 \
-    COMPOSER_PROCESS_TIMEOUT=2000 \
-    COMPOSER_NO_INTERACTION=1
+    COMPOSER_ALLOW_SUPERUSER=1
 
-WORKDIR /var/www/html/dashboard
-
-# Copy dependency manifests first for Docker layer caching
-COPY dashboard/composer.json dashboard/composer.lock* ./
-COPY dashboard/package.json dashboard/package-lock.json* ./
-
-# Install dependencies using --prefer-source (git clones) to completely bypass GitHub zip (codeload) HTTP 429 rate limit
-RUN composer config -g preferred-install auto \
-    && composer config -g process-timeout 2000 \
-    && ( \
-        composer install --no-dev --no-scripts --no-interaction --prefer-source --optimize-autoloader --no-progress || \
-        composer install --no-dev --no-scripts --no-interaction --prefer-dist --optimize-autoloader --no-progress \
-    ) \
-    && (npm ci || npm install)
-
-# Copy full application source code
 WORKDIR /var/www/html
+
+# Copy full application source code (including pre-bundled vendor and build assets)
 COPY . .
 
 WORKDIR /var/www/html/dashboard
@@ -48,9 +32,20 @@ RUN cp -n .env.example .env
 RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
-# Build production frontend assets and dump optimized autoloader
-RUN npm run build \
-    && composer dump-autoload --optimize --no-dev
+# Outage-proof build step: if vendor already exists, dump autoload; otherwise fallback to composer install
+RUN if [ -f "vendor/autoload.php" ]; then \
+        echo "[+] Using pre-bundled vendor dependencies. Skipping external downloads." \
+        && composer dump-autoload --optimize --no-dev; \
+    else \
+        composer install --no-dev --no-scripts --no-interaction --prefer-dist --optimize-autoloader; \
+    fi
+
+# If pre-built frontend assets exist, skip npm build; otherwise run npm build
+RUN if [ -d "public/build" ]; then \
+        echo "[+] Using pre-compiled production assets."; \
+    else \
+        (npm ci || npm install) && npm run build; \
+    fi
 
 # Expose Render PORT
 EXPOSE 8000

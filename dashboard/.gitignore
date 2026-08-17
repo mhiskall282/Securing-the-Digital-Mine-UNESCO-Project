@@ -13,12 +13,11 @@
 /.zed
 /auth.json
 /node_modules
-/public/build
 /public/hot
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
+# /vendor and /public/build are bundled for outage-proof deployment
 Homestead.json
 Homestead.yaml
 Thumbs.db
