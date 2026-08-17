@@ -36,30 +36,52 @@ flowchart LR
 
 ---
 
-## 🚀 Quick Start & Installation
+## 🚀 Quick Start & Installation Guide
 
-### Option 1: Run Instantly via `npx` (Recommended)
+> ⚠️ **Important Registry Note**: This package is hosted on **GitHub Packages Registry** (`npm.pkg.github.com`), not the default npmjs.org registry. If you run `npm install` without configuring the registry, npm will return a `404 Not Found` error. Follow either of the methods below:
 
-Configure your npm client to resolve the `@mhiskall282` scope from GitHub Packages, then run:
+### Method 1: Install from GitHub Packages (Recommended)
+
+Tell npm to resolve the `@mhiskall282` scope from GitHub Packages:
 
 ```bash
-# 1. Point @mhiskall282 scope to GitHub Packages registry
+# 1. Map the @mhiskall282 scope to GitHub Packages registry
 npm config set @mhiskall282:registry https://npm.pkg.github.com
 
-# 2. Run directly with zero local install
-npx @mhiskall282/unesco-mine-sec-cli
-```
-
-### Option 2: Global Installation
-
-Install globally so the `unesco-mine-sec-cli` binary is available anywhere in your terminal:
-
-```bash
+# 2. Install globally
 npm install -g @mhiskall282/unesco-mine-sec-cli
 
-# Launch the interactive scanner
+# 3. Launch the interactive CLI
 unesco-mine-sec-cli
 ```
+
+### Method 2: Zero-Config Install from Cloned Repository
+
+If you prefer not to configure npm registries:
+
+```bash
+git clone https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project.git
+cd Securing-the-Digital-Mine-UNESCO-Project/npm-packet-scanner
+npm install -g .
+unesco-mine-sec-cli
+```
+
+---
+
+## ❓ Troubleshooting `404 Not Found`
+
+If you encounter:
+```text
+npm error 404 Not Found - GET https://registry.npmjs.org/@mhiskall282%2funesco-mine-sec-cli - Not found
+```
+
+**Cause**: Your npm client is trying to fetch the package from the default public registry (`registry.npmjs.org`) instead of GitHub Packages.
+
+**Solution**: Run the following command once in your terminal:
+```bash
+npm config set @mhiskall282:registry https://npm.pkg.github.com
+```
+Then rerun `npm install -g @mhiskall282/unesco-mine-sec-cli`.
 
 ### Option 3: Local Source Build
 

@@ -384,25 +384,28 @@ Expected response:
 
 ### Option D: Deploy the CLI Agent on an Edge Device
 
-Install via GitHub Packages:
+> 💡 **Registry Note**: Because this package is hosted on **GitHub Packages Registry** (`npm.pkg.github.com`) rather than the default npmjs.org, you must configure the `@mhiskall282` scope registry once before running `npm install`, otherwise npm will return a `404 Not Found` error.
+
+**Method 1: Install from GitHub Packages (Recommended)**
 
 ```bash
-# Set GitHub Packages registry for the scope
+# 1. Map @mhiskall282 scope to GitHub Packages registry
 npm config set @mhiskall282:registry https://npm.pkg.github.com
 
-# Run directly via npx
+# 2. Run directly via npx
 npx @mhiskall282/unesco-mine-sec-cli
 
-# Or install globally
+# 3. Or install globally
 npm install -g @mhiskall282/unesco-mine-sec-cli
 unesco-mine-sec-cli
 ```
 
-Or install from local source:
+**Method 2: Zero-Config Install from Cloned Repository**
 
 ```bash
-cd npm-packet-scanner
-npm install && npm install -g ./
+git clone https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project.git
+cd Securing-the-Digital-Mine-UNESCO-Project/npm-packet-scanner
+npm install -g .
 unesco-mine-sec-cli
 ```
 
