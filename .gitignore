@@ -36,7 +36,7 @@ env/
 ENV/
 
 # Project specific ignores
-# Ignore contents of data, models, and logs but track .gitkeep files
+# Ignore raw datasets and temporary execution logs
 data/raw/*
 !data/raw/.gitkeep
 
@@ -46,9 +46,8 @@ data/processed/*
 data/features/*
 !data/features/.gitkeep
 
-models/*
-!models/.gitkeep
-!models/README.md
+# Models are tracked for academic reproducibility and collaborator access
+# models/* (Unignored to allow model weights and TFLite binaries on GitHub)
 
 logs/*
 !logs/.gitkeep
