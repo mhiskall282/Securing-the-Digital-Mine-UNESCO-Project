@@ -47,6 +47,23 @@ This work was selected for presentation at the Russian-African Forum-Contest of 
 
 ---
 
+## Institutional Recognition & Forum Selection
+
+This project represents an official research delegation selected for presentation at the:
+
+* **Event**: Russian-African Forum-Contest of Young Scientists: *Future Engineers of the World: The Foundation of Sustainable Development*
+* **Auspices**: Held under the Auspices of the **United Nations Educational, Scientific and Cultural Organization (UNESCO)**
+* **Host Institution**: **Empress Catherine II Saint Petersburg Mining University**, Saint Petersburg, Russia
+* **Track**: **Track 3 ("Smart Subsoil")**: Digital Transformation and Automation in the Mineral Resources Complex
+* **Event Dates**: 12 to 17 October 2026
+* **Institutional Delegation**: **University of Education, Winneba** (Ghana) and **Kayaba Labs**
+* **Research Documentation**:
+  * [Full Research Abstract (PDF)](https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link)
+  * [Presentation Slide Deck (PDF)](https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link)
+  * [Saint Petersburg Mining University UNESCO Forum Portal](https://youthafrica.spmi.ru)
+
+---
+
 ## What Has Been Achieved
 
 ### Confirmed Results (NSL-KDD, KDDTest+ held-out set, 22,544 samples)
@@ -104,6 +121,58 @@ These 10 features capture: connection type and state (protocol/service/flag), vo
 | Phase 1 | OT field data capture at pilot mining sites | PENDING: seeking partners |
 | Phase 2 | BWOA retraining on real OT traffic | NOT STARTED |
 | Phase 3 | Pilot deployment at partner mining site | NOT STARTED |
+
+---
+
+## Key Experimental Visualizations & Figure Analysis
+
+The figures below summarize the key empirical findings from feature optimization, deep learning sequence classification, and edge quantization:
+
+### 1. BWOA Feature Selection Convergence
+![BWOA Fitness Convergence](figures/bwoa_convergence_v3.png)
+
+> **Figure 1: Binary Whale Optimization Algorithm (BWOA) Fitness Convergence.**
+> This plot tracks the best fitness score across optimization iterations. BWOA explores candidate binary feature subsets using shrinking encircling and spiral bubble-net movements. Guided by a composite fitness function balancing error rate minimization with a 75% accuracy floor, the optimizer rapidly converges by iteration 23 to an optimal subset of 10 features (75.61% reduction), eliminating redundant dimensions without collapsing classification performance.
+
+---
+
+### 2. Feature Importance & Selected Subset
+![Feature Importance Comparison](figures/bwoa_feature_importance_v3.png)
+
+> **Figure 2: Selected vs Pruned Feature Importance Ranking (Gini Index).**
+> Comparison of Gini importance scores across all 41 original network attributes in the benchmark dataset. The 10 features selected by BWOA (highlighted in blue) capture the strongest discriminative signals for connection protocol state (`service`, `flag`, `protocol_type`), volume asymmetry for DoS detection (`src_bytes`), privilege escalation (`su_attempted`, `hot`), and host error rates (`serror_rate`, `same_srv_rate`, `diff_srv_rate`, `dst_host_diff_srv_rate`).
+
+---
+
+### 3. Multi-Class Confusion Matrix (KDDTest+)
+![Confusion Matrix](figures/bwoa_v3_confusion_matrix.png)
+
+> **Figure 3: Multi-Class Confusion Matrix on KDDTest+ Held-Out Set (22,544 Samples).**
+> Evaluates the 10-feature CNN-LSTM model on unseen test traffic. The model demonstrates high fidelity on benign flows (9,198 Normal samples correctly classified, 96.89% precision) and intercepts 89.04% of high-volume Denial of Service (DoS) attacks. The lower score on U2R (67 total test samples) is a known dataset imbalance characteristic addressed via balanced class weighting.
+
+---
+
+### 4. Multi-Class ROC & Area Under Curve (AUC)
+![ROC Curves](figures/bwoa_v3_roc_curves.png)
+
+> **Figure 4: Receiver Operating Characteristic (ROC) Curves by Attack Category.**
+> Illustrates the trade-off between True Positive Rate and False Positive Rate across all five classification classes. The model delivers strong separability on Normal (AUC = 0.89), DoS (AUC = 0.88), and Probe (AUC = 0.82) attacks, resulting in a macro-average AUC-ROC of 0.85, confirming reliable probability calibration under edge inference constraints.
+
+---
+
+### 5. Deep Learning Training & Validation Convergence
+![Training History](figures/bwoa_v3_training_history.png)
+
+> **Figure 5: CNN-LSTM Loss and Accuracy Convergence History.**
+> Tracks loss minimization and accuracy progression across training epochs on the 10 BWOA-selected features. The model displays smooth convergence with learning rate scheduling and early stopping, reaching 94.27% validation accuracy before checkpoint weight restoration and subsequent float16 quantization.
+
+---
+
+### 6. Attack Class Distribution & Real-World Imbalance
+![Class Distribution](figures/attack_pie_chart.png)
+
+> **Figure 6: Attack Class Breakdown in Benchmark Telemetry.**
+> Illustrates the high class imbalance common in industrial network environments: Normal and DoS constitute the overwhelming majority of connections, while targeted attacks (R2L and U2R) represent minority fractions. This distribution informed our use of balanced class weight penalties during backpropagation.
 
 ---
 
