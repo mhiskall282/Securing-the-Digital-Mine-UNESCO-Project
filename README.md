@@ -37,6 +37,10 @@ This work was selected for presentation at the Russian-African Forum-Contest of 
 > required data partnerships are identified, and the proposal is mapped to
 > relevant UN Sustainable Development Goals.
 
+**Full Abstract** available: https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link 
+
+**Presentation Slides** available: https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link
+
 **Keywords:** intrusion detection; metaheuristic optimization; Whale Optimization Algorithm; CNN-LSTM; Industrial IoT; SCADA; mining digitalization; cybersecurity; Africa
 
 **Nomination:** Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex
@@ -486,11 +490,11 @@ The Russian-African academic network convened by Saint Petersburg Mining Univers
 
 ## Team
 
-- **John Okyere** - Team Lead and AI Security Researcher. University of Education, Winneba (BSc ICT Education, Level 300) and University of Ghana (MSc Computer Science candidate). Co-founder and Technical Lead, Kayaba Labs. ICP Ambassador, trained 600+ developers across Ghana and internationally. [johnokyere.xyz](https://johnokyere.xyz)
+- **John Okyere** - Team Lead and AI Security Researcher. University of Education, Winneba, [johnokyere.xyz](https://johnokyere.xyz)
 
-- **Ezekeil Baah** - Machine Learning Engineer and Data Scientist. University of Education, Winneba. CEO, GALF Global Foundation.
+- **Ezekeil Baah** - Machine Learning Engineer and Data Scientist. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
 
-- **[Team Member 3]** - Edge Deployment and Quantization Engineer. [Update with real name before submission]
+- **Clement Baffour** - Edge Deployment and Quantization Engineer. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
 
 ---
 
@@ -500,11 +504,10 @@ If you reference this research project in your publications, please cite the wor
 
 ```bibtex
 @inproceedings{okyere2026securing,
-  author    = {Okyere, John},
+  author    = {Okyere, John and Baah, Ezekeil and Baffour, Clement},
   title     = {Securing the Digital Mine: A Metaheuristic Optimized Deep Learning Framework
                for Intrusion Detection in IoT Enabled Mineral Resource Operations},
-  booktitle = {Proceedings of the Russian-African Forum-Contest of Young Scientists:
-               Future Engineers of the World: The Foundation of Sustainable Development},
+  booktitle = {Proceedings of the Russian-African Forum-Contest of Young Scientists: Future Engineers of the World: The Foundation of Sustainable Development},
   publisher = {Empress Catherine II Saint Petersburg Mining University},
   year      = {2026},
   address   = {Saint Petersburg, Russia},
