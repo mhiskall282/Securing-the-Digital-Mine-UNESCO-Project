@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Securing the Digital Mine — AWS EC2 Production Deployment Script
+# Securing the Digital Mine - AWS EC2 Production Deployment Script
 # Target OS: Ubuntu 22.04 LTS / Ubuntu 24.04 LTS (AWS EC2)
 # Service: FastAPI Python ML Inference Server (Port 8001 -> Nginx 80/443)
 # ==============================================================================
@@ -8,7 +8,7 @@
 set -e
 
 echo "======================================================================"
-echo " Starting Securing the Digital Mine — AWS EC2 Deployment"
+echo " Starting Securing the Digital Mine - AWS EC2 Deployment"
 echo "======================================================================"
 
 # 1. Update system packages

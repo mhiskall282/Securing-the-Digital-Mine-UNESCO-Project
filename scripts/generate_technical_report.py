@@ -1,265 +1,69 @@
-"""Generate the comprehensive Technical Report in docx format with Appendices A-E."""
+"""Generate Technical Report (technical_report.docx) with Appendices A-E and clean styling."""
 import os
 import docx
 from docx import Document
-from docx.shared import Inches, Pt, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.oxml import parse_xml
-from docx.oxml.ns import nsdecls
+from docx_styler import (
+    set_page_margins, add_title, add_subtitle, add_authors, add_heading_1,
+    add_heading_2, add_heading_3, add_body, add_bullet, add_callout_box,
+    add_formatted_table, add_image_figure, add_code_snippet, clean_text
+)
 
 def create_technical_report():
     doc = Document()
+    set_page_margins(doc)
 
-    # Margins
-    for section in doc.sections:
-        section.top_margin = Inches(1.0)
-        section.bottom_margin = Inches(1.0)
-        section.left_margin = Inches(1.0)
-        section.right_margin = Inches(1.0)
-
-    def set_cell_background(cell, fill_hex):
-        shading_elm = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{fill_hex}"/>')
-        cell._tc.get_or_add_tcPr().append(shading_elm)
-
-    def set_cell_margins(cell, top=100, bottom=100, left=140, right=140):
-        tcPr = cell._tc.get_or_add_tcPr()
-        tcMar = parse_xml(f'<w:tcMar {nsdecls("w")}><w:top w:w="{top}" w:type="dxa"/><w:bottom w:w="{bottom}" w:type="dxa"/><w:left w:w="{left}" w:type="dxa"/><w:right w:w="{right}" w:type="dxa"/></w:tcMar>')
-        tcPr.append(tcMar)
-
-    def add_title(text):
-        p = doc.add_paragraph()
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p.paragraph_format.space_before = Pt(14)
-        p.paragraph_format.space_after = Pt(4)
-        run = p.add_run(text)
-        run.font.name = 'Arial'
-        run.font.size = Pt(20)
-        run.font.bold = True
-        run.font.color.rgb = RGBColor(11, 29, 58)
-
-    def add_subtitle(text):
-        p = doc.add_paragraph()
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p.paragraph_format.space_after = Pt(18)
-        run = p.add_run(text)
-        run.font.name = 'Arial'
-        run.font.size = Pt(11.5)
-        run.font.italic = True
-        run.font.color.rgb = RGBColor(71, 85, 105)
-
-    def add_authors():
-        p = doc.add_paragraph()
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p.paragraph_format.space_after = Pt(20)
-        run = p.add_run("Engineering Delegation: John Okyere, Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah\nUniversity of Education, Winneba & Kayaba Labs | UNESCO Russian-African Forum 2026")
-        run.font.name = 'Times New Roman'
-        run.font.size = Pt(10)
-        run.font.bold = True
-        run.font.color.rgb = RGBColor(0, 82, 155)
-
-    def add_heading_1(text):
-        p = doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(16)
-        p.paragraph_format.space_after = Pt(6)
-        p.paragraph_format.keep_with_next = True
-        run = p.add_run(text)
-        run.font.name = 'Arial'
-        run.font.size = Pt(13.5)
-        run.font.bold = True
-        run.font.color.rgb = RGBColor(0, 82, 155)
-
-    def add_heading_2(text):
-        p = doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(12)
-        p.paragraph_format.space_after = Pt(4)
-        p.paragraph_format.keep_with_next = True
-        run = p.add_run(text)
-        run.font.name = 'Arial'
-        run.font.size = Pt(11.5)
-        run.font.bold = True
-        run.font.color.rgb = RGBColor(15, 23, 42)
-
-    def add_body(text, bold_prefix=None):
-        p = doc.add_paragraph()
-        p.paragraph_format.line_spacing = 1.3
-        p.paragraph_format.space_after = Pt(6)
-        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-        if bold_prefix:
-            run_b = p.add_run(bold_prefix)
-            run_b.font.name = 'Times New Roman'
-            run_b.font.size = Pt(10.5)
-            run_b.font.bold = True
-        run = p.add_run(text)
-        run.font.name = 'Times New Roman'
-        run.font.size = Pt(10.5)
-        return p
-
-    def add_bullet(text, bold_prefix=None):
-        p = doc.add_paragraph(style='List Bullet')
-        p.paragraph_format.line_spacing = 1.2
-        p.paragraph_format.space_after = Pt(3)
-        if bold_prefix:
-            run_b = p.add_run(bold_prefix)
-            run_b.font.name = 'Times New Roman'
-            run_b.font.size = Pt(10)
-            run_b.font.bold = True
-        run = p.add_run(text)
-        run.font.name = 'Times New Roman'
-        run.font.size = Pt(10)
-        return p
-
-    def add_callout(title, text):
-        tbl = doc.add_table(rows=1, cols=1)
-        tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
-        cell = tbl.cell(0, 0)
-        set_cell_background(cell, "F1F5F9")
-        set_cell_margins(cell, top=120, bottom=120, left=180, right=180)
-        
-        p = cell.paragraphs[0]
-        p.paragraph_format.space_after = Pt(3)
-        run_t = p.add_run(title + "\n")
-        run_t.font.name = 'Arial'
-        run_t.font.size = Pt(10)
-        run_t.font.bold = True
-        run_t.font.color.rgb = RGBColor(0, 82, 155)
-        
-        run_b = p.add_run(text)
-        run_b.font.name = 'Times New Roman'
-        run_b.font.size = Pt(9.5)
-        run_b.font.color.rgb = RGBColor(30, 41, 59)
-        doc.add_paragraph().paragraph_format.space_after = Pt(4)
-
-    def add_code_block(code_text):
-        tbl = doc.add_table(rows=1, cols=1)
-        tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
-        cell = tbl.cell(0, 0)
-        set_cell_background(cell, "0F172A") # Dark slate
-        set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
-        
-        p = cell.paragraphs[0]
-        p.paragraph_format.space_after = Pt(2)
-        run = p.add_run(code_text)
-        run.font.name = 'Consolas'
-        run.font.size = Pt(8.5)
-        run.font.color.rgb = RGBColor(226, 232, 240)
-        doc.add_paragraph().paragraph_format.space_after = Pt(4)
-
-    def add_image_box(image_path, caption, width_inches=5.8):
-        if os.path.exists(image_path):
-            p = doc.add_paragraph()
-            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p.paragraph_format.space_before = Pt(6)
-            p.paragraph_format.space_after = Pt(2)
-            p.add_run().add_picture(image_path, width=Inches(width_inches))
-            
-            p_cap = doc.add_paragraph()
-            p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p_cap.paragraph_format.space_after = Pt(8)
-            run_c = p_cap.add_run(caption)
-            run_c.font.name = 'Times New Roman'
-            run_c.font.size = Pt(9)
-            run_c.font.italic = True
-            run_c.font.color.rgb = RGBColor(71, 85, 105)
-
-    def add_styled_table(headers, rows, col_widths=None):
-        tbl = doc.add_table(rows=len(rows) + 1, cols=len(headers))
-        tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
-        tbl.autofit = False
-        
-        # Header Row
-        hdr_cells = tbl.rows[0].cells
-        for i, header_text in enumerate(headers):
-            hdr_cells[i].text = header_text
-            set_cell_background(hdr_cells[i], "00529B")
-            set_cell_margins(hdr_cells[i], top=100, bottom=100, left=120, right=120)
-            p = hdr_cells[i].paragraphs[0]
-            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            for r in p.runs:
-                r.font.name = 'Arial'
-                r.font.size = Pt(9)
-                r.font.bold = True
-                r.font.color.rgb = RGBColor(255, 255, 255)
-        
-        # Data Rows
-        for r_idx, row_data in enumerate(rows):
-            row_cells = tbl.rows[r_idx + 1].cells
-            bg_color = "F8FAFC" if r_idx % 2 == 1 else "FFFFFF"
-            for c_idx, val in enumerate(row_data):
-                row_cells[c_idx].text = str(val)
-                set_cell_background(row_cells[c_idx], bg_color)
-                set_cell_margins(row_cells[c_idx], top=60, bottom=60, left=100, right=100)
-                p = row_cells[c_idx].paragraphs[0]
-                if c_idx == 0:
-                    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                elif c_idx == len(row_data) - 1 and ("PASS" in str(val) or "Yes" in str(val)):
-                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                else:
-                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                for r in p.runs:
-                    r.font.name = 'Times New Roman'
-                    r.font.size = Pt(9)
-                    if "PASS" in str(val):
-                        r.font.bold = True
-                        r.font.color.rgb = RGBColor(16, 185, 129)
-        
-        if col_widths:
-            for row in tbl.rows:
-                for i, w in enumerate(col_widths):
-                    row.cells[i].width = Inches(w)
-        doc.add_paragraph().paragraph_format.space_after = Pt(6)
-
-    # -------------------------------------------------------------
-    # DOCUMENT CONTENT
-    # -------------------------------------------------------------
-    add_title("TECHNICAL REPORT & DEPLOYMENT SPECIFICATION")
-    add_subtitle("Securing the Digital Mine: Edge-Ready Metaheuristic Optimized Deep Learning Intrusion Detection")
-    add_authors()
-
-    # SECTION 1: EXECUTIVE SUMMARY
-    add_heading_1("1. EXECUTIVE SUMMARY")
-    add_body(
-        "Modern mineral resource operations across Africa and the Russian Federation are undergoing rapid digital transformation under 'Smart Subsoil' initiatives. Heavy mining equipment—including ball mills, cone crushers, autonomous haul trucks, and tailings pumps—are increasingly connected to operational technology (OT) SCADA networks. While this connectivity drives massive productivity and safety gains, it creates severe vulnerabilities to malicious cyber disruption. Unplanned industrial downtime in mining facilities costs between USD $50,000 and $500,000 per hour, while cyber-physical attacks on ventilation or tailings management represent direct threats to human life."
+    # Document Title
+    add_title(doc, "TECHNICAL REPORT & DEPLOYMENT SPECIFICATION")
+    add_subtitle(doc, "Securing the Digital Mine: Edge-Ready Metaheuristic-Optimized Deep Learning Intrusion Detection\nUNESCO Russian-African Forum of Young Scientists 2026")
+    add_authors(doc,
+        "Engineering Delegation: John Okyere, Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah",
+        "Department of ICT, University of Education, Winneba & Kayaba Labs | Version 3.0.0"
     )
-    add_body(
+
+    # 1. EXECUTIVE SUMMARY
+    add_heading_1(doc, "1. EXECUTIVE SUMMARY")
+    add_body(doc,
+        "Modern mineral resource operations across Africa and the Russian Federation are undergoing rapid digital transformation under 'Smart Subsoil' initiatives. Heavy mining equipment (including semi-autogenous grinding (SAG) mills, cone crushers, autonomous haul trucks, and tailings pumps) are increasingly networked into operational technology (OT) SCADA networks. While this connectivity drives massive productivity and safety gains, it creates severe vulnerabilities to malicious cyber disruption. Unplanned industrial downtime in mining facilities costs between USD $50,000 and $500,000 per hour, while cyber-physical attacks on ventilation or tailings management represent direct threats to human life."
+    )
+    add_body(doc,
         "Commercial enterprise cybersecurity solutions cannot solve this problem because they rely on static signatures, cloud-based inspection requiring high-bandwidth links, and heavy computation that exceeds the 100-millisecond control loop deadlines of industrial PLCs. Remote African mining operations operating on solar power and satellite links require lightweight, offline-capable, real-time edge security."
     )
-    add_body(
+    add_body(doc,
         "This technical report details the architecture, implementation, and deployment of a three-tier intrusion detection framework combining Binary Whale Optimization (BWOA) with a spatial-temporal CNN-LSTM neural network. By pruning network telemetry from 41 features to 10 (75.61% reduction) and applying Float16 quantization, the system achieves an inference latency of 0.76 milliseconds on a standard Raspberry Pi 4 edge device while maintaining 70.56% multi-class accuracy and 96.89% precision on benign flows. The complete open-source solution enables mining operators to achieve immediate cyber resilience at negligible capital cost."
     )
 
-    # SECTION 2: TECHNICAL ARCHITECTURE
-    add_heading_1("2. TECHNICAL ARCHITECTURE & DEEP DIVE")
-    add_image_box("research/figures/system_architecture.png", "Figure 2.1: Four-Layer End-to-End System Architecture", width_inches=6.0)
+    # 2. TECHNICAL ARCHITECTURE
+    add_heading_1(doc, "2. TECHNICAL ARCHITECTURE & DEEP DIVE")
+    add_image_figure(doc, "research/figures/system_architecture.png", "Figure 2.1: Four-Layer End-to-End System Architecture", width_inches=6.0)
 
-    add_heading_2("2.1 Layer 1: Edge Telemetry Ingestion Agent")
-    add_body(
+    add_heading_2(doc, "2.1 Layer 1: Edge Telemetry Ingestion Agent")
+    add_body(doc,
         "The edge telemetry ingestion agent (@mhiskall282/unesco-mine-sec-cli) is packaged as a high-performance Node.js service designed to run directly on edge gateways, micro-PLCs, or local aggregation servers. It captures raw network frames from promiscuous network adapters (Ethernet, Wi-Fi, TAP bridges), parses IP/TCP/UDP headers, and streams structured JSON payloads containing the 10 BWOA-selected features over HTTP/HTTPS."
     )
 
-    add_heading_2("2.2 Layer 2: BWOA Feature Selection Engine")
-    add_body(
+    add_heading_2(doc, "2.2 Layer 2: BWOA Feature Selection Engine")
+    add_body(doc,
         "The Binary Whale Optimization Algorithm (BWOA) conducts metaheuristic exploration of the 2^41 discrete feature space. Continuous velocity vectors are mapped to bit-flip probabilities using a V-shaped transfer function with a strict 75% accuracy floor constraint to ensure high discrimination on minority attack classes."
     )
-    add_image_box("research/figures/bwoa_convergence.png", "Figure 2.2: BWOA Optimization Convergence across 100 Iterations", width_inches=5.4)
+    add_image_figure(doc, "research/figures/bwoa_convergence.png", "Figure 2.2: BWOA Optimization Convergence across 100 Iterations", width_inches=5.4)
 
-    add_heading_2("2.3 Layer 3: Spatial-Temporal CNN-LSTM Classifier")
-    add_body(
+    add_heading_2(doc, "2.3 Layer 3: Spatial-Temporal CNN-LSTM Classifier")
+    add_body(doc,
         "The deep learning engine combines a 1D Convolutional Neural Network (Conv1D) layer (64 filters, kernel size 3) with a Long Short-Term Memory (LSTM) layer (256 units). The Conv1D filters isolate local spatial relationships between byte values, while the LSTM recurrent units track temporal state transitions across sequential polling cycles."
     )
-    add_image_box("research/figures/cnn_lstm_architecture.png", "Figure 2.3: CNN-LSTM Neural Network Architecture Flowchart", width_inches=5.8)
+    add_image_figure(doc, "research/figures/cnn_lstm_architecture.png", "Figure 2.3: CNN-LSTM Neural Network Architecture Flowchart", width_inches=5.8)
 
-    add_heading_2("2.4 Layer 4: Model Server & SaaS Livewire Dashboard")
-    add_body(
+    add_heading_2(doc, "2.4 Layer 4: Model Server & SaaS Livewire Dashboard")
+    add_body(doc,
         "The inference microservice runs an asynchronous FastAPI server (port 8001) executing the quantized Float16 TFLite model. Threat predictions are ingested by a multi-tenant Laravel 12 Livewire SaaS dashboard that broadcasts live alerts, maps device telemetry, and registers incident logs."
     )
 
-    # SECTION 3: STEP-BY-STEP DEPLOYMENT GUIDE
-    add_heading_1("3. DEPLOYMENT & INSTALLATION GUIDE")
+    # 3. DEPLOYMENT & INSTALLATION GUIDE
+    add_heading_1(doc, "3. DEPLOYMENT & INSTALLATION GUIDE")
 
-    add_heading_2("3.1 Edge Gateway Deployment (Raspberry Pi 4B / Pi 5)")
-    add_body("Follow these steps to deploy the complete intrusion detection stack on a Linux edge gateway:")
-    add_code_block(
+    add_heading_2(doc, "3.1 Edge Gateway Deployment (Raspberry Pi 4B / Pi 5)")
+    add_body(doc, "Follow these steps to deploy the complete intrusion detection stack on a Linux edge gateway:")
+    add_code_snippet(doc,
         "# 1. Clone the project repository\n"
         "git clone https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project.git /opt/unesco-project\n"
         "cd /opt/unesco-project\n\n"
@@ -272,8 +76,8 @@ def create_technical_report():
         "unesco-mine-sec-cli --url http://127.0.0.1:8001/api/analyze --interface eth0"
     )
 
-    add_heading_2("3.2 Cloud Inference Server Deployment (AWS EC2 / Ubuntu 22.04)")
-    add_code_block(
+    add_heading_2(doc, "3.2 Cloud Inference Server Deployment (AWS EC2 / Ubuntu 22.04)")
+    add_code_snippet(doc,
         "# 1. Provision Ubuntu 22.04 LTS instance (t3.medium recommended)\n"
         "# 2. Clone repository and run automated AWS setup\n"
         "git clone https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project.git /opt/unesco-project\n"
@@ -285,9 +89,9 @@ def create_technical_report():
         "curl http://localhost:8001/api/features"
     )
 
-    # SECTION 4: EVALUATION RESULTS
-    add_heading_1("4. COMPREHENSIVE EVALUATION RESULTS")
-    add_styled_table(
+    # 4. EVALUATION RESULTS
+    add_heading_1(doc, "4. COMPREHENSIVE EVALUATION RESULTS")
+    add_formatted_table(doc,
         ["Metric Category", "Baseline (41 Feat)", "BWOA v3 (10 Feat)", "BWOA Float16", "SWaT Transfer"],
         [
             ["Input Dimensions", "41 Features", "10 Features", "10 Features", "51 Sensor Feat"],
@@ -300,15 +104,15 @@ def create_technical_report():
         ],
         col_widths=[1.8, 1.3, 1.3, 1.3, 1.3]
     )
-    add_image_box("research/figures/confusion_matrix.png", "Figure 4.1: Confusion Matrix on NSL-KDD Held-Out Test Set (22,544 Samples)", width_inches=5.4)
-    add_image_box("research/figures/latency_comparison_barchart.png", "Figure 4.2: Latency Profile Comparison across IDS Implementations", width_inches=5.6)
+    add_image_figure(doc, "research/figures/confusion_matrix.png", "Figure 4.1: Confusion Matrix on NSL-KDD Held-Out Test Set (22,544 Samples)", width_inches=5.4)
+    add_image_figure(doc, "research/figures/latency_comparison_barchart.png", "Figure 4.2: Latency Profile Comparison across IDS Implementations", width_inches=5.6)
 
     # APPENDICES
-    add_heading_1("APPENDICES")
+    add_heading_1(doc, "APPENDICES")
 
     # Appendix A
-    add_heading_2("APPENDIX A: BWOA Optimization Pseudocode")
-    add_code_block(
+    add_heading_2(doc, "APPENDIX A: BWOA Optimization Pseudocode")
+    add_code_snippet(doc,
         "Algorithm 1: Binary Whale Optimization Algorithm (BWOA) with Accuracy Floor\n"
         "----------------------------------------------------------------------------\n"
         "Input : Feature matrix X in R^{N x D}, labels y in {0, ..., C-1}\n"
@@ -343,8 +147,8 @@ def create_technical_report():
     )
 
     # Appendix B
-    add_heading_2("APPENDIX B: CNN-LSTM Hyperparameters & Architecture Specifications")
-    add_styled_table(
+    add_heading_2(doc, "APPENDIX B: CNN-LSTM Hyperparameters & Architecture Specifications")
+    add_formatted_table(doc,
         ["Layer Type", "Output Shape", "Param Count", "Activation", "Regularization / Details"],
         [
             ["Input Layer", "(None, 10, 1)", "0", "-", "10 BWOA Features reshaped for 1D convolution"],
@@ -360,8 +164,8 @@ def create_technical_report():
     )
 
     # Appendix C
-    add_heading_2("APPENDIX C: Complete CICFlowMeter to NSL-KDD Feature Mapping")
-    add_styled_table(
+    add_heading_2(doc, "APPENDIX C: Complete CICFlowMeter to NSL-KDD Feature Mapping")
+    add_formatted_table(doc,
         ["Idx", "NSL-KDD Feature", "BWOA Status", "CICFlowMeter Equivalent", "Description"],
         [
             ["1", "duration", "Pruned", "Flow Duration", "Connection duration in seconds"],
@@ -381,9 +185,9 @@ def create_technical_report():
     )
 
     # Appendix D
-    add_heading_2("APPENDIX D: User Acceptance Testing (UAT) Questionnaire")
-    add_body(
-        "Domain specialists (3 cybersecurity analysts and 2 mining OT engineers) scored the platform on a 1–5 Likert scale across five criteria:\n"
+    add_heading_2(doc, "APPENDIX D: User Acceptance Testing (UAT) Questionnaire")
+    add_body(doc,
+        "Domain specialists (3 cybersecurity analysts and 2 mining OT engineers) scored the platform on a 1 to 5 Likert scale across five criteria:\n"
         "1. Alert Clarity: Are threat predictions understandable without deep cybersecurity expertise?\n"
         "2. Dashboard Usability: Is live telemetry streaming intuitive and actionable for control room operators?\n"
         "3. Setup Ease: Can the sniffer CLI agent be deployed on a new device in under 5 minutes?\n"
@@ -392,11 +196,11 @@ def create_technical_report():
     )
 
     # Appendix E
-    add_heading_2("APPENDIX E: Repository & Reproducibility Links")
-    add_bullet("GitHub Main Repository: https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project", bold_prefix="Source Code: ")
-    add_bullet("NPM Package (GitHub Packages): @mhiskall282/unesco-mine-sec-cli", bold_prefix="CLI Package: ")
-    add_bullet("Google Colab Training Pipeline: notebooks/00_colab_setup_and_train.ipynb", bold_prefix="Google Colab: ")
-    add_bullet("Live Dashboard URL: https://minesec-dashboard-prod.onrender.com", bold_prefix="Live Demo: ")
+    add_heading_2(doc, "APPENDIX E: Repository & Reproducibility Links")
+    add_bullet(doc, "GitHub Main Repository: https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project", bold_prefix="Source Code: ")
+    add_bullet(doc, "NPM Package (GitHub Packages): @mhiskall282/unesco-mine-sec-cli", bold_prefix="CLI Package: ")
+    add_bullet(doc, "Google Colab Training Pipeline: notebooks/00_colab_setup_and_train.ipynb", bold_prefix="Google Colab: ")
+    add_bullet(doc, "Live Dashboard URL: https://minesec-dashboard-prod.onrender.com", bold_prefix="Live Demo: ")
 
     output_path = "research/technical_report.docx"
     doc.save(output_path)

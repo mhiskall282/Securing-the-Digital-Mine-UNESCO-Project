@@ -136,7 +136,7 @@ class SWaTTransferLearner:
         """Builds a new CNN-LSTM tuned for the SWaT time-series structure."""
         inputs = tf.keras.Input(shape=self.input_shape, name="swat_input")
 
-        # Conv Block 1 — local feature extraction
+        # Conv Block 1 - local feature extraction
         x = tf.keras.layers.Conv1D(
             self.filters, kernel_size=3, activation="relu", padding="same",
             name="conv1"
@@ -145,7 +145,7 @@ class SWaTTransferLearner:
         x = tf.keras.layers.MaxPooling1D(pool_size=2, padding="same", name="pool1")(x)
         x = tf.keras.layers.Dropout(self.dropout_rate, name="drop1")(x)
 
-        # Conv Block 2 — higher-level patterns
+        # Conv Block 2 - higher-level patterns
         x = tf.keras.layers.Conv1D(
             self.filters * 2, kernel_size=3, activation="relu", padding="same",
             name="conv2"
@@ -154,7 +154,7 @@ class SWaTTransferLearner:
         x = tf.keras.layers.MaxPooling1D(pool_size=2, padding="same", name="pool2")(x)
         x = tf.keras.layers.Dropout(self.dropout_rate, name="drop2")(x)
 
-        # LSTM — temporal dependencies between sensor readings
+        # LSTM - temporal dependencies between sensor readings
         x = tf.keras.layers.LSTM(
             self.lstm_units, return_sequences=False, name="lstm_swat"
         )(x)

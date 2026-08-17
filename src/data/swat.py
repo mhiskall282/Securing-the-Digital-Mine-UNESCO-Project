@@ -698,7 +698,7 @@ class SWaTLoader:
             )
         )
         for start in attack_pts:
-            # Each attack lasts 10–120 seconds
+            # Each attack lasts 10 to 120 seconds
             duration = np.random.randint(10, 120)
             end = min(start + duration, n_samples)
             labels[start:end] = 1

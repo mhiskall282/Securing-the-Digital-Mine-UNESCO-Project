@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Securing the Digital Mine — Raspberry Pi Edge Gateway Deployment Script
+# Securing the Digital Mine - Raspberry Pi Edge Gateway Deployment Script
 # Target OS: Raspberry Pi OS 64-bit (Debian Bullseye / Bookworm) on Pi 4 / Pi 5
 # Component: TFLite Quantized Edge Classifier & unesco-mine-sec-cli Sniffer Agent
 # ==============================================================================
@@ -8,7 +8,7 @@
 set -e
 
 echo "======================================================================"
-echo " Starting Securing the Digital Mine — Raspberry Pi Edge Deployment"
+echo " Starting Securing the Digital Mine - Raspberry Pi Edge Deployment"
 echo "======================================================================"
 
 # 1. Update System & Install Hardware Dependencies

@@ -5,6 +5,7 @@ from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
 from pptx.enum.shapes import MSO_SHAPE
+from docx_styler import clean_text
 
 def create_poster():
     prs = Presentation()
