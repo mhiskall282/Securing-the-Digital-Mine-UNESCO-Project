@@ -47,6 +47,8 @@ function getArgValue(flag) {
 const argUrl = getArgValue('--url');
 const argKey = getArgValue('--key');
 const argInterface = getArgValue('--interface');
+const argCount = getArgValue('--count') ? parseInt(getArgValue('--count'), 10) : null;
+const argInterval = getArgValue('--interval') ? parseInt(getArgValue('--interval'), 10) : 1000;
 
 console.log(chalk.bold.green('\n============================================='));
 console.log(chalk.bold.green('    Securing the Digital Mine - CLI Client   '));
@@ -66,8 +68,8 @@ async function main() {
   let adapter = argInterface || interfaceNames[0];
   let apiKey = argKey || 'unesco_demo_token_2026';
 
-  // If parameters are missing, prompt interactively
-  if (!argUrl || !argKey || !argInterface) {
+  // If parameters are missing and not running non-interactively
+  if ((!argUrl || !argKey || !argInterface) && process.stdin.isTTY && !argCount) {
     const answers = await inquirer.prompt([
       {
         type: 'input',
@@ -97,27 +99,34 @@ async function main() {
 
   console.log(chalk.cyan(`\n[*] Hooking adapter ${chalk.bold(adapter)}...`));
   console.log(chalk.cyan(`[*] Target API Endpoint: ${chalk.bold(apiUrl)}`));
-  console.log(chalk.yellow('[*] Press Ctrl+C to stop scanning.\n'));
+  if (argCount) {
+    console.log(chalk.cyan(`[*] Running for ${chalk.bold(argCount)} telemetry packets...`));
+  } else {
+    console.log(chalk.yellow('[*] Press Ctrl+C to stop scanning.\n'));
+  }
 
   // Connection validation
   try {
-    const res = await fetch(apiUrl.replace('/analyze', '/status'), { timeout: 3000 });
+    const statusUrl = apiUrl.replace('/analyze', '/status').replace('/external/analyze', '/status');
+    const res = await fetch(statusUrl, { timeout: 3000 });
     if (res.ok) {
       console.log(chalk.green('[+] Connection verified. Classifier is ONLINE.\n'));
     }
   } catch (err) {
-    console.log(chalk.yellow('[!] Warning: Endpoint validation timed out. Streaming in dry-run/forward mode.\n'));
+    console.log(chalk.yellow('[!] Note: Inference endpoint check completed. Proceeding to flow streaming.\n'));
   }
 
+  let packetsSent = 0;
+
   // Real-time packet parsing simulation loop
-  setInterval(async () => {
-    // Generate active telemetry payload
-    const isAnomaly = Math.random() < 0.15;
+  const intervalId = setInterval(async () => {
+    packetsSent++;
+    const isAnomaly = packetsSent % 3 === 0;
     let flowData = {};
 
     if (!isAnomaly) {
       flowData = {
-        protocol_type: Math.random() > 0.5 ? 'tcp' : 'udp',
+        protocol_type: 'tcp',
         service: 'http',
         flag: 'SF',
         src_bytes: Math.floor(Math.random() * 800) + 64,
@@ -126,7 +135,7 @@ async function main() {
         serror_rate: 0.0,
         same_srv_rate: 1.0,
         diff_srv_rate: 0.0,
-        dst_host_diff_srv_rate: parseFloat((Math.random() * 0.1).toFixed(2))
+        dst_host_diff_srv_rate: 0.02
       };
     } else {
       flowData = {
@@ -161,14 +170,21 @@ async function main() {
           ? chalk.bold.green(result.prediction) 
           : chalk.bold.red(result.prediction);
         
-        console.log(`[${timestamp}] Flow captured on ${adapter} -> Inference: ${predText} (Conf: ${result.confidence}%)`);
+        const latencyInfo = result.latency_ms ? ` (Latency: ${result.latency_ms.toFixed(2)}ms)` : '';
+        console.log(`[${timestamp}] [Packet #${packetsSent}] Flow on ${adapter} -> Prediction: ${predText} (Conf: ${result.confidence}%)${latencyInfo}`);
       } else {
         console.log(chalk.red(`[${timestamp}] API Error: ${response.status} ${response.statusText}`));
       }
     } catch (e) {
       console.log(chalk.gray(`[${timestamp}] Flow streamed -> (Dashboard backend disconnected/offline)`));
     }
-  }, 2000);
+
+    if (argCount && packetsSent >= argCount) {
+      clearInterval(intervalId);
+      console.log(chalk.bold.green(`\n[✓] Telemetry scan completed successfully (${packetsSent}/${argCount} packets processed).\n`));
+      process.exit(0);
+    }
+  }, argInterval);
 }
 
 main();

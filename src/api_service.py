@@ -18,10 +18,21 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 # ---------------------------------------------------------------------------
 # Path configuration (override via environment variables)
 # ---------------------------------------------------------------------------
-MODEL_PATH = os.environ.get(
-    "MODEL_PATH",
-    os.path.join(os.path.dirname(__file__), "../models/cnn_lstm_bwoa_v3_quantized.tflite"),
-)
+def _resolve_model_path():
+    env_path = os.environ.get("MODEL_PATH")
+    if env_path and os.path.exists(env_path):
+        return env_path
+    candidates = [
+        os.path.join(os.path.dirname(__file__), "../models/cnn_lstm_quantized_float16_v3.tflite"),
+        os.path.join(os.path.dirname(__file__), "../models/cnn_lstm_quantized_float16.tflite"),
+        os.path.join(os.path.dirname(__file__), "../models/cnn_lstm_bwoa_v3_quantized.tflite"),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return candidates[0]
+
+MODEL_PATH = _resolve_model_path()
 FEATURE_MASK_PATH = os.environ.get(
     "FEATURE_MASK_PATH",
     os.path.join(os.path.dirname(__file__), "../data/features/nslkdd_bwoa_mask_v3.npy"),
@@ -112,11 +123,32 @@ def _get_model():
     return INTERPRETER, SCALER, FEATURE_MASK
 
 
+PROTOCOL_MAP = {"tcp": 1.0, "udp": 2.0, "icmp": 3.0}
+FLAG_MAP = {"SF": 10.0, "S0": 1.0, "REJ": 2.0, "RSTO": 3.0, "RSTR": 4.0, "SH": 5.0, "S1": 6.0, "S2": 7.0, "OTH": 9.0}
+SERVICE_MAP = {"http": 21.0, "smtp": 22.0, "finger": 23.0, "ftp": 24.0, "ftp_data": 25.0, "private": 50.0, "telnet": 20.0, "eco_i": 60.0, "ecr_i": 61.0}
+
+def _to_float(val, feature_name: str) -> float:
+    if isinstance(val, (int, float)):
+        return float(val)
+    if isinstance(val, str):
+        val_lower = val.strip().lower()
+        if feature_name == "protocol_type" and val_lower in PROTOCOL_MAP:
+            return PROTOCOL_MAP[val_lower]
+        if feature_name == "flag" and val.strip().upper() in FLAG_MAP:
+            return FLAG_MAP[val.strip().upper()]
+        if feature_name == "service" and val_lower in SERVICE_MAP:
+            return SERVICE_MAP[val_lower]
+        try:
+            return float(val)
+        except ValueError:
+            return 0.0
+    return 0.0
+
 def run_inference(features_dict: dict) -> dict:
     """Run TFLite inference on a dict of NSL-KDD feature values.
 
     Args:
-        features_dict: Mapping of feature name to numeric value. Missing features
+        features_dict: Mapping of feature name to numeric or string value. Missing features
             default to 0.0.
 
     Returns:
@@ -125,9 +157,9 @@ def run_inference(features_dict: dict) -> dict:
     """
     interpreter, scaler, _ = _get_model()
 
-    # Build full 41-feature vector; missing features default to 0.0
+    # Build full 41-feature vector with safe categorical conversions
     raw = np.array(
-        [float(features_dict.get(f, 0.0)) for f in ALL_FEATURES],
+        [_to_float(features_dict.get(f, 0.0), f) for f in ALL_FEATURES],
         dtype=np.float32,
     )
 
@@ -180,9 +212,9 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
     # GET endpoints
     # ------------------------------------------------------------------
     def do_GET(self):
-        if self.path in ("/api/health", "/"):
+        if self.path in ("/api/health", "/api/status", "/api/external/status", "/"):
             self._handle_health()
-        elif self.path == "/api/features":
+        elif self.path in ("/api/features", "/api/external/features"):
             self._handle_features()
         else:
             self._send_json({"error": "Not found"}, status=404)
@@ -214,7 +246,7 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
     # POST endpoints
     # ------------------------------------------------------------------
     def do_POST(self):
-        if self.path == "/api/analyze":
+        if self.path in ("/api/analyze", "/api/external/analyze"):
             self._handle_analyze()
         else:
             self._send_json({"error": "Not found"}, status=404)
@@ -265,6 +297,15 @@ def run(server_class=HTTPServer, handler_class=ModelInferenceHandler):
     port = int(os.environ.get("PORT", 8001))
     host = os.environ.get("HOST", "0.0.0.0")
     server_address = (host, port)
+    
+    # Warm up interpreter at startup
+    try:
+        _get_model()
+        dummy_res = run_inference({"src_bytes": 100, "protocol_type": "tcp", "service": "http", "flag": "SF"})
+        print(f"[+] Model warmed up successfully. Sample latency: {dummy_res['latency_ms']:.2f}ms")
+    except Exception as e:
+        print(f"[!] Warmup warning: {e}")
+
     httpd = server_class(server_address, handler_class)
     model_path = os.path.abspath(MODEL_PATH)
     print(f"Securing the Digital Mine -- Inference Server")
