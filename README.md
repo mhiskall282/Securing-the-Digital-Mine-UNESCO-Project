@@ -37,9 +37,9 @@ This work was selected for presentation at the Russian-African Forum-Contest of 
 > required data partnerships are identified, and the proposal is mapped to
 > relevant UN Sustainable Development Goals.
 
-**Full Abstract** available: https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link 
+**Full Abstract** available: [https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link](https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link)
 
-**Presentation Slides** available: https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link
+**Presentation Slides** available: [https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link](https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link)
 
 **Keywords:** intrusion detection; metaheuristic optimization; Whale Optimization Algorithm; CNN-LSTM; Industrial IoT; SCADA; mining digitalization; cybersecurity; Africa
 
