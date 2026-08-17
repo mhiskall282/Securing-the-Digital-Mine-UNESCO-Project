@@ -215,3 +215,31 @@ OT/SCADA Promiscuous Network Sniffer Daemon.
     }
     ```
   - **Functionality**: Validates device token against `devices` table, forwards payload to `MODEL_SERVER_URL` (`http://api-service-prod:8001/api/analyze`), records flow telemetry to `live_network_flows` table under the device's `organization_id`, and triggers real-time Livewire event broadcast.
+
+---
+
+## 7. Edge Telemetry CLI Agent (`@mhiskall282/unesco-mine-sec-cli`)
+
+A Node.js edge network sniffer distributed via [GitHub Packages](https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project/pkgs/npm/unesco-mine-sec-cli).
+
+### Installation & Execution
+```bash
+# Configure GitHub Packages registry for @mhiskall282 scope
+npm config set @mhiskall282:registry https://npm.pkg.github.com
+
+# Run directly via npx
+npx @mhiskall282/unesco-mine-sec-cli
+
+# Or install globally
+npm install -g @mhiskall282/unesco-mine-sec-cli
+unesco-mine-sec-cli
+```
+
+### CLI Command Options
+* `--url <api_endpoint>`: Target API endpoint URL (default: `https://minesec-dashboard-prod.onrender.com/api/external/analyze`).
+* `--key <bearer_token>`: Device Bearer Token for organization-scoped telemetry ingestion.
+* `--interface <adapter>`: Network interface to bind and sniff.
+* `--help` / `-h`: Displays the interactive help menu.
+* `--version` / `-v`: Displays CLI version information.
+
+See [`npm-packet-scanner/README.md`](../npm-packet-scanner/README.md) for full guide and documentation.

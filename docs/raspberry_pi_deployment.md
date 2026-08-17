@@ -100,10 +100,20 @@ chmod +x scripts/deploy_raspberry_pi.sh
 
 ## 5. Execution Modes
 
-### Mode A: Global Interactive CLI Agent (`unesco-mine-sec-cli`)
-Launch the interactive terminal UI to stream connection telemetry to your central dashboard:
+### Mode A: Global Interactive CLI Agent (`@mhiskall282/unesco-mine-sec-cli`)
+Package Registry: [GitHub Packages](https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project/pkgs/npm/unesco-mine-sec-cli)
+
+Install and launch the interactive terminal UI to stream connection telemetry to your central dashboard:
 
 ```bash
+# 1. Point @mhiskall282 scope to GitHub Packages registry
+npm config set @mhiskall282:registry https://npm.pkg.github.com
+
+# 2. Run directly via npx or install globally
+npx @mhiskall282/unesco-mine-sec-cli
+
+# Or install globally
+npm install -g @mhiskall282/unesco-mine-sec-cli
 unesco-mine-sec-cli
 ```
 

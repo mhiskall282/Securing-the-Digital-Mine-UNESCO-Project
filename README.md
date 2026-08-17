@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![UNESCO Forum](https://img.shields.io/badge/UNESCO-Russian--African%20Forum%202026-blue.svg)](https://youthafrica.spmi.ru)
 [![Track](https://img.shields.io/badge/Track%203-Smart%20Subsoil-green.svg)](https://youthafrica.spmi.ru/en/participants)
-[![CLI](https://img.shields.io/badge/CLI-unesco--mine--sec--cli-red.svg)](npm-packet-scanner/)
+[![CLI Package](https://img.shields.io/badge/CLI-%40mhiskall282%2Funesco--mine--sec--cli-red.svg)](https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project/pkgs/npm/unesco-mine-sec-cli)
 [![Dashboard](https://img.shields.io/badge/Dashboard-Laravel%20Livewire-purple.svg)](dashboard/)
 
 ---
@@ -353,6 +353,8 @@ unesco-mine-sec-cli
 ```
 
 The CLI captures live network flows on a promiscuous interface, extracts the 10 BWOA features, and streams them to the inference API. You will be prompted for your dashboard URL and device API key on first run.
+
+> For full CLI options, flags, interactive mode guides, and troubleshooting, see [npm-packet-scanner/README.md](npm-packet-scanner/README.md) or visit the [GitHub Packages Registry](https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project/pkgs/npm/unesco-mine-sec-cli).
 
 ### Option E: Deploy the Full Dashboard (Render.com)
 
