@@ -36,18 +36,22 @@ env/
 ENV/
 
 # Project specific ignores
-# Ignore raw datasets and temporary execution logs
+# Ignore raw datasets
 data/raw/*
 !data/raw/.gitkeep
 
-data/processed/*
+# Ignore large numpy arrays in data/processed but track scalers and label encoders
+data/processed/*.npy
 !data/processed/.gitkeep
+!data/processed/*.pkl
 
-data/features/*
+# Ignore large numpy arrays in data/features but track feature metadata and masks
+data/features/X_*.npy
 !data/features/.gitkeep
+!data/features/*.json
+!data/features/nslkdd_bwoa_mask*.npy
 
 # Models are tracked for academic reproducibility and collaborator access
-# models/* (Unignored to allow model weights and TFLite binaries on GitHub)
 
 logs/*
 !logs/.gitkeep

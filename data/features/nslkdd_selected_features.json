@@ -1,0 +1,6 @@
+[
+    "protocol_type",
+    "src_bytes",
+    "dst_host_same_srv_rate",
+    "dst_host_diff_srv_rate"
+]

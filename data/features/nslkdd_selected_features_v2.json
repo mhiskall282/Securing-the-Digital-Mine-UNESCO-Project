@@ -1,0 +1,12 @@
+[
+    "protocol_type",
+    "service",
+    "src_bytes",
+    "urgent",
+    "num_failed_logins",
+    "count",
+    "srv_serror_rate",
+    "diff_srv_rate",
+    "dst_host_srv_diff_host_rate",
+    "dst_host_srv_rerror_rate"
+]
