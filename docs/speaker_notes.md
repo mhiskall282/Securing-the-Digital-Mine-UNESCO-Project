@@ -9,7 +9,7 @@ Event Dates: 12 to 17 October 2026
 ## Slide 1 Speaker Script (30 seconds)
 **Word count target**: ~75 words  
 **Speaker Notes**:  
-Good morning distinguished members of the jury and fellow scientists. My name is John Okyere, presenting on behalf of our research team: Ezekeil Baah, Clement Baffour, Parker Paa Annobil, and George Akwesi Bonnah from the University of Education, Winneba and Kayaba Labs. Today I will present our research on securing the digital mine. Our work details a lightweight machine learning framework that protects critical mining automation systems from cyber threats. This framework is optimized using a binary whale metaheuristic and is designed for edge gateways in remote mining operations.
+Good morning distinguished members of the jury and fellow scientists. My name is John Okyere, presenting on behalf of our research team: Ezekeil Baah, Clement Baffour, Parker Paa Annobil, and George Akwesi Bonnah from the University of Education, Winneba and UEW Innovation Hub. Today I will present our research on securing the digital mine. Our work details a lightweight machine learning framework that protects critical mining automation systems from cyber threats. This framework is optimized using a binary whale metaheuristic and is designed for edge gateways in remote mining operations.
 
 ---
 

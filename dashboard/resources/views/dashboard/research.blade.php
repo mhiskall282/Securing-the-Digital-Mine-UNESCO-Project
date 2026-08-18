@@ -20,7 +20,7 @@
             <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Research Methodology & Model Insights</h2>
             <p class="text-sm text-gray-400 font-light leading-relaxed">
                 A Metaheuristic-Optimized, Multi-Tenant Deep Learning Suite for Intrusion Detection in IoT SCADA Industrial Mining Networks. 
-                Lead Author: <strong>John Okyere</strong> (Technical Lead, Kayaba Labs &mdash; <a href="mailto:hello@johnokyere.xyz" class="text-[#10b981] hover:underline font-mono">hello@johnokyere.xyz</a>).
+                Lead Author: <strong>John Okyere</strong> (Technical Lead, UEW Innovation Hub &mdash; <a href="mailto:hello@johnokyere.xyz" class="text-[#10b981] hover:underline font-mono">hello@johnokyere.xyz</a>).
             </p>
         </div>
 

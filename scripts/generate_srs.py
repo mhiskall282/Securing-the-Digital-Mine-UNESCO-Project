@@ -17,7 +17,7 @@ def create_srs():
     add_subtitle(doc, "IEEE Std 830-1998 Compliant Specification for Edge Intrusion Detection System in Digital Mining Operations\nUNESCO Project - Track 3: Smart Subsoil | Russian-African Forum 2026")
     add_authors(doc,
         "Software Engineering Delegation: John Okyere (Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah",
-        "Department of ICT, University of Education, Winneba & Kayaba Labs | Standard: IEEE 830-1998 | Version 3.0.0"
+        "Department of ICT, University of Education, Winneba & UEW Innovation Hub | Standard: IEEE 830-1998 | Version 3.0.0"
     )
 
     add_callout_box(doc, "SPECIFICATION SCOPE & COMPLIANCE",

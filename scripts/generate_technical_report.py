@@ -17,7 +17,7 @@ def create_technical_report():
     add_subtitle(doc, "Securing the Digital Mine: Edge-Ready Metaheuristic-Optimized Deep Learning Intrusion Detection\nUNESCO Russian-African Forum of Young Scientists 2026")
     add_authors(doc,
         "Engineering Delegation: John Okyere, Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah",
-        "Department of ICT, University of Education, Winneba & Kayaba Labs | Version 3.0.0"
+        "Department of ICT, University of Education, Winneba & UEW Innovation Hub | Version 3.0.0"
     )
 
     # 1. EXECUTIVE SUMMARY

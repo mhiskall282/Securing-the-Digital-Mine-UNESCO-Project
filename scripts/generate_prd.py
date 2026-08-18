@@ -17,7 +17,7 @@ def create_prd():
     add_subtitle(doc, "Securing the Digital Mine: Edge-Deployable OT/IIoT Intrusion Detection System\nUNESCO Project - Track 3: Smart Subsoil | Russian-African Forum 2026")
     add_authors(doc, 
         "Product Engineering Team: John Okyere (Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah",
-        "University of Education, Winneba & Kayaba Labs | Version 3.0.0 | Status: Approved for Deployment"
+        "University of Education, Winneba & UEW Innovation Hub | Version 3.0.0 | Status: Approved for Deployment"
     )
 
     # Callout Summary
@@ -38,7 +38,7 @@ def create_prd():
             ["Package Identifier", "@mhiskall282/unesco-mine-sec-cli (GitHub Packages)"],
             ["Target Hardware", "Raspberry Pi 4B/5 (1GB-4GB RAM), Industrial Gateways, AWS EC2"],
             ["Target Protocols", "Modbus RTU/TCP, DNP3, OPC-UA, Ethernet/IP, MQTT"],
-            ["Lead Institution", "University of Education, Winneba (UEW) & Kayaba Labs"],
+            ["Lead Institution", "University of Education, Winneba (UEW) & UEW Innovation Hub"],
             ["Forum Submission", "Russian-African Forum-Contest of Young Scientists 2026 (UNESCO)"],
             ["Document Version", "v3.0.0 (Production Candidate)"],
             ["Release Date", "August 2026"]

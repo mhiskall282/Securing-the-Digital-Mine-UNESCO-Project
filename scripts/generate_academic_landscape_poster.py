@@ -69,7 +69,7 @@ def create_pixel_perfect_landscape_poster_pptx():
 
     p_l2 = tf_l.add_paragraph()
     r_l2 = p_l2.add_run()
-    r_l2.text = "UNIVERSITY OF EDUCATION,\nWINNEBA, GHANA\n& KAYABA LABS"
+    r_l2.text = "UNIVERSITY OF EDUCATION,\nWINNEBA, GHANA\n& UEW INNOVATION HUB"
     r_l2.font.name = "Arial"
     r_l2.font.size = Pt(13)
     r_l2.font.bold = True
@@ -124,7 +124,7 @@ def create_pixel_perfect_landscape_poster_pptx():
     p_aff = tf_c.add_paragraph()
     p_aff.alignment = PP_ALIGN.CENTER
     raff = p_aff.add_run()
-    raff.text = "Department of ICT, University of Education, Winneba & Kayaba Labs | Saint Petersburg, Russia 2026"
+    raff.text = "Department of ICT, University of Education, Winneba & UEW Innovation Hub | Saint Petersburg, Russia 2026"
     raff.font.name = "Times New Roman"
     raff.font.size = Pt(13)
     raff.font.italic = True
@@ -381,7 +381,7 @@ def create_pixel_perfect_landscape_poster_docx():
     r_l1.font.size = DPt(20)
     r_l1.font.bold = True
     r_l1.font.color.rgb = DRGBColor(255, 255, 255)
-    r_l2 = p_l.add_run("Univ. of Education, Winneba\n& Kayaba Labs")
+    r_l2 = p_l.add_run("Univ. of Education, Winneba\n& UEW Innovation Hub")
     r_l2.font.name = 'Times New Roman'
     r_l2.font.size = DPt(9.5)
     r_l2.font.bold = True
@@ -400,7 +400,7 @@ def create_pixel_perfect_landscape_poster_docx():
     r_ca.font.size = DPt(10.5)
     r_ca.font.bold = True
     r_ca.font.color.rgb = DRGBColor(255, 215, 0)
-    r_caff = p_c.add_run("Department of ICT, University of Education, Winneba & Kayaba Labs | Saint Petersburg Mining University 2026")
+    r_caff = p_c.add_run("Department of ICT, University of Education, Winneba & UEW Innovation Hub | Saint Petersburg Mining University 2026")
     r_caff.font.name = 'Times New Roman'
     r_caff.font.size = DPt(9)
     r_caff.font.color.rgb = DRGBColor(226, 232, 240)

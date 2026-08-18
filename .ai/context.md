@@ -12,7 +12,7 @@ This repository contains the codebase and research artifacts for "Securing the D
 ### Team Lead
 - **Name**: John Okyere
 - **Role**: BSc ICT Education candidate (University of Education, Winneba, Ghana).
-- **Affiliations**: Co-founder and Technical Lead at Kayaba Labs; ICP Ambassador. John has trained over 600 developers across Ghana and internationally.
+- **Affiliations**: Co-founder and Technical Lead at UEW Innovation Hub; ICP Ambassador. John has trained over 600 developers across Ghana and internationally.
 
 ---
 
@@ -75,7 +75,7 @@ This research project aligns with the United Nations SDGs to drive sustainable i
 - **SDG 8: Decent Work and Economic Growth**
   Intrusion detection systems prevent malicious operational disruptions, thereby safeguarding workers, physical assets, and productivity in mining environments.
 - **SDG 17: Partnerships for the Goals**
-  Cooperative scientific development and knowledge exchange between Ghana (University of Ghana, Kayaba Labs) and Russia (Saint Petersburg Mining University) under UNESCO's auspices.
+  Cooperative scientific development and knowledge exchange between Ghana (University of Ghana, UEW Innovation Hub) and Russia (Saint Petersburg Mining University) under UNESCO's auspices.
 
 ---
 

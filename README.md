@@ -56,7 +56,7 @@ This project represents an official research delegation selected for presentatio
 * **Host Institution**: **Empress Catherine II Saint Petersburg Mining University**, Saint Petersburg, Russia
 * **Track**: **Track 3 ("Smart Subsoil")**: Digital Transformation and Automation in the Mineral Resources Complex
 * **Event Dates**: 12 to 17 October 2026
-* **Institutional Delegation**: **University of Education, Winneba** (Ghana) and **Kayaba Labs**
+* **Institutional Delegation**: **University of Education, Winneba** (Ghana) and **UEW Innovation Hub**
 * **Research Documentation & Scholarly Papers**:
   * [Full ~50-Page DSR Research Paper (DOCX)](research/full_research_paper.docx)
   * [3-Page Project Evaluation & Executive Summary (PDF)](research/Project_Evaluation_and_Executive_Summary.pdf)

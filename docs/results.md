@@ -102,7 +102,7 @@ All components in the framework undergo continuous validation:
 
 ## 7. Research Team & Citation
 
-* **John Okyere** - Team Lead & AI Security Researcher (University of Education, Winneba & Kayaba Labs)
+* **John Okyere** - Team Lead & AI Security Researcher (University of Education, Winneba & UEW Innovation Hub)
 * **Ezekeil Baah** - Machine Learning Engineer & Data Scientist (University of Education, Winneba)
 * **Clement Baffour** - Edge Deployment & Quantization Engineer (University of Education, Winneba)
 * **Parker Paa Annobil** - Machine Learning Engineer & Data Scientist (University of Education, Winneba)

@@ -52,7 +52,7 @@ def create_poster_docx():
     run_forum.font.bold = True
     run_forum.font.color.rgb = RGBColor(0, 163, 224) # Cyan
 
-    run_auth = p_t.add_run("John Okyere (Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah\nDepartment of ICT, University of Education, Winneba & Kayaba Labs | hello@johnokyere.xyz")
+    run_auth = p_t.add_run("John Okyere (Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah\nDepartment of ICT, University of Education, Winneba & UEW Innovation Hub | hello@johnokyere.xyz")
     run_auth.font.name = 'Times New Roman'
     run_auth.font.size = Pt(11)
     run_auth.font.italic = True

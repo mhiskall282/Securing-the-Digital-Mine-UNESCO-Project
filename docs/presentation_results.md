@@ -9,7 +9,7 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 ### Securing the Digital Mine: A Metaheuristic Optimized Deep Learning Framework for Intrusion Detection in IoT Enabled Mineral Resource Operations
 
 * **Authors**:
-  * **John Okyere** (Team Lead & AI Security Researcher, Kayaba Labs & UEW)
+  * **John Okyere** (Team Lead & AI Security Researcher, UEW Innovation Hub & UEW)
   * **Ezekeil Baah** (Machine Learning Engineer & Data Scientist, UEW)
   * **Clement Baffour** (Edge Deployment & Quantization Engineer, UEW)
   * **Parker Paa Annobil** (Machine Learning Engineer & Data Scientist, UEW)

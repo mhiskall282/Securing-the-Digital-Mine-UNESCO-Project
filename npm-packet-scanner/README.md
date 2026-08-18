@@ -176,7 +176,7 @@ If you need assistance deploying the CLI, configuring edge sensors, or integrati
 * **Support Email**: [hello@johnokyere.xyz](mailto:hello@johnokyere.xyz)
 * **Website**: [johnokyere.xyz](https://johnokyere.xyz)
 * **GitHub Issues**: [Open an Issue](https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project/issues)
-* **Project Delegation**: University of Education, Winneba & Kayaba Labs
+* **Project Delegation**: University of Education, Winneba & UEW Innovation Hub
 
 ---
 

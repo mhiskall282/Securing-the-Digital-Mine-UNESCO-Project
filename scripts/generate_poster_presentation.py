@@ -88,7 +88,7 @@ def create_poster():
     p_auth = tf_auth.paragraphs[0]
     p_auth.alignment = PP_ALIGN.CENTER
     r_auth = p_auth.add_run()
-    r_auth.text = "John Okyere (Lead) • Ezekeil Baah • Clement Baffour • Parker Paa Annobil • George Akwesi Bonnah\nDepartment of ICT, University of Education, Winneba & Kayaba Labs | hello@johnokyere.xyz"
+    r_auth.text = "John Okyere (Lead) • Ezekeil Baah • Clement Baffour • Parker Paa Annobil • George Akwesi Bonnah\nDepartment of ICT, University of Education, Winneba & UEW Innovation Hub | hello@johnokyere.xyz"
     r_auth.font.name = "Arial"
     r_auth.font.size = Pt(17)
     r_auth.font.color.rgb = WHITE
@@ -279,7 +279,7 @@ def create_poster():
     c_items = [
         ("Complete Open-Source Ecosystem: ", "Full code, training notebooks, benchmarks, and 75 unit test suites are fully open source on GitHub."),
         ("NPM Edge Sniffer Package: ", "Install instantly on any gateway via '@mhiskall282/unesco-mine-sec-cli' from GitHub Packages."),
-        ("UNESCO Forum Delegation: ", "Presented by the University of Education, Winneba & Kayaba Labs research team at Empress Catherine II Saint Petersburg Mining University."),
+        ("UNESCO Forum Delegation: ", "Presented by the University of Education, Winneba & UEW Innovation Hub research team at Empress Catherine II Saint Petersburg Mining University."),
         ("Repository URL: ", "https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project"),
         ("Correspondence Email: ", "hello@johnokyere.xyz | Portfolio: https://johnokyere.xyz")
     ]

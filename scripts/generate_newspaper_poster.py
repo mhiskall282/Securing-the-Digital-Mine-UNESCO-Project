@@ -106,7 +106,7 @@ def create_newspaper_poster_pptx():
     p_aff = tf_a.add_paragraph()
     p_aff.alignment = PP_ALIGN.CENTER
     r_aff = p_aff.add_run()
-    r_aff.text = "Department of ICT, University of Education, Winneba & Kayaba Labs | Track 3: Smart Subsoil | Saint Petersburg Mining University"
+    r_aff.text = "Department of ICT, University of Education, Winneba & UEW Innovation Hub | Track 3: Smart Subsoil | Saint Petersburg Mining University"
     r_aff.font.name = "Times New Roman"
     r_aff.font.size = PPt(14)
     r_aff.font.italic = True
@@ -400,7 +400,7 @@ def create_newspaper_poster_docx():
     rsub.font.bold = True
     rsub.font.color.rgb = RGBColor(255, 255, 255)
 
-    rauth = p_k.add_run("John Okyere (Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah\nDepartment of ICT, University of Education, Winneba & Kayaba Labs | Track 3: Smart Subsoil | Saint Petersburg Mining University")
+    rauth = p_k.add_run("John Okyere (Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah\nDepartment of ICT, University of Education, Winneba & UEW Innovation Hub | Track 3: Smart Subsoil | Saint Petersburg Mining University")
     rauth.font.name = 'Times New Roman'
     rauth.font.size = Pt(10.5)
     rauth.font.italic = True

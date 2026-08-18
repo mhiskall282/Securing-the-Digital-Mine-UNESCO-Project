@@ -24,7 +24,7 @@ def create_full_research_paper():
     add_subtitle(doc, "A Design Science Research Project for the Russian-African Forum-Contest of Young Scientists\nTrack 3: Smart Subsoil - Digital Transformation and Automation in Mineral Resources\nUnder the Auspices of UNESCO | Empress Catherine II Saint Petersburg Mining University")
     add_authors(doc,
         "John Okyere (Principal Author & Team Lead), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah",
-        "Department of Information and Communication Technology, University of Education, Winneba (UEW), Ghana\nKayaba Labs Artificial Intelligence & Cyber-Physical Security Research Group\nCorrespondence: hello@johnokyere.xyz | Repository: https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project"
+        "Department of Information and Communication Technology, University of Education, Winneba (UEW), Ghana\nUEW Innovation Hub Cyber-Physical Systems Research Group\nCorrespondence: hello@johnokyere.xyz | Repository: https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project"
     )
 
     # Abstract Callout Box
@@ -840,7 +840,7 @@ def create_full_research_paper():
     # Appendix M: Phase 1 Field Methodology
     add_heading_2(doc, "APPENDIX M: Phase 1 Field Data Collection & Sensor Deployment Methodology")
     add_body(doc,
-        "Phase 1 field data capture is scheduled for execution across partner concessions (Gold Fields Tarkwa, AngloGold Ashanti Obuasi, and Kayaba Labs research sites). The deployment architecture utilizes passive Ethernet network taps connected to SPAN mirror ports on industrial substation switches. Raspberry Pi 4B edge nodes running CICFlowMeter extract bi-directional flow features in real time, encrypting records via AES-256 before staging them for model retraining. Data collection protocols strictly adhere to industrial non-disclosure agreements, ensuring that proprietary production volume figures and plant setpoint registers are fully anonymized prior to open-source dataset publication."
+        "Phase 1 field data capture is scheduled for execution across partner concessions (Gold Fields Tarkwa, AngloGold Ashanti Obuasi, and UEW Innovation Hub research sites). The deployment architecture utilizes passive Ethernet network taps connected to SPAN mirror ports on industrial substation switches. Raspberry Pi 4B edge nodes running CICFlowMeter extract bi-directional flow features in real time, encrypting records via AES-256 before staging them for model retraining. Data collection protocols strictly adhere to industrial non-disclosure agreements, ensuring that proprietary production volume figures and plant setpoint registers are fully anonymized prior to open-source dataset publication."
     )
 
     # Save Document
