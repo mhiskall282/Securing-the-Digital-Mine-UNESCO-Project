@@ -10,13 +10,11 @@ This directory documents the formal scholarly and engineering deliverables produ
 
 | Deliverable | File Path | Format & Extent | Standards & Description |
 | :--- | :--- | :--- | :--- |
-| **Full Research Paper** | [`research/full_research_paper.docx`](../research/full_research_paper.docx) | Word DOCX (~11,000 words, 35 pages) | Full 5-chapter Design Science Research manuscript: 12pt Times New Roman, 1.5 line spacing, XML table borders, APA 7th citations, formal mathematical equations, and Appendices A-H. |
+| **Full Research Paper** | [`research/full_research_paper.docx`](../research/full_research_paper.docx) | Word DOCX (~16,000 words, ~50 pages) | Full 6-chapter Design Science Research manuscript: 12pt Times New Roman, 1.5 line spacing, XML table borders, APA 7th citations, formal mathematical equations, unified References, and Appendices A-M. |
+| **Executive Summary & Blueprint** | [`research/Project_Evaluation_and_Executive_Summary.pdf`](../research/Project_Evaluation_and_Executive_Summary.pdf) | 3-Page Dense PDF | Comprehensive 3-page project evaluation, mathematical engine, benchmark tables, edge benchmarks, UAT scores, and slide-by-slide presentation blueprint. |
 | **Technical Report** | [`research/technical_report.docx`](../research/technical_report.docx) | Word DOCX | Comprehensive architecture deep-dive, step-by-step Raspberry Pi and AWS EC2 deployment runbooks, and Appendices A-E. |
 | **Product Requirements Document (PRD)** | [`research/PRD.docx`](../research/PRD.docx) | Word DOCX | Product vision, target user personas (SCADA engineer, SOC analyst, mine manager), functional (FR-01 to FR-08) and non-functional requirements (NFR-01 to NFR-07), and release roadmap. |
 | **Software Requirements Specification (SRS)** | [`research/SRS.docx`](../research/SRS.docx) | Word DOCX (IEEE 830-1998) | Formal IEEE 830 specification covering external interfaces, system features, and automated verification test gates (unit, integration, dry-run, UAT). |
-| **Poster Presentation (Word Document)** | [`research/poster_presentation.docx`](../research/poster_presentation.docx) | Large Format DOCX | Large-format structured poster layout in `.docx` with styled card containers, high-res diagrams, and readable 2-meter typography. |
-| **Poster Presentation (PDF)** | [`research/poster_presentation.pdf`](../research/poster_presentation.pdf) | High-Res PDF (300 DPI) | Print-ready A0 portrait poster for conference display. |
-| **Editable Poster (PPTX)** | [`research/poster_presentation.pptx`](../research/poster_presentation.pptx) | Editable PowerPoint | Fully customizable A0 portrait presentation slides. |
 | **Presentation Slide Deck** | [`research/DigitalMine_Presentation (1).pdf`](../research/DigitalMine_Presentation%20(1).pdf) | Conference Slide Deck (PDF) | Official slide deck for the UNESCO Russian-African Forum 2026. |
 | **Formal Abstract** | [`research/Abstract_DigitalMine_Final (2).pdf`](../research/Abstract_DigitalMine_Final%20(2).pdf) | Conference Abstract (PDF) | Official abstract approved for the forum proceedings. |
 

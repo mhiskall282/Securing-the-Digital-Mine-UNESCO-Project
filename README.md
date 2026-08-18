@@ -58,11 +58,11 @@ This project represents an official research delegation selected for presentatio
 * **Event Dates**: 12 to 17 October 2026
 * **Institutional Delegation**: **University of Education, Winneba** (Ghana) and **Kayaba Labs**
 * **Research Documentation & Scholarly Papers**:
-  * [Full 35-Page DSR Research Paper (DOCX)](research/full_research_paper.docx)
+  * [Full ~50-Page DSR Research Paper (DOCX)](research/full_research_paper.docx)
+  * [3-Page Project Evaluation & Executive Summary (PDF)](research/Project_Evaluation_and_Executive_Summary.pdf)
   * [Technical Report & Deployment Specifications (DOCX)](research/technical_report.docx)
   * [Product Requirements Document (PRD) (DOCX)](research/PRD.docx)
   * [Software Requirements Specification (SRS - IEEE 830) (DOCX)](research/SRS.docx)
-  * [A0 Poster Presentation (High-Res PDF)](research/poster_presentation.pdf) | [Poster (DOCX)](research/poster_presentation.docx) | [Poster (PPTX)](research/poster_presentation.pptx)
   * [Full Research Papers & Specifications Index](docs/research_papers_and_specifications.md)
   * [Saint Petersburg Mining University UNESCO Forum Portal](https://youthafrica.spmi.ru)
 
@@ -74,13 +74,11 @@ This repository provides complete, formal academic and engineering documentation
 
 | Deliverable Document | File Path | Format & Scope | Key Highlights |
 | :--- | :--- | :--- | :--- |
-| **Full Research Paper** | [`research/full_research_paper.docx`](research/full_research_paper.docx) | Word DOCX (~11,000 words, 35 pages) | Full 5-chapter DSR manuscript: 12pt Times New Roman, 1.5 line spacing, XML table borders, APA 7th citations, numbered equations, and Appendices A-H. |
+| **Full Research Paper** | [`research/full_research_paper.docx`](research/full_research_paper.docx) | Word DOCX (~16,000 words, ~50 pages) | Full 6-chapter DSR manuscript: 12pt Times New Roman, 1.5 line spacing, XML table borders, APA 7th citations, numbered equations, unified References, and Appendices A-M. |
+| **Executive Summary & Blueprint** | [`research/Project_Evaluation_and_Executive_Summary.pdf`](research/Project_Evaluation_and_Executive_Summary.pdf) | 3-Page Dense PDF | Comprehensive 3-page project evaluation, mathematical engine, benchmark tables, edge benchmarks, UAT scores, and slide-by-slide presentation blueprint. |
 | **Technical Report** | [`research/technical_report.docx`](research/technical_report.docx) | Word DOCX | Architecture deep-dive, step-by-step Raspberry Pi & AWS EC2 deployment runbooks, and Appendices A-E. |
 | **Product Requirements (PRD)** | [`research/PRD.docx`](research/PRD.docx) | Word DOCX | Product vision, target user personas (SCADA engineer, SOC analyst, mine manager), functional & non-functional requirements, and release roadmap. |
 | **Software Requirements (SRS)** | [`research/SRS.docx`](research/SRS.docx) | Word DOCX (IEEE 830) | Formal IEEE 830 specification covering external interfaces, system features, and automated verification test gates (75 unit tests). |
-| **Poster Presentation (PDF)** | [`research/poster_presentation.pdf`](research/poster_presentation.pdf) | High-Res PDF (300 DPI) | Print-ready A0 portrait conference poster with UNESCO branding and large-format visual cards. |
-| **Poster Presentation (DOCX)** | [`research/poster_presentation.docx`](research/poster_presentation.docx) | Large Format DOCX | Large-format editable poster document with styled card panels and high-res figures. |
-| **Poster Presentation (PPTX)** | [`research/poster_presentation.pptx`](research/poster_presentation.pptx) | Editable PowerPoint | Fully editable vector slide template for conference presentation. |
 | **Presentation Slide Deck** | [`research/DigitalMine_Presentation (1).pdf`](research/DigitalMine_Presentation%20(1).pdf) | Slide Deck (PDF) | Official presentation slide deck for the UNESCO Russian-African Forum 2026. |
 | **Formal Abstract** | [`research/Abstract_DigitalMine_Final (2).pdf`](research/Abstract_DigitalMine_Final%20(2).pdf) | Abstract (PDF) | Official abstract approved for the forum proceedings. |
 
