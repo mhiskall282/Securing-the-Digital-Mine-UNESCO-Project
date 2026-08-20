@@ -376,9 +376,9 @@ Expected response:
 }
 ```
 
-> The API requires `models/cnn_lstm_bwoa_v3_quantized.tflite` to be present.
-> Train it via Option A (Colab), then transfer it to your target device.
-> See [docs/raspberry_pi_deployment.md](docs/raspberry_pi_deployment.md) Section 8.
+> Pre-trained deployment models (including `models/cnn_lstm_bwoa_v3_quantized.tflite` and `data/features/nslkdd_bwoa_mask_v3.npy`) are tracked directly in this repository for instant out-of-the-box deployment on EC2 and Raspberry Pi.
+> To re-train or fine-tune models from scratch, run Option A (Colab) or `scripts/train_v4.py`.
+> See [docs/aws_ec2_deployment.md](docs/aws_ec2_deployment.md) and [docs/raspberry_pi_deployment.md](docs/raspberry_pi_deployment.md).
 
 ### Option D: Deploy the CLI Agent on an Edge Device
 
@@ -552,9 +552,9 @@ See [docs/bwoa_algorithm.md](docs/bwoa_algorithm.md) for the full mathematical f
 |   |-- bwoa_v3_metrics.json                # BWOA optimized model classification metrics
 |   `-- edge_benchmark_report_v3.json       # TFLite latency and RAM benchmark results
 |-- models/
-|   |-- .gitkeep                            # Placeholder; model files are gitignored due to size
-|   |-- README.md                           # Describes model files and how to train them
-|   `-- cnn_lstm_bwoa_v3_quantized.tflite   # Float16 quantized TFLite model (0.82MB, gitignored)
+|   |-- .gitkeep                            # Models directory root
+|   |-- README.md                           # Describes model files, architectures, and benchmarks
+|   `-- cnn_lstm_bwoa_v3_quantized.tflite   # Float16 quantized TFLite model (0.82MB, tracked for instant deployment)
 |-- notebooks/
 |   |-- 00_colab_setup_and_train.ipynb      # PRIMARY: full GPU training pipeline for Google Colab
 |   |-- 01_eda_nslkdd.ipynb                 # NSL-KDD exploratory data analysis

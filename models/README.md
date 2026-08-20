@@ -8,6 +8,7 @@ This directory contains the trained deep learning checkpoints, metaheuristic-opt
 
 | Model File | Format | File Size | Input Dim | Test Accuracy | Macro F1 | Edge Latency (Pi 4B) | Description |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| [`cnn_lstm_bwoa_v3_quantized.tflite`](cnn_lstm_bwoa_v3_quantized.tflite) | TFLite Float16 | **0.82 MB** | 10 Feat | **70.56%** | **0.7127** | **0.76 ms** | **Production Deployment Binary**: Canonical TFLite model referenced in AWS EC2 & Raspberry Pi systemd services. |
 | [`cnn_lstm_quantized_float16_v3.tflite`](cnn_lstm_quantized_float16_v3.tflite) | TFLite Float16 | **0.82 MB** | 10 Feat | **70.56%** | **0.7127** | **0.76 ms** | **Production Edge Model**: BWOA 10-feature Float16 model for Raspberry Pi & ARM gateways. |
 | [`cnn_lstm_quantized_float16.tflite`](cnn_lstm_quantized_float16.tflite) | TFLite Float16 | **0.82 MB** | 10 Feat | 70.56% | 0.7127 | 0.76 ms | Primary quantized deployment binary. |
 | [`cnn_lstm_quantized_float16_v2.tflite`](cnn_lstm_quantized_float16_v2.tflite) | TFLite Float16 | **0.33 MB** | 10 Feat | 68.90% | 0.6840 | 0.45 ms | Ultra-compact edge variant for low-memory microcontrollers. |
