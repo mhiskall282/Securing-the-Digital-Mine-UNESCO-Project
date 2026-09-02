@@ -724,6 +724,20 @@ class BenchmarkRunner:
 
         print(f"  [+] Saved LaTeX Tables:        {tex_path}")
 
+    def export_zip_archive(self):
+        """Bundle all exported reports into a single zip file."""
+        import zipfile
+        zip_path = os.path.join(self.output_dir, "ec2_benchmark_reports.zip")
+        try:
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+                for f in sorted(os.listdir(self.output_dir)):
+                    f_path = os.path.join(self.output_dir, f)
+                    if os.path.isfile(f_path) and f != "ec2_benchmark_reports.zip":
+                        zipf.write(f_path, arcname=f)
+            print(f"  [+] Saved All-in-One ZIP Archive: {zip_path}")
+        except Exception as e:
+            print(f"  [-] Failed to create ZIP archive: {e}")
+
     def print_terminal_summary(self, metrics: Dict[str, Any]):
         """Display an elegant summary table in the terminal."""
         s = metrics["summary"]
@@ -746,6 +760,7 @@ class BenchmarkRunner:
         print(f" Real-Time Verdict:        {s['scada_verdict']}")
         print("=" * 72)
         print(f"\n[+] Results Exported to: {os.path.abspath(self.output_dir)}/")
+        print("    |-- ec2_benchmark_reports.zip              (ALL Reports Bundled in ONE ZIP)")
         print("    |-- ec2_benchmark_complete_results.xlsx   (Multi-sheet Excel Workbook)")
         print("    |-- ec2_benchmark_detailed_inferences.csv  (Sample-by-sample feature log)")
         print("    |-- ec2_benchmark_summary.csv              (Aggregated latency percentiles)")
@@ -792,6 +807,7 @@ def main():
     runner.export_csv_files(metrics)
     runner.export_excel_workbook(metrics)
     runner.export_paper_tables(metrics)
+    runner.export_zip_archive()
 
     # 5. Display Summary
     print("\n[4/4] Benchmark Completed Successfully!")

@@ -335,6 +335,21 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
                 if os.path.exists(cand):
                     target_file = (cand, "application/x-tex; charset=utf-8", "ec2_benchmark_tables.tex")
                     break
+            elif filename in ("results.zip", "benchmark.zip", "reports.zip", "ec2_benchmark_reports.zip"):
+                cand = os.path.join(r_dir, "ec2_benchmark_reports.zip")
+                if not os.path.exists(cand) and os.path.exists(r_dir):
+                    import zipfile
+                    try:
+                        with zipfile.ZipFile(cand, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                            for f in os.listdir(r_dir):
+                                f_path = os.path.join(r_dir, f)
+                                if os.path.isfile(f_path) and f != "ec2_benchmark_reports.zip":
+                                    zipf.write(f_path, arcname=f)
+                    except Exception:
+                        pass
+                if os.path.exists(cand):
+                    target_file = (cand, "application/zip", "ec2_benchmark_reports.zip")
+                    break
 
         if target_file and os.path.exists(target_file[0]):
             filepath, mime_type, download_name = target_file
