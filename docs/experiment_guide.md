@@ -94,3 +94,26 @@ To profile model memory footprint and inference latency on local targets:
 2. Initialize `EdgeBenchmark` and measure prediction response times.
 3. Convert Keras weights to quantized `.tflite` format.
 4. Execute `EdgeBenchmark.check_deployment_readiness()` to evaluate edge criteria.
+
+---
+
+## Step 7: Cloud & Edge Empirical Benchmarking & Academic Results Export
+
+To collect empirical performance measurements from the live AWS EC2 or edge deployment and generate publication-ready tables and workbooks for research papers:
+
+```bash
+# 1. Run empirical benchmark against live EC2 (or local edge node)
+python scripts/benchmark_and_export.py --url http://51.21.219.29 --samples 100
+
+# 2. Results are automatically exported to research/reports/:
+#    - ec2_benchmark_complete_results.xlsx   (Multi-sheet Excel workbook with Executive Summary, Latencies, Confusion Matrix)
+#    - ec2_benchmark_detailed_inferences.csv  (Row-by-row packet feature and prediction logs)
+#    - ec2_benchmark_summary.csv              (Aggregated latency percentiles and throughput)
+#    - ec2_benchmark_per_class.csv            (Precision, Recall, and F1 per attack class)
+#    - ec2_benchmark_paper_tables.md          (Markdown tables formatted for report drafts)
+#    - ec2_benchmark_tables.tex               (LaTeX table snippets for IEEE/Springer manuscripts)
+
+# 3. Download directly from web browser:
+#    http://51.21.219.29/api/export/results.xlsx
+#    http://51.21.219.29/api/export/results.csv
+```

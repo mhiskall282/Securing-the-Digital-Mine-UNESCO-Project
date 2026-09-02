@@ -499,9 +499,9 @@ See [docs/bwoa_algorithm.md](docs/bwoa_algorithm.md) for the full mathematical f
 | Guide | Target | Description |
 | :--- | :--- | :--- |
 | [docs/raspberry_pi_deployment.md](docs/raspberry_pi_deployment.md) | Raspberry Pi 4 / 5 | Edge: prerequisites checklist, TFLite model transfer via scp, curl inference verification, hardware watchdog, AWS alert forwarding |
-| [docs/aws_ec2_deployment.md](docs/aws_ec2_deployment.md) | AWS EC2 (Ubuntu 22.04) | Cloud: Nginx reverse proxy, SSL/HTTPS with Let's Encrypt, TFLite env vars, monitoring, rate limiting |
+| [docs/aws_ec2_deployment.md](docs/aws_ec2_deployment.md) | AWS EC2 (Ubuntu 22.04) | Cloud: Nginx reverse proxy, automated empirical benchmarking, multi-sheet Excel (.xlsx) / CSV export for research papers, SSL/HTTPS with Let's Encrypt, TFLite env vars |
 | [render.yaml](render.yaml) | Render.com | One-click full-stack blueprint: PostgreSQL + Python API + Laravel dashboard |
-| [deployment.md](deployment.md) | Overview | Short pointer to both deployment guides |
+| [deployment.md](deployment.md) | Overview | Short pointer to both deployment guides and benchmark export instructions |
 
 ---
 
@@ -568,7 +568,8 @@ See [docs/bwoa_algorithm.md](docs/bwoa_algorithm.md) for the full mathematical f
 |   |-- package.json                        # Defines "unesco-mine-sec-cli" binary
 |   `-- README.md                           # CLI agent installation and usage guide
 |-- scripts/
-|   |-- deploy_ec2.sh                       # 1-command AWS EC2 deployment automation
+|   |-- benchmark_and_export.py             # Automated empirical benchmarking and CSV/XLSX export for papers
+|   |-- deploy_ec2.sh                       # 1-command AWS EC2 deployment & benchmark automation
 |   |-- deploy_raspberry_pi.sh              # 1-command Raspberry Pi edge deployment automation
 |   |-- mine-sec-agent.service              # Systemd unit for Pi edge sniffer daemon
 |   |-- mine-sec-api.service                # Systemd unit for EC2 Python inference service
