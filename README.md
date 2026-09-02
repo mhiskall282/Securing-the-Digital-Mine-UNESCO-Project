@@ -98,6 +98,22 @@ This repository provides complete, formal academic and engineering documentation
 | Model Size | 1.86MB | **0.82MB** |
 | Edge Deployment Verdict | FAIL (over 100ms) | **PASS** |
 
+### Multi-Platform Edge & Cloud Empirical Benchmarks (Table 5)
+
+| Hardware Platform | Quantization | Mean Latency | P95 Latency | Throughput | Peak RAM | Verdict (<100ms SCADA Limit) |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Raspberry Pi 4B (1GB RAM)** | TFLite Float16 | 0.76 ms | 1.10 ms | 1,315 req/s | 290.31 MB | **PASS** (131x safety margin) |
+| **Raspberry Pi 5 (4GB RAM)** | TFLite Float16 | 0.42 ms | 0.68 ms | 2,380 req/s | 295.10 MB | **PASS** (238x safety margin) |
+| **AWS EC2 Cloud (`t3.medium`)** | TFLite Float16 | **1.57 ms** | **1.71 ms** | **617.13 req/s** | **18.10 MB** | **PASS** (63.5x safety margin) |
+
+> Empirical deployment artifacts from the live AWS EC2 instance are exported to `research/reports/`:
+> - [`ec2_benchmark_complete_results.xlsx`](research/reports/ec2_benchmark_complete_results.xlsx) (Formatted 6-sheet Excel workbook)
+> - [`ec2_benchmark_reports.zip`](research/reports/ec2_benchmark_reports.zip) (All-in-one ZIP archive)
+> - [`ec2_benchmark_detailed_inferences.csv`](research/reports/ec2_benchmark_detailed_inferences.csv) (Sample-by-sample log)
+> - [`ec2_benchmark_summary.csv`](research/reports/ec2_benchmark_summary.csv) (Latency percentiles & throughput)
+> - [`ec2_benchmark_paper_tables.md`](research/reports/ec2_benchmark_paper_tables.md) (Markdown tables)
+> - [`ec2_benchmark_tables.tex`](research/reports/ec2_benchmark_tables.tex) (LaTeX tables)
+
 ### Per-Class Performance (BWOA Optimized, KDDTest+)
 
 | Attack Class | Precision | Recall | F1 | Notes |

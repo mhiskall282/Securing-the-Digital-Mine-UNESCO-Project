@@ -396,7 +396,7 @@ def create_full_research_paper():
         [
             ["Raspberry Pi 4B (1GB RAM)", "TFLite Float16", "0.76 ms", "1.10 ms", "290.31 MB", "2.5 W", "PASS (< 100ms)"],
             ["Raspberry Pi 5 (4GB RAM)", "TFLite Float16", "0.42 ms", "0.68 ms", "295.10 MB", "3.8 W", "PASS (< 100ms)"],
-            ["AWS EC2 (t3.medium Ubuntu)", "TFLite Float16", "0.18 ms", "0.31 ms", "180.20 MB", "Cloud Managed", "PASS (< 100ms)"]
+            ["AWS EC2 Cloud Node (t3.medium)", "TFLite Float16", "1.57 ms", "1.71 ms", "18.10 MB", "Cloud Managed (617 req/s)", "PASS (< 100ms)"]
         ],
         col_widths=[1.8, 1.1, 0.9, 0.9, 0.9, 0.9, 1.0]
     )

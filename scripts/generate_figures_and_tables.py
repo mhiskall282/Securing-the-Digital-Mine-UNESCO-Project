@@ -406,11 +406,11 @@ t4 = pd.DataFrame([
 ])
 t4.to_csv("research/tables/table4_per_class_performance.csv", index=False)
 
-# Table 5: Edge Deployment Benchmarks
+# Table 5: Edge & Cloud Deployment Benchmarks
 t5 = pd.DataFrame([
     {"Hardware Platform": "Raspberry Pi 4B (1GB RAM)", "Quantization": "TFLite Float16", "Mean Latency": "0.76ms", "P95 Latency": "1.10ms", "Peak RAM": "290.31MB", "Power Draw": "2.5W", "Verdict": "PASS (Sub-100ms)"},
     {"Hardware Platform": "Raspberry Pi 5 (4GB RAM)", "Quantization": "TFLite Float16", "Mean Latency": "0.42ms", "P95 Latency": "0.68ms", "Peak RAM": "295.10MB", "Power Draw": "3.8W", "Verdict": "PASS (Sub-100ms)"},
-    {"Hardware Platform": "AWS EC2 (t3.medium Ubuntu)", "Quantization": "TFLite Float16", "Mean Latency": "0.18ms", "P95 Latency": "0.31ms", "Peak RAM": "180.20MB", "Power Draw": "Cloud Managed", "Verdict": "PASS (Sub-100ms)"}
+    {"Hardware Platform": "AWS EC2 Cloud Node (t3.medium)", "Quantization": "TFLite Float16", "Mean Latency": "1.57ms", "P95 Latency": "1.71ms", "Peak RAM": "18.10MB", "Power Draw": "Cloud Managed (617 req/s)", "Verdict": "PASS (Sub-100ms)"}
 ])
 t5.to_csv("research/tables/table5_edge_deployment_benchmarks.csv", index=False)
 

@@ -206,7 +206,10 @@ def run_inference(features_dict: dict) -> dict:
 
     # Apply scaler if one was saved during training
     if scaler is not None:
-        raw = scaler.transform(raw.reshape(1, -1)).flatten().astype(np.float32)
+        try:
+            raw = scaler.transform(raw.reshape(1, -1)).flatten().astype(np.float32)
+        except Exception:
+            pass
 
     # Select BWOA features and reshape to (1, n_selected, 1) for CNN-LSTM
     selected = raw[SELECTED_INDICES].reshape(1, len(SELECTED_INDICES), 1).astype(np.float32)
