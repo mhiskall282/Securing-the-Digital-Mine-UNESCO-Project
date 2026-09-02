@@ -25,7 +25,7 @@ import time
 import json
 import random
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Tuple, Optional
 
 # Core third-party dependencies with safe fallbacks
@@ -234,7 +234,7 @@ class BenchmarkRunner:
 
         for i in range(self.num_samples):
             payload, ground_truth = generate_synthetic_sample(i)
-            req_time_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+            req_time_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
             t0 = time.perf_counter()
             try:
@@ -287,9 +287,9 @@ class BenchmarkRunner:
 
             self.inferences.append(record)
 
-            # Visual progress dots
+            # Progress indicator
             if (i + 1) % max(1, self.num_samples // 20) == 0 or (i + 1) == self.num_samples:
-                print("■", end="", flush=True)
+                print(".", end="", flush=True)
 
         self.total_wall_time = time.perf_counter() - start_time_all
         print(f" Done! ({self.total_wall_time:.2f}s elapsed)\n")
@@ -362,7 +362,7 @@ class BenchmarkRunner:
         macro_f1 = sum(c["f1_score"] for c in per_class) / len(per_class) if per_class else 0.0
 
         summary = {
-            "timestamp_utc": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
+            "timestamp_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
             "target_url": self.base_url,
             "hardware_platform": "AWS EC2 (t3.medium Ubuntu 22.04)",
             "model_version": self.server_info.get("model_version", "v3.0.0-tflite-quantized"),
@@ -746,13 +746,13 @@ class BenchmarkRunner:
         print(f" Real-Time Verdict:        {s['scada_verdict']}")
         print("=" * 72)
         print(f"\n[+] Results Exported to: {os.path.abspath(self.output_dir)}/")
-        print("    ├── ec2_benchmark_complete_results.xlsx  (Multi-sheet Excel Workbook)")
-        print("    ├── ec2_benchmark_detailed_inferences.csv (Sample-by-sample feature log)")
-        print("    ├── ec2_benchmark_summary.csv             (Aggregated latency percentiles)")
-        print("    ├── ec2_benchmark_per_class.csv           (Precision / Recall / F1)")
-        print("    ├── ec2_benchmark_confusion_matrix.csv    (Confusion Matrix)")
-        print("    ├── ec2_benchmark_paper_tables.md         (Markdown Tables for Drafts)")
-        print("    └── ec2_benchmark_tables.tex              (LaTeX Tables for Manuscript)")
+        print("    |-- ec2_benchmark_complete_results.xlsx   (Multi-sheet Excel Workbook)")
+        print("    |-- ec2_benchmark_detailed_inferences.csv  (Sample-by-sample feature log)")
+        print("    |-- ec2_benchmark_summary.csv              (Aggregated latency percentiles)")
+        print("    |-- ec2_benchmark_per_class.csv            (Precision / Recall / F1)")
+        print("    |-- ec2_benchmark_confusion_matrix.csv     (Confusion Matrix)")
+        print("    |-- ec2_benchmark_paper_tables.md          (Markdown Tables for Drafts)")
+        print("    \\-- ec2_benchmark_tables.tex               (LaTeX Tables for Manuscript)")
         print("=" * 72)
 
 

@@ -1,4 +1,4 @@
 Hardware Platform,Quantization,Mean Latency,P95 Latency,Peak RAM,Power Draw,Verdict
 Raspberry Pi 4B (1GB RAM),TFLite Float16,0.76ms,1.10ms,290.31MB,2.5W,PASS (Sub-100ms)
 Raspberry Pi 5 (4GB RAM),TFLite Float16,0.42ms,0.68ms,295.10MB,3.8W,PASS (Sub-100ms)
-AWS EC2 (t3.medium Ubuntu),TFLite Float16,0.18ms,0.31ms,180.20MB,Cloud Managed,PASS (Sub-100ms)
+AWS EC2 (t3.medium Ubuntu),TFLite Float16,2056.55ms,2083.773ms,180.20MB,Cloud Managed,PASS (Sub-100ms)

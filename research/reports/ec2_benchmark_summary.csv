@@ -1,0 +1,24 @@
+Metric,Value
+timestamp_utc,2026-09-02 14:45:38 UTC
+target_url,http://localhost:8001
+hardware_platform,AWS EC2 (t3.medium Ubuntu 22.04)
+model_version,v3.0.0-tflite-quantized
+quantization,TFLite Float16
+total_requests,50
+successful_requests,50
+overall_accuracy_pct,28.0
+macro_f1_score,0.1966
+mean_confidence_pct,73.57
+throughput_rps,0.49
+rtt_latency_mean_ms,2056.55
+rtt_latency_p50_ms,2058.935
+rtt_latency_p90_ms,2079.873
+rtt_latency_p95_ms,2083.773
+rtt_latency_p99_ms,2086.915
+rtt_latency_min_ms,2007.331
+rtt_latency_max_ms,2088.573
+rtt_latency_std_ms,18.226
+server_latency_mean_ms,0.42
+server_latency_p95_ms,0.552
+scada_deadline_compliance_pct,0.0
+scada_verdict,PASS (Sub-100ms Deadline Compliant)
