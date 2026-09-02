@@ -43,9 +43,9 @@ SCALER_PATH = os.environ.get(
 )
 
 # ---------------------------------------------------------------------------
-# Class labels matching the model output order
+# Class labels matching the trained model output order (alphabetical)
 # ---------------------------------------------------------------------------
-CLASS_LABELS = ["Normal", "DoS", "Probe", "R2L", "U2R"]
+CLASS_LABELS = ["DoS", "Normal", "Probe", "R2L", "U2R"]
 
 # ---------------------------------------------------------------------------
 # All 41 NSL-KDD feature names in the canonical column order
@@ -78,6 +78,7 @@ SELECTED_INDICES = [ALL_FEATURES.index(f) for f in SELECTED_FEATURES]
 INTERPRETER = None
 SCALER = None
 FEATURE_MASK = None
+LABEL_ENCODERS = None
 
 
 def _load_interpreter():
@@ -111,31 +112,71 @@ def _load_scaler():
     return None
 
 
+def _load_label_encoders():
+    """Load fitted LabelEncoders for protocol, flag, service."""
+    global LABEL_ENCODERS
+    if LABEL_ENCODERS is None:
+        le_path = os.environ.get(
+            "LABEL_ENCODER_PATH",
+            os.path.join(os.path.dirname(__file__), "../data/processed/label_encoder.pkl")
+        )
+        if os.path.exists(le_path):
+            import pickle
+            try:
+                with open(le_path, "rb") as fh:
+                    LABEL_ENCODERS = pickle.load(fh)
+            except Exception:
+                pass
+    return LABEL_ENCODERS
+
+
 def _get_model():
     """Return (interpreter, scaler, feature_mask), initializing on first call."""
     global INTERPRETER, SCALER, FEATURE_MASK
     if INTERPRETER is None:
         INTERPRETER = _load_interpreter()
         SCALER = _load_scaler()
+        _load_label_encoders()
         mask_path = os.path.abspath(FEATURE_MASK_PATH)
         if os.path.exists(mask_path):
             FEATURE_MASK = np.load(mask_path)
     return INTERPRETER, SCALER, FEATURE_MASK
 
 
-PROTOCOL_MAP = {"tcp": 1.0, "udp": 2.0, "icmp": 3.0}
-FLAG_MAP = {"SF": 10.0, "S0": 1.0, "REJ": 2.0, "RSTO": 3.0, "RSTR": 4.0, "SH": 5.0, "S1": 6.0, "S2": 7.0, "OTH": 9.0}
-SERVICE_MAP = {"http": 21.0, "smtp": 22.0, "finger": 23.0, "ftp": 24.0, "ftp_data": 25.0, "private": 50.0, "telnet": 20.0, "eco_i": 60.0, "ecr_i": 61.0}
+# Canonical dictionary maps matching data/processed/label_encoder.pkl
+PROTOCOL_MAP = {"icmp": 0.0, "tcp": 1.0, "udp": 2.0}
+FLAG_MAP = {
+    "OTH": 0.0, "REJ": 1.0, "RSTO": 2.0, "RSTOS0": 3.0, "RSTR": 4.0,
+    "S0": 5.0, "S1": 6.0, "S2": 7.0, "S3": 8.0, "SF": 9.0, "SH": 10.0
+}
+SERVICE_MAP = {
+    "eco_i": 13.0, "ecr_i": 14.0, "finger": 17.0, "ftp": 18.0, "ftp_data": 19.0,
+    "http": 22.0, "other": 41.0, "private": 45.0, "smtp": 49.0, "telnet": 55.0
+}
 
 def _to_float(val, feature_name: str) -> float:
     if isinstance(val, (int, float)):
         return float(val)
     if isinstance(val, str):
-        val_lower = val.strip().lower()
+        val_str = val.strip()
+        val_lower = val_str.lower()
+        val_upper = val_str.upper()
+
+        # Dynamic label encoder transformation
+        le_dict = _load_label_encoders()
+        if le_dict and feature_name in le_dict:
+            try:
+                classes = list(le_dict[feature_name].classes_)
+                for i, c in enumerate(classes):
+                    if c.lower() == val_lower:
+                        return float(i)
+            except Exception:
+                pass
+
         if feature_name == "protocol_type" and val_lower in PROTOCOL_MAP:
             return PROTOCOL_MAP[val_lower]
-        if feature_name == "flag" and val.strip().upper() in FLAG_MAP:
-            return FLAG_MAP[val.strip().upper()]
+        if feature_name == "flag" and val_upper in FLAG_MAP:
+            return FLAG_MAP[val_upper]
         if feature_name == "service" and val_lower in SERVICE_MAP:
             return SERVICE_MAP[val_lower]
         try:
