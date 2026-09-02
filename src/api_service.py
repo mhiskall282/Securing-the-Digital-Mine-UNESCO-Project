@@ -212,12 +212,143 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
     # GET endpoints
     # ------------------------------------------------------------------
     def do_GET(self):
-        if self.path in ("/api/health", "/api/status", "/api/external/status", "/"):
+        path_clean = self.path.split("?")[0]
+        if path_clean in ("/api/health", "/api/status", "/api/external/status", "/"):
             self._handle_health()
-        elif self.path in ("/api/features", "/api/external/features"):
+        elif path_clean in ("/api/features", "/api/external/features"):
             self._handle_features()
+        elif path_clean in ("/api/analyze", "/api/external/analyze"):
+            self._handle_analyze_info()
+        elif path_clean.startswith("/api/export/"):
+            self._handle_export(path_clean)
         else:
             self._send_json({"error": "Not found"}, status=404)
+
+    def _handle_analyze_info(self):
+        """Provide informative guidance when /api/analyze is accessed via GET."""
+        response = {
+            "endpoint": "/api/analyze",
+            "method": "POST",
+            "status": "ready",
+            "description": "Send a JSON object with network flow features to obtain real-time TFLite intrusion classification.",
+            "selected_features": SELECTED_FEATURES,
+            "example_curl": (
+                "curl -X POST http://localhost/api/analyze "
+                "-H 'Content-Type: application/json' "
+                "-d '{\"protocol_type\": \"tcp\", \"service\": \"http\", \"flag\": \"SF\", \"src_bytes\": 1024, \"serror_rate\": 0.85, \"same_srv_rate\": 0.15}'"
+            ),
+            "sample_payload": {
+                "protocol_type": "tcp",
+                "service": "http",
+                "flag": "SF",
+                "src_bytes": 1024,
+                "hot": 0,
+                "su_attempted": 0,
+                "serror_rate": 0.85,
+                "same_srv_rate": 0.15,
+                "diff_srv_rate": 0.0,
+                "dst_host_diff_srv_rate": 0.0
+            }
+        }
+        self._send_json(response, status=200)
+
+    def _handle_export(self, path: str):
+        """Serve generated benchmark files (CSV, XLSX, MD, JSON)."""
+        filename = path.replace("/api/export/", "").strip()
+
+        report_dirs = [
+            os.path.join(os.path.dirname(__file__), "../research/reports"),
+            "/opt/unesco-project/research/reports",
+            os.path.join(os.getcwd(), "research/reports"),
+        ]
+
+        target_file = None
+        for r_dir in report_dirs:
+            if filename in ("results.xlsx", "benchmark.xlsx", "ec2_benchmark_complete_results.xlsx"):
+                cand = os.path.join(r_dir, "ec2_benchmark_complete_results.xlsx")
+                if os.path.exists(cand):
+                    target_file = (cand, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ec2_benchmark_complete_results.xlsx")
+                    break
+            elif filename in ("results.csv", "benchmark.csv", "inferences.csv", "ec2_benchmark_detailed_inferences.csv"):
+                cand = os.path.join(r_dir, "ec2_benchmark_detailed_inferences.csv")
+                if os.path.exists(cand):
+                    target_file = (cand, "text/csv", "ec2_benchmark_detailed_inferences.csv")
+                    break
+            elif filename in ("summary.csv", "ec2_benchmark_summary.csv"):
+                cand = os.path.join(r_dir, "ec2_benchmark_summary.csv")
+                if os.path.exists(cand):
+                    target_file = (cand, "text/csv", "ec2_benchmark_summary.csv")
+                    break
+            elif filename in ("per_class.csv", "ec2_benchmark_per_class.csv"):
+                cand = os.path.join(r_dir, "ec2_benchmark_per_class.csv")
+                if os.path.exists(cand):
+                    target_file = (cand, "text/csv", "ec2_benchmark_per_class.csv")
+                    break
+            elif filename in ("report.md", "tables.md", "ec2_benchmark_paper_tables.md"):
+                cand = os.path.join(r_dir, "ec2_benchmark_paper_tables.md")
+                if os.path.exists(cand):
+                    target_file = (cand, "text/markdown; charset=utf-8", "ec2_benchmark_paper_tables.md")
+                    break
+            elif filename in ("tables.tex", "ec2_benchmark_tables.tex"):
+                cand = os.path.join(r_dir, "ec2_benchmark_tables.tex")
+                if os.path.exists(cand):
+                    target_file = (cand, "application/x-tex; charset=utf-8", "ec2_benchmark_tables.tex")
+                    break
+
+        if target_file and os.path.exists(target_file[0]):
+            filepath, mime_type, download_name = target_file
+            try:
+                with open(filepath, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", mime_type)
+                self.send_header("Content-Length", str(len(content)))
+                self.send_header("Content-Disposition", f'attachment; filename="{download_name}"')
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            except Exception as e:
+                self._send_json({"error": f"Failed to read file: {e}"}, status=500)
+                return
+
+        # If summary was requested as JSON
+        if filename in ("summary", "summary.json"):
+            for r_dir in report_dirs:
+                sum_csv = os.path.join(r_dir, "ec2_benchmark_summary.csv")
+                if os.path.exists(sum_csv):
+                    import csv
+                    data = {}
+                    with open(sum_csv, "r", encoding="utf-8") as f:
+                        reader = csv.reader(f)
+                        next(reader, None)
+                        for row in reader:
+                            if len(row) >= 2:
+                                data[row[0]] = row[1]
+                    self._send_json(data, status=200)
+                    return
+
+        # List available exports if requested file is not found
+        available = []
+        for r_dir in report_dirs:
+            if os.path.exists(r_dir):
+                available = os.listdir(r_dir)
+                break
+
+        self._send_json({
+            "error": f"File '{filename}' not found.",
+            "message": "Run 'python scripts/benchmark_and_export.py' to generate the reports first.",
+            "available_reports": available,
+            "export_endpoints": [
+                "/api/export/results.xlsx",
+                "/api/export/results.csv",
+                "/api/export/summary.csv",
+                "/api/export/per_class.csv",
+                "/api/export/report.md",
+                "/api/export/tables.tex",
+                "/api/export/summary"
+            ]
+        }, status=404)
 
     def _handle_health(self):
         """Return service liveness and model version."""
@@ -285,6 +416,7 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         self.wfile.write(body)
 

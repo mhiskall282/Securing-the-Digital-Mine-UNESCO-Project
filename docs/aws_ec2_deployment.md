@@ -282,3 +282,58 @@ Reload Nginx after editing:
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
+---
+
+## 12. Empirical Benchmarking & Academic Results Export (CSV / XLSX)
+
+This framework includes an automated benchmarking and evaluation tool designed specifically to collect empirical performance measurements from the live AWS EC2 deployment and export publication-ready datasets and tables for research papers.
+
+### 12.1 Running the Benchmark On-Demand
+
+#### Option A: Running directly on the AWS EC2 Instance
+```bash
+cd /opt/unesco-project
+source venv/bin/activate
+
+# Run evaluation with 100 test samples (default)
+python3 scripts/benchmark_and_export.py --url http://127.0.0.1:8001 --samples 100
+
+# High-throughput stress test (e.g., 500 samples)
+python3 scripts/benchmark_and_export.py --url http://127.0.0.1:8001 --samples 500
+```
+
+#### Option B: Running Remotely from your Local Laptop against AWS EC2
+You do not need SSH to benchmark. From your local development machine:
+```bash
+# Point directly to your EC2 Public IP (e.g., 51.21.219.29)
+python scripts/benchmark_and_export.py --url http://51.21.219.29 --samples 100
+```
+
+### 12.2 Instant Download via Web Browser or Curl
+
+The FastAPI service exposes direct download endpoints so researchers can download the latest generated reports immediately:
+
+| Export Artifact | Browser / Curl Download URL | Format / Description |
+| :--- | :--- | :--- |
+| **Excel Workbook** | `http://<EC2-IP>/api/export/results.xlsx` | Multi-sheet styled Excel workbook with executive summary, latency percentiles, confusion matrix, and inference logs. |
+| **Detailed Inferences** | `http://<EC2-IP>/api/export/results.csv` | Sample-by-sample raw feature values, predicted class, confidence (%), latency (ms), and verdicts. |
+| **Summary Metrics** | `http://<EC2-IP>/api/export/summary.csv` | Aggregated latency percentiles (Mean, P50, P90, P95, P99) and throughput. |
+| **Per-Class Metrics** | `http://<EC2-IP>/api/export/per_class.csv` | Precision, Recall, and F1-score for Normal, DoS, Probe, R2L, and U2R. |
+| **Paper Tables (Markdown)** | `http://<EC2-IP>/api/export/report.md` | Pre-formatted Markdown tables ready to copy-paste into project deliverables. |
+| **LaTeX Table Snippets** | `http://<EC2-IP>/api/export/tables.tex` | IEEE/Springer `\begin{table}` snippets ready to insert into LaTeX manuscripts. |
+| **JSON Summary API** | `http://<EC2-IP>/api/export/summary` | REST JSON object of summary metrics for dashboard or automated parsers. |
+
+#### Command-Line Download Example:
+```bash
+# Download the complete Excel report directly to your current folder
+curl -O http://51.21.219.29/api/export/results.xlsx
+
+# Download the detailed CSV results
+curl -O http://51.21.219.29/api/export/results.csv
+```
+
+#### Secure File Copy (SCP) Alternative:
+```bash
+scp -i your-ec2-key.pem ubuntu@51.21.219.29:/opt/unesco-project/research/reports/ec2_benchmark_complete_results.xlsx ./
+```
+
