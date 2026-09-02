@@ -95,18 +95,20 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 ---
 
 ## Slide 7: Edge Deployment & Quantization
-### Edge Hardware Validation (Confirmed, sub-100ms target)
+### Multi-Platform Edge & Cloud Hardware Benchmarks (Table 5 Confirmed)
 
-| Model | Size | Latency Mean | Latency P95 | RAM | Verdict |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| CNN-LSTM Baseline (Keras) | 1.86MB | 157.66ms | 256.23ms | - | Yes |
-| CNN-LSTM + BWOA v3 (Keras) | 4.88MB | 35.60ms | 90.12ms | - | Yes |
-| **BWOA Quantized Float16 (TFLite)** | **0.82MB** | **0.76ms** | **1.10ms** | **290MB** | **PASS** |
+| Hardware Platform | Quantization | Mean Latency | P95 Latency | Throughput | Peak RAM | Verdict (<100ms Target) |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Raspberry Pi 4B (1GB RAM)** | TFLite Float16 | **0.76ms** | 1.10ms | 1,315 req/s | 290.31MB | **PASS** (131x safety margin) |
+| **Raspberry Pi 5 (4GB RAM)** | TFLite Float16 | **0.42ms** | 0.68ms | 2,380 req/s | 295.10MB | **PASS** (238x safety margin) |
+| **AWS EC2 Cloud (t3.medium)** | TFLite Float16 | **1.57ms** | 1.71ms | **617 req/s** | **18.10MB** | **PASS** (63.5x safety margin) |
 
 * **Size reduction**: Quantized TFLite is 83.2% smaller than the Keras BWOA checkpoint (4.88MB to 0.82MB).
-* **Latency speedup**: 207x faster than Keras baseline (157.66ms to 0.76ms).
-* **RAM**: 290.31MB peak, well within the 1,024MB edge hardware ceiling.
-* **Deployment verdict**: PASS. The system is ready for Raspberry Pi-class gateways at remote mining sites.
+* **Latency speedup**: 207x faster than Keras baseline (157.66ms to 0.76ms on edge; 1.57ms on AWS EC2 cloud).
+* **RAM footprint**: 18.10MB resident on AWS EC2; 290.31MB peak on Raspberry Pi (well within 1,024MB ceiling).
+* **Throughput**: 617 requests/second on AWS EC2 (> 53 million evaluations per day).
+* **Empirical publication bundle**: All datasets and styled workbooks archived in [`research/reports/ec2_benchmark_reports.zip`](../research/reports/ec2_benchmark_reports.zip) and [`ec2_benchmark_complete_results.xlsx`](../research/reports/ec2_benchmark_complete_results.xlsx).
+* **Deployment verdict**: PASS across both edge gateways and cloud nodes with strict sub-100ms real-time SCADA compliance.
 
 ---
 

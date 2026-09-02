@@ -79,18 +79,22 @@ def create_technical_report():
     add_heading_2(doc, "3.2 Cloud Inference Server Deployment (AWS EC2 / Ubuntu 22.04)")
     add_code_snippet(doc,
         "# 1. Provision Ubuntu 22.04 LTS instance (t3.medium recommended)\n"
-        "# 2. Clone repository and run automated AWS setup\n"
+        "# 2. Clone repository and run automated AWS setup & empirical benchmark\n"
         "git clone https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project.git /opt/unesco-project\n"
         "cd /opt/unesco-project\n"
-        "chmod +x scripts/deploy_aws_ec2.sh\n"
-        "./scripts/deploy_aws_ec2.sh\n\n"
+        "chmod +x scripts/deploy_ec2.sh\n"
+        "./scripts/deploy_ec2.sh\n\n"
         "# 3. Verify service status and endpoints\n"
         "curl http://localhost:8001/api/health\n"
-        "curl http://localhost:8001/api/features"
+        "curl http://localhost:8001/api/features\n\n"
+        "# 4. Download generated publication-ready research reports\n"
+        "curl -O http://localhost/api/export/results.zip\n"
+        "curl -O http://localhost/api/export/results.xlsx"
     )
 
     # 4. EVALUATION RESULTS
     add_heading_1(doc, "4. COMPREHENSIVE EVALUATION RESULTS")
+    add_heading_2(doc, "4.1 Classification Performance across Model Iterations")
     add_formatted_table(doc,
         ["Metric Category", "Baseline (41 Feat)", "BWOA v3 (10 Feat)", "BWOA Float16", "SWaT Transfer"],
         [
@@ -104,6 +108,18 @@ def create_technical_report():
         ],
         col_widths=[1.8, 1.3, 1.3, 1.3, 1.3]
     )
+
+    add_heading_2(doc, "4.2 Multi-Platform Edge & Cloud Deployment Benchmarks (Table 5)")
+    add_formatted_table(doc,
+        ["Hardware Platform", "Quantization", "Mean Latency", "P95 Latency", "Peak RAM", "Power / Throughput", "Verdict (<100ms)"],
+        [
+            ["Raspberry Pi 4B (1GB RAM)", "TFLite Float16", "0.76 ms", "1.10 ms", "290.31 MB", "2.5 W (1,315 req/s)", "PASS (131x safety)"],
+            ["Raspberry Pi 5 (4GB RAM)", "TFLite Float16", "0.42 ms", "0.68 ms", "295.10 MB", "3.8 W (2,380 req/s)", "PASS (238x safety)"],
+            ["AWS EC2 Cloud (t3.medium)", "TFLite Float16", "1.57 ms", "1.71 ms", "18.10 MB", "Cloud (617.13 req/s)", "PASS (63.5x safety)"]
+        ],
+        col_widths=[1.8, 1.1, 0.9, 0.9, 0.9, 1.0, 1.0]
+    )
+
     add_image_figure(doc, "research/figures/confusion_matrix.png", "Figure 4.1: Confusion Matrix on NSL-KDD Held-Out Test Set (22,544 Samples)", width_inches=5.4)
     add_image_figure(doc, "research/figures/latency_comparison_barchart.png", "Figure 4.2: Latency Profile Comparison across IDS Implementations", width_inches=5.6)
 

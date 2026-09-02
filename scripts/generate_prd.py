@@ -103,7 +103,8 @@ def create_prd():
             ["NFR-04", "Power Efficiency", "< 3.0 Watts continuous power draw", "Measured at 2.5 Watts under continuous load, solar/battery ready (PASS)"],
             ["NFR-05", "Classification Accuracy", "> 70.0% multi-class accuracy on KDDTest+", "Achieved 70.56% accuracy and 0.7127 Macro F1 on 22,544 samples (PASS)"],
             ["NFR-06", "Benign Precision", "> 95.0% precision on normal mining traffic", "Achieved 96.89% precision, preventing false operational shutdowns (PASS)"],
-            ["NFR-07", "DoS Attack Recall", "> 85.0% recall on volumetric attack streams", "Achieved 89.04% recall on DoS intrusions (PASS)"]
+            ["NFR-07", "DoS Attack Recall", "> 85.0% recall on volumetric attack streams", "Achieved 89.04% recall on DoS intrusions (PASS)"],
+            ["NFR-08", "Cloud Scalability & Throughput", "> 500 req/s throughput on AWS EC2", "Benchmarked at 617.13 req/s, 1.57 ms mean latency on AWS EC2 (PASS)"]
         ],
         col_widths=[1.0, 1.4, 2.3, 1.8]
     )
@@ -114,7 +115,7 @@ def create_prd():
         ["Phase", "Milestone Name", "Timeline", "Core Deliverables & KPIs"],
         [
             ["Phase 1", "Algorithm Design & Benchmark Validation", "Months 1 - 3", "BWOA optimization, CNN-LSTM training, 75 unit test suite, Float16 quantization. Target: >70% accuracy, <1ms latency (COMPLETED)."],
-            ["Phase 2", "Edge Packaging & Pilot Benchmarking", "Months 4 - 6", "NPM package (@mhiskall282/unesco-mine-sec-cli), SWaT transfer learning, Raspberry Pi deploy scripts, UNESCO Forum presentation."],
+            ["Phase 2", "Edge & Cloud Deployment & Empirical Benchmarking", "Months 4 - 6", "NPM package (@mhiskall282/unesco-mine-sec-cli), SWaT transfer learning, Raspberry Pi & AWS EC2 1-command deployers, live cloud empirical benchmarking (617 req/s, 1.57ms latency) and publication data export (COMPLETED)."],
             ["Phase 3", "On-Site Field Validation & Multi-Mine Rollout", "Months 7 - 12", "Live SCADA capture at Gold Fields Tarkwa, federated multi-concession learning, automated Minerals Commission ESG audit reporting."]
         ],
         col_widths=[1.0, 1.8, 1.2, 2.5]

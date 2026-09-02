@@ -81,7 +81,7 @@ def create_srs():
     add_heading_2(doc, "3.1 External Interface Requirements")
     add_body(doc, "The software provides three distinct external interfaces:", bold_prefix="Interface Scope: ")
     add_bullet(doc, "CLI Telemetry Interface: Interactive command-line interface with Inquirer.js wizards for adapter selection, API endpoint configuration, and live Chalk-colorized flow streaming.")
-    add_bullet(doc, "REST API Endpoints: FastAPI microservice exposing GET /api/health, GET /api/features, and POST /api/analyze for JSON payload ingestion.")
+    add_bullet(doc, "REST API Endpoints: FastAPI microservice exposing GET /api/health, GET /api/features, and POST /api/analyze for JSON payload ingestion, alongside GET /api/export/results.zip, results.xlsx, and results.csv for instant research publication report downloads.")
     add_bullet(doc, "Livewire SaaS Portal: Responsive multi-tenant web console broadcasting real-time attack alerts, confidence scores, and historical forensic logs.")
 
     add_heading_2(doc, "3.2 Detailed Functional Requirements (IEEE 830 Standard)")
@@ -92,7 +92,8 @@ def create_srs():
             ["SRS-FR-102", "BWOA Pruner", "Applies pre-computed 10-feature mask: [src_bytes, service, flag, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate, protocol_type, hot, su_attempted].", "Unit test test_bwoa.py passing"],
             ["SRS-FR-103", "Neural Inference", "Executes Float16 TFLite interpreter, evaluates Conv1D spatial filters and LSTM temporal cells, returns Softmax probability distribution.", "Unit test test_cnn_lstm.py passing"],
             ["SRS-FR-104", "Threat Thresholding", "Identifies winning class. If class != Normal, sets alert flag and identifies specific feature triggers (e.g. high_serror_rate).", "Integration validate_api.py passing"],
-            ["SRS-FR-105", "Audit Persistence", "Persists flow records, prediction outcomes, device tokens, and latency telemetry to PostgreSQL/SQLite database.", "Database migration passing"]
+            ["SRS-FR-105", "Audit Persistence", "Persists flow records, prediction outcomes, device tokens, and latency telemetry to PostgreSQL/SQLite database.", "Database migration passing"],
+            ["SRS-FR-106", "Academic Export", "Generates and serves multi-sheet Excel (.xlsx), CSV, Markdown, and LaTeX reports directly via /api/export endpoints.", "scripts/benchmark_and_export.py passing"]
         ],
         col_widths=[1.2, 1.8, 2.3, 1.2]
     )
@@ -113,6 +114,7 @@ def create_srs():
             ["Unit Testing", "python -m unittest discover -s tests -p 'test_*.py'", "75 unit tests across 9 test suites", "75/75 PASS (125.6s)"],
             ["API Validation", "python scripts/validate_api.py", "Health, Features, Analyze, 404 handler", "100% PASS"],
             ["AWS EC2 Deployment", "bash scripts/validate_ec2_deployment.sh", "Port checks, systemd daemons, dependencies", "STATUS: READY (0 errors)"],
+            ["Empirical Cloud Benchmark", "python scripts/benchmark_and_export.py", "100-packet stress test, <100ms deadline, XLSX/CSV export", "100% PASS (1.57ms, 617 req/s)"],
             ["Raspberry Pi Dry-Run", "bash scripts/validate_pi_deployment.sh", "ARM TFLite runtime, npm binary linkage", "STATUS: READY"],
             ["Documentation Integrity", "python scripts/verify_readme_links.py", "31 internal markdown hyperlinks", "31/31 PASS"]
         ],

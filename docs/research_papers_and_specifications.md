@@ -89,6 +89,22 @@ where $\alpha = 0.3$ (70% weight to error minimization), $|\vec{X}|$ is the sele
 * `research/tables/table2_per_class_metrics.csv` - Per-Class Precision, Recall, and F1 Metrics.
 * `research/tables/table3_bwoa_selected_features.csv` - Detailed Breakdown of the 10 Selected Features.
 * `research/tables/table4_edge_hardware_latency.csv` - Latency, RAM, and Power on Raspberry Pi 4B, Pi 5, and AWS EC2.
+* `research/tables/table5_edge_deployment_benchmarks.csv` - Live Edge & Cloud Deployment Benchmarks (Pi 4B, Pi 5, and AWS EC2).
 * `research/tables/table5_transfer_learning_swat.csv` - SWaT Transfer Learning Benchmark.
 * `research/tables/table6_economic_roi_breakdown.csv` - Financial Risk Mitigation & Downtime ROI.
 * `research/tables/table7_user_acceptance_testing.csv` - Quantitative Likert UAT Evaluation Scores.
+
+---
+
+## 📦 Empirical Publication-Ready Cloud Benchmark Reports (`research/reports/`)
+
+The following empirical benchmark artifacts were generated during live production stress-testing on the AWS EC2 `t3.medium` instance:
+
+* [`research/reports/ec2_benchmark_reports.zip`](../research/reports/ec2_benchmark_reports.zip) - Complete All-in-One archive containing all raw data, Excel workbooks, LaTeX snippets, and Markdown tables.
+* [`research/reports/ec2_benchmark_complete_results.xlsx`](../research/reports/ec2_benchmark_complete_results.xlsx) - Formatted 6-sheet Excel workbook with Executive Summary, Latency percentiles, Confusion Matrix, and Detailed Inference Logs.
+* [`research/reports/ec2_benchmark_detailed_inferences.csv`](../research/reports/ec2_benchmark_detailed_inferences.csv) - Sample-by-sample raw packet features, latency, confidence (%), and verdicts.
+* [`research/reports/ec2_benchmark_summary.csv`](../research/reports/ec2_benchmark_summary.csv) - Aggregated performance metrics (1.57 ms mean latency, 617.13 req/s throughput, 100% sub-100ms compliance).
+* [`research/reports/ec2_benchmark_per_class.csv`](../research/reports/ec2_benchmark_per_class.csv) - Precision, Recall, and F1 scores per attack category.
+* [`research/reports/ec2_benchmark_confusion_matrix.csv`](../research/reports/ec2_benchmark_confusion_matrix.csv) - Multi-class confusion matrix grid.
+* [`research/reports/ec2_benchmark_paper_tables.md`](../research/reports/ec2_benchmark_paper_tables.md) - Formatted Markdown tables ready for deliverable inclusion.
+* [`research/reports/ec2_benchmark_tables.tex`](../research/reports/ec2_benchmark_tables.tex) - LaTeX `\begin{table}` snippets for IEEE/Springer conference manuscripts.
