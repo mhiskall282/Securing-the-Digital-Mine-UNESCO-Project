@@ -8,7 +8,19 @@ import time
 import os
 from typing import Dict, Any, Tuple, Optional
 import numpy as np
-import tensorflow as tf
+
+# ---------------------------------------------------------------------------
+# TensorFlow is the full training/conversion runtime.  On edge deployments
+# only tflite_runtime is typically installed (and required.txt specifies it
+# for the Pi path).  Guard the import so this module can be imported \u2014 and
+# the infrastructure / readiness tests can run \u2014 without the full TF package.
+# ---------------------------------------------------------------------------
+try:
+    import tensorflow as tf
+    TF_AVAILABLE = True
+except ImportError:
+    tf = None  # type: ignore[assignment]
+    TF_AVAILABLE = False
 
 
 class EdgeBenchmark:
@@ -23,10 +35,10 @@ class EdgeBenchmark:
         """
         self.target_latency_ms: float = target_latency_ms
         self.max_ram_mb: float = max_ram_mb
-        self.model: Optional[tf.keras.Model] = None
+        self.model: Optional[Any] = None
         self.model_path: Optional[str] = None
 
-    def load_model(self, model_path: str) -> tf.keras.Model:
+    def load_model(self, model_path: str) -> Any:
         """Loads a saved Keras model from disk.
 
         Args:
@@ -34,7 +46,16 @@ class EdgeBenchmark:
 
         Returns:
             The loaded tf.keras.Model instance.
+
+        Raises:
+            RuntimeError: If TensorFlow is not installed in the current environment.
         """
+        if not TF_AVAILABLE:
+            raise RuntimeError(
+                "load_model() requires the full 'tensorflow' package, which is not installed. "
+                "On an edge deployment install 'tflite-runtime' and use the TFLite interpreter "
+                "path in api_service.py instead."
+            )
         self.model_path = model_path
         # Custom object mapping can go here if needed
         self.model = tf.keras.models.load_model(model_path)
@@ -44,7 +65,7 @@ class EdgeBenchmark:
         self,
         X_sample: np.ndarray,
         num_runs: int = 100,
-        model: Optional[tf.keras.Model] = None
+        model: Optional[Any] = None
     ) -> Dict[str, float]:
         """Profiles the mean, standard deviation, 95th, and 99th percentile inference latency.
 
@@ -55,7 +76,16 @@ class EdgeBenchmark:
 
         Returns:
             A dictionary containing latency statistics.
+
+        Raises:
+            RuntimeError: If TensorFlow is not installed in the current environment.
         """
+        if not TF_AVAILABLE:
+            raise RuntimeError(
+                "benchmark_latency() requires the full 'tensorflow' package which is not "
+                "installed. Use the TFLite interpreter path in api_service.py for edge latency "
+                "profiling."
+            )
         target_model = model if model is not None else self.model
         if target_model is None:
             raise ValueError("No model loaded for benchmarking. Call load_model() first.")
@@ -115,7 +145,7 @@ class EdgeBenchmark:
             "meets_ram_target": float(peak_mb < self.max_ram_mb)
         }
 
-    def quantize_model(self, model: tf.keras.Model, quantization_type: str = "float16") -> str:
+    def quantize_model(self, model: Any, quantization_type: str = "float16") -> str:
         """Converts the Keras model into a quantized TFLite model saved to models/ folder.
 
         Args:
@@ -124,7 +154,16 @@ class EdgeBenchmark:
 
         Returns:
             The filepath of the saved quantized TFLite model.
+
+        Raises:
+            RuntimeError: If TensorFlow is not installed in the current environment.
         """
+        if not TF_AVAILABLE:
+            raise RuntimeError(
+                "quantize_model() requires the full 'tensorflow' package which is not "
+                "installed. Run quantization in the Colab training environment where full "
+                "TensorFlow is available."
+            )
         os.makedirs("models/", exist_ok=True)
         converter = tf.lite.TFLiteConverter.from_keras_model(model)
         

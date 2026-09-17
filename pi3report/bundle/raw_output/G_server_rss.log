@@ -1,0 +1,4 @@
+=== [G] resident memory of server process (RSS) ===
+VmRSS:	   39340 kB
+    PID   RSS    VSZ CMD
+      7 39340 408112 python src/api_service.py

@@ -1,0 +1,54 @@
+
+[1/4] Probing API Health at: http://localhost:8001/api/health
+  [+] Status: healthy
+  [+] Model Version: v3.0.0-tflite-quantized
+  [+] Framework: TFLite Float16
+  [+] Model Ready: True
+  [+] BWOA Features (10): protocol_type, service, flag, src_bytes, hot, su_attempted, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate
+
+[2/4] Executing Benchmark (200 evaluation requests)...
+  Target: http://localhost:8001/api/analyze
+  Progress: .................... Done! (0.42s elapsed)
+
+[3/4] Exporting Reports & Datasets...
+  [+] Saved Detailed Inferences: /output/benchmark_export/ec2_benchmark_detailed_inferences.csv
+  [+] Saved Summary Metrics:     /output/benchmark_export/ec2_benchmark_summary.csv
+  [+] Saved Per-Class Metrics:   /output/benchmark_export/ec2_benchmark_per_class.csv
+  [+] Saved Confusion Matrix:    /output/benchmark_export/ec2_benchmark_confusion_matrix.csv
+  [+] Updated Paper Table 5:     research/tables/table5_edge_deployment_benchmarks.csv
+  [+] Saved Formatted Excel Workbook: /output/benchmark_export/ec2_benchmark_complete_results.xlsx
+  [+] Saved Markdown Tables:     /output/benchmark_export/ec2_benchmark_paper_tables.md
+  [+] Saved LaTeX Tables:        /output/benchmark_export/ec2_benchmark_tables.tex
+  [+] Saved All-in-One ZIP Archive: /output/benchmark_export/ec2_benchmark_reports.zip
+
+[4/4] Benchmark Completed Successfully!
+========================================================================
+ UNESCO Digital Mine - AWS EC2 Empirical Benchmark Summary
+========================================================================
+ Target Endpoint:          http://localhost:8001
+ Hardware Platform:        AWS EC2 (t3.medium Ubuntu 22.04)
+ Model Version:            v3.0.0-tflite-quantized (TFLite Float16)
+ Total Inferences:         200 samples
+ Overall Accuracy:         0.0% (Macro F1: 0.0)
+------------------------------------------------------------------------
+ Mean Network RTT Latency: 2.066 ms
+ P50 (Median) Latency:     1.979 ms
+ P95 Latency:              3.009 ms
+ P99 Latency:              3.447 ms
+ Server Inference Latency: 2.066 ms (raw TFLite runtime)
+ System Throughput:        475.82 requests/sec
+ SCADA Real-Time Margin:   100.0% compliant with <100ms deadline
+ Real-Time Verdict:        PASS (Sub-100ms Deadline Compliant)
+========================================================================
+
+[+] Results Exported to: /output/benchmark_export/
+    |-- ec2_benchmark_reports.zip              (ALL Reports Bundled in ONE ZIP)
+    |-- ec2_benchmark_complete_results.xlsx   (Multi-sheet Excel Workbook)
+    |-- ec2_benchmark_detailed_inferences.csv  (Sample-by-sample feature log)
+    |-- ec2_benchmark_summary.csv              (Aggregated latency percentiles)
+    |-- ec2_benchmark_per_class.csv            (Precision / Recall / F1)
+    |-- ec2_benchmark_confusion_matrix.csv     (Confusion Matrix)
+    |-- ec2_benchmark_paper_tables.md          (Markdown Tables for Drafts)
+    \-- ec2_benchmark_tables.tex               (LaTeX Tables for Manuscript)
+========================================================================
+exit code: 0

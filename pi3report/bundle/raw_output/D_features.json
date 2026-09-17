@@ -1,0 +1,2 @@
+=== [D] features ===
+{"selected_features": ["protocol_type", "service", "flag", "src_bytes", "hot", "su_attempted", "serror_rate", "same_srv_rate", "diff_srv_rate", "dst_host_diff_srv_rate"], "selected_indices": [1, 2, 3, 4, 9, 14, 24, 28, 29, 34], "n_selected": 10, "n_total": 41, "reduction_pct": 75.61}

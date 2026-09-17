@@ -1,0 +1,26 @@
+-rw-r--r--. 1 root root  1953568 Sep 16 13:30 models/best_cnn_lstm.h5
+-rw-r--r--. 1 root root  2046107 Sep 16 13:30 models/cnn_lstm_baseline_full.keras
+-rw-r--r--. 1 root root  1953511 Sep 16 13:30 models/cnn_lstm_baseline_v2.keras
+-rw-r--r--. 1 root root  1953511 Sep 16 13:30 models/cnn_lstm_baseline_v3.keras
+-rw-r--r--. 1 root root  1960900 Sep 16 13:30 models/cnn_lstm_bwoa_optimized.keras
+-rw-r--r--. 1 root root  1953546 Sep 16 13:30 models/cnn_lstm_bwoa_v2.keras
+-rw-r--r--. 1 root root  5113098 Sep 16 13:30 models/cnn_lstm_bwoa_v3.keras
+-rw-r--r--. 1 root root   861036 Sep 16 13:30 models/cnn_lstm_bwoa_v3_quantized.tflite
+-rw-r--r--. 1 root root  1960407 Sep 16 13:30 models/cnn_lstm_nslkdd_baseline.keras
+-rw-r--r--. 1 root root   861036 Sep 16 13:30 models/cnn_lstm_quantized_float16.tflite
+-rw-r--r--. 1 root root   334396 Sep 16 13:30 models/cnn_lstm_quantized_float16_v2.tflite
+-rw-r--r--. 1 root root   861036 Sep 16 13:30 models/cnn_lstm_quantized_float16_v3.tflite
+-rw-r--r--. 1 root root 11441550 Sep 16 13:30 models/cnn_lstm_v4_best.keras
+2.0M	models/cnn_lstm_baseline_full.keras
+1.9M	models/cnn_lstm_baseline_v2.keras
+1.9M	models/cnn_lstm_baseline_v3.keras
+1.9M	models/cnn_lstm_bwoa_optimized.keras
+1.9M	models/cnn_lstm_bwoa_v2.keras
+4.9M	models/cnn_lstm_bwoa_v3.keras
+1.9M	models/cnn_lstm_nslkdd_baseline.keras
+11M	models/cnn_lstm_v4_best.keras
+1.9M	models/best_cnn_lstm.h5
+844K	models/cnn_lstm_bwoa_v3_quantized.tflite
+844K	models/cnn_lstm_quantized_float16.tflite
+328K	models/cnn_lstm_quantized_float16_v2.tflite
+844K	models/cnn_lstm_quantized_float16_v3.tflite

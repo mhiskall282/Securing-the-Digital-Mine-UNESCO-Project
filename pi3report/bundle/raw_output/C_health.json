@@ -1,0 +1,2 @@
+=== [C] health check ===
+{"status": "healthy", "model_ready": true, "model_version": "v3.0.0-tflite-quantized", "framework": "TFLite Float16", "model_path": "/opt/unesco-project/models/cnn_lstm_quantized_float16_v3.tflite"}

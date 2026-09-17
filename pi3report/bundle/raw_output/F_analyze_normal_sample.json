@@ -1,0 +1,2 @@
+=== [F] analyze - documented normal-ish sample payload (string categoricals) ===
+{"error": "Inference error: <built-in method CreateWrapperFromFile of PyCapsule object at 0x7f9bd910ad00> returned a result with an exception set"}

@@ -1,0 +1,9 @@
+=== [H] malformed-input robustness checks ===
+-- no Content-Length / empty body --
+HTTP 400
+-- non-JSON body --
+{"error": "Invalid JSON body: Expecting value: line 1 column 1 (char 0)"}
+-- JSON array instead of object --
+{"error": "Request body must be a JSON object"}
+-- large payload (5MB) latency/behavior --
+HTTP 500 in 1.038506s

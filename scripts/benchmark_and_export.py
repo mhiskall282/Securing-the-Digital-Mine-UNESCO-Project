@@ -384,7 +384,18 @@ class BenchmarkRunner:
             "server_latency_mean_ms": round(srv_mean, 3),
             "server_latency_p95_ms": round(srv_p95, 3),
             "scada_deadline_compliance_pct": round(scada_pass_pct, 2),
-            "scada_verdict": "PASS (Sub-100ms Deadline Compliant)",
+            # Verdict gates on BOTH successful inference count AND latency compliance.
+            # A broken model or ABI mismatch produces successful_requests=0 with every
+            # request returning HTTP 500 in under 100ms — that must be a FAIL, not a PASS.
+            "scada_verdict": (
+                "PASS (Sub-100ms Deadline Compliant)"
+                if successful > 0 and round(scada_pass_pct, 2) == 100.0
+                else (
+                    f"FAIL – No successful inferences ({successful}/{total} requests succeeded)"
+                    if successful == 0
+                    else f"FAIL – Latency exceedances detected ({round(scada_pass_pct, 2)}% < 100ms)"
+                )
+            ),
         }
 
         return {
@@ -444,7 +455,7 @@ class BenchmarkRunner:
                 rows = [
                     {"Hardware Platform": "Raspberry Pi 4B (1GB RAM)", "Quantization": "TFLite Float16", "Mean Latency": "0.76ms", "P95 Latency": "1.10ms", "Peak RAM": "290.31MB", "Power Draw": "2.5W", "Verdict": "PASS (Sub-100ms)"},
                     {"Hardware Platform": "Raspberry Pi 5 (4GB RAM)", "Quantization": "TFLite Float16", "Mean Latency": "0.42ms", "P95 Latency": "0.68ms", "Peak RAM": "295.10MB", "Power Draw": "3.8W", "Verdict": "PASS (Sub-100ms)"},
-                    {"Hardware Platform": "AWS EC2 (t3.medium Ubuntu)", "Quantization": s["quantization"], "Mean Latency": f"{s['rtt_latency_mean_ms']}ms", "P95 Latency": f"{s['rtt_latency_p95_ms']}ms", "Peak RAM": "180.20MB", "Power Draw": "Cloud Managed", "Verdict": "PASS (Sub-100ms)"},
+                    {"Hardware Platform": "AWS EC2 (t3.medium Ubuntu)", "Quantization": s["quantization"], "Mean Latency": f"{s['rtt_latency_mean_ms']}ms", "P95 Latency": f"{s['rtt_latency_p95_ms']}ms", "Peak RAM": "180.20MB", "Power Draw": "Cloud Managed", "Verdict": s["scada_verdict"]},
                 ]
                 with open(t5_path, "w", newline="", encoding="utf-8") as f:
                     writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
@@ -715,7 +726,7 @@ class BenchmarkRunner:
             f.write("\\hline\n")
             f.write("\\textbf{Hardware Platform} & \\textbf{Framework} & \\textbf{Mean Latency} & \\textbf{P95 Latency} & \\textbf{Throughput} & \\textbf{Accuracy} & \\textbf{Verdict} \\\\\n")
             f.write("\\hline\n")
-            f.write(f"AWS EC2 (t3.medium) & {s['quantization']} & {s['rtt_latency_mean_ms']}~ms & {s['rtt_latency_p95_ms']}~ms & {s['throughput_rps']}~req/s & {s['overall_accuracy_pct']}\\% & PASS \\\\\n")
+            f.write(f"AWS EC2 (t3.medium) & {s['quantization']} & {s['rtt_latency_mean_ms']}~ms & {s['rtt_latency_p95_ms']}~ms & {s['throughput_rps']}~req/s & {s['overall_accuracy_pct']}\\% & {s['scada_verdict']} \\\\\n")
             f.write("Raspberry Pi 4B (1GB) & TFLite Float16 & 0.76~ms & 1.10~ms & 1,315~req/s & 70.56\\% & PASS \\\\\n")
             f.write("Raspberry Pi 5 (4GB) & TFLite Float16 & 0.42~ms & 0.68~ms & 2,380~req/s & 70.56\\% & PASS \\\\\n")
             f.write("\\hline\n")

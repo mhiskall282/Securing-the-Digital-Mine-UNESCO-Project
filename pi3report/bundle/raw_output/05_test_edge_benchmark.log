@@ -1,0 +1,22 @@
+test_edge_benchmark (unittest.loader._FailedTest.test_edge_benchmark) ... ERROR
+
+======================================================================
+ERROR: test_edge_benchmark (unittest.loader._FailedTest.test_edge_benchmark)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_edge_benchmark
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/unesco-project/tests/test_edge_benchmark.py", line 4, in <module>
+    from src.evaluation.edge_benchmark import EdgeBenchmark
+  File "/opt/unesco-project/src/evaluation/edge_benchmark.py", line 11, in <module>
+    import tensorflow as tf
+ModuleNotFoundError: No module named 'tensorflow'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)
+exit code: 1

@@ -1,0 +1,6 @@
+Actual \ Predicted,Normal,DoS,Probe,R2L,U2R
+Normal,29,0,0,0,29
+DoS,29,29,0,0,0
+Probe,0,0,28,0,0
+R2L,0,0,0,28,0
+U2R,0,0,0,28,0

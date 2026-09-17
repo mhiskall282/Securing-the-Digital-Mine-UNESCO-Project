@@ -411,15 +411,28 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
 
     def _handle_health(self):
         """Return service liveness and model version."""
-        model_ready = os.path.exists(os.path.abspath(MODEL_PATH))
+        # Verify the interpreter can actually be constructed, not just that the
+        # model file exists on disk.  This catches ABI mismatches (e.g. NumPy 2.x
+        # incompatibility with tflite-runtime) that would otherwise silently break
+        # every /api/analyze call while health still reported "healthy".
+        model_ready = False
+        load_error = None
+        try:
+            _get_model()
+            model_ready = True
+        except Exception as exc:
+            load_error = str(exc)
+
         response = {
-            "status": "healthy",
+            "status": "healthy" if model_ready else "degraded",
             "model_ready": model_ready,
             "model_version": "v3.0.0-tflite-quantized",
             "framework": "TFLite Float16",
-            "model_path": os.path.abspath(MODEL_PATH),
         }
-        self._send_json(response, status=200)
+        if load_error:
+            response["model_error"] = load_error
+        self._send_json(response, status=200 if model_ready else 503)
+
 
     def _handle_features(self):
         """Return the 10 BWOA-selected feature names and their indices in ALL_FEATURES."""

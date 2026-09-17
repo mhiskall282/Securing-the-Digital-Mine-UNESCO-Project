@@ -1,0 +1,3 @@
+VmRSS:	  151448 kB
+    PID   RSS    VSZ CMD
+     28 151448 1172028 python src/api_service.py

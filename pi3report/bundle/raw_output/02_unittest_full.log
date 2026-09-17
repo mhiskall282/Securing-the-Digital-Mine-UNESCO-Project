@@ -1,0 +1,157 @@
+test_analyze_payload_structure (test_api_service.TestAPIServiceEndpoints.test_analyze_payload_structure)
+Analyze endpoint accepts the 10 BWOA selected features. ... ok
+test_class_labels_complete (test_api_service.TestAPIServiceEndpoints.test_class_labels_complete)
+CLASS_LABELS must contain all 5 attack categories. ... ok
+test_health_response_structure (test_api_service.TestAPIServiceEndpoints.test_health_response_structure)
+Health endpoint returns required fields. ... ok
+test_selected_indices_valid (test_api_service.TestAPIServiceEndpoints.test_selected_indices_valid)
+SELECTED_INDICES must map correctly into ALL_FEATURES. ... ok
+test_mock_created_when_missing (test_batadal.TestBATADALLoader.test_mock_created_when_missing) ... ok
+test_preprocess_shapes (test_batadal.TestBATADALLoader.test_preprocess_shapes) ... ok
+test_sliding_window (test_batadal.TestBATADALLoader.test_sliding_window) ... ok
+test_optimization_loop (test_bwoa.TestBinaryWhaleOptimizer.test_optimization_loop)
+Verifies that optimize returns a valid mask and fitness history. ... ok
+test_transfer_function_bounds (test_bwoa.TestBinaryWhaleOptimizer.test_transfer_function_bounds)
+Verifies the V-shaped transfer function maps values to [0, 1]. ... ok
+test_cnn_lstm (unittest.loader._FailedTest.test_cnn_lstm) ... ERROR
+test_edge_benchmark (unittest.loader._FailedTest.test_edge_benchmark) ... ERROR
+test_all_features_fitness (test_fitness.TestFeatureFitnessEvaluator.test_all_features_fitness)
+All-features mask must produce a valid fitness score. ... ok
+test_fitness_range (test_fitness.TestFeatureFitnessEvaluator.test_fitness_range)
+Valid mask fitness must be between 0 and 1. ... ok
+test_minimum_features_enforced (test_fitness.TestFeatureFitnessEvaluator.test_minimum_features_enforced)
+Mask with exactly min_features must NOT return penalty on min_features count alone. ... ok
+test_too_few_features_returns_penalty (test_fitness.TestFeatureFitnessEvaluator.test_too_few_features_returns_penalty)
+Masks with fewer than min_features must return fitness=1.0. ... ok
+test_calculate_metrics_exact (test_metrics.TestMetrics.test_calculate_metrics_exact)
+Verifies metrics on a simple, known prediction sequence. ... ok
+test_experiment_metrics_compute (test_metrics.TestMetrics.test_experiment_metrics_compute)
+Verifies ExperimentMetrics.compute produces complete report dictionary. ... ok
+test_label_encoding_five_classes (test_nsl_kdd.TestNSLKDDLoader.test_label_encoding_five_classes)
+Labels must map to 5 classes: Normal, DoS, Probe, R2L, U2R. ... ok
+test_load_returns_dataframe (test_nsl_kdd.TestNSLKDDLoader.test_load_returns_dataframe)
+load() must return a DataFrame with correct shape. ... ok
+test_preprocess_returns_arrays (test_nsl_kdd.TestNSLKDDLoader.test_preprocess_returns_arrays)
+preprocess() must return numpy arrays. ... ok
+test_all_attack (test_swat.TestAttackStats.test_all_attack) ... ok
+test_all_normal (test_swat.TestAttackStats.test_all_normal) ... ok
+test_stats_keys (test_swat.TestAttackStats.test_stats_keys) ... ok
+test_stats_values (test_swat.TestAttackStats.test_stats_values) ... ok
+test_combined_row_count (test_swat.TestLoadCombined.test_combined_row_count) ... ok
+test_no_data_leakage_between_splits (test_swat.TestLoadSWaTForTransfer.test_no_data_leakage_between_splits)
+Train and test split sizes should sum to total (temporal split). ... ok
+test_required_keys_present (test_swat.TestLoadSWaTForTransfer.test_required_keys_present) ... ok
+test_returns_dict (test_swat.TestLoadSWaTForTransfer.test_returns_dict) ... ok
+test_spectral_residual_option (test_swat.TestLoadSWaTForTransfer.test_spectral_residual_option)
+Using spectral residual should not crash and preserve shape. ... ok
+test_window_shapes (test_swat.TestLoadSWaTForTransfer.test_window_shapes) ... ok
+test_all_groups_present (test_swat.TestProcessGroupIndices.test_all_groups_present) ... ok
+test_indices_within_bounds (test_swat.TestProcessGroupIndices.test_indices_within_bounds) ... ok
+test_no_duplicate_indices (test_swat.TestProcessGroupIndices.test_no_duplicate_indices) ... ok
+test_load_no_warnings_for_existing_file (test_swat.TestSWaTLoaderCSV.test_load_no_warnings_for_existing_file)
+Loading an existing file should not emit SWaT warnings. ... ok
+test_load_preserves_columns (test_swat.TestSWaTLoaderCSV.test_load_preserves_columns) ... ok
+test_load_returns_dataframe (test_swat.TestSWaTLoaderCSV.test_load_returns_dataframe) ... ok
+test_custom_feature_names (test_swat.TestSWaTLoaderInit.test_custom_feature_names)
+Custom feature names should be stored correctly. ... ok
+test_default_feature_count (test_swat.TestSWaTLoaderInit.test_default_feature_count)
+SWaTLoader should expose exactly 51 default features. ... ok
+test_feature_names_match_module_constant (test_swat.TestSWaTLoaderInit.test_feature_names_match_module_constant)
+Default feature_names should equal the module-level constant. ... ok
+test_process_groups_cover_all_features (test_swat.TestSWaTLoaderInit.test_process_groups_cover_all_features)
+All 51 features should be covered by the 6 process groups. ... ok
+test_mock_created_when_missing (test_swat.TestSWaTMockGeneration.test_mock_created_when_missing)
+Loader should auto-generate a mock file if path doesn't exist. ... ok
+test_mock_has_both_label_classes (test_swat.TestSWaTMockGeneration.test_mock_has_both_label_classes)
+Mock dataset should contain both Normal and Attack labels. ... ok
+test_mock_has_correct_columns (test_swat.TestSWaTMockGeneration.test_mock_has_correct_columns)
+Mock file should contain Timestamp, 51 feature columns, and label. ... ok
+test_mock_row_count (test_swat.TestSWaTMockGeneration.test_mock_row_count)
+Mock dataset should have 5000 rows. ... ok
+test_minmax_range (test_swat.TestSWaTNormalization.test_minmax_range) ... ok
+test_scaler_stored_after_normalize (test_swat.TestSWaTNormalization.test_scaler_stored_after_normalize) ... ok
+test_shapes_preserved (test_swat.TestSWaTNormalization.test_shapes_preserved) ... ok
+test_standard_zero_mean (test_swat.TestSWaTNormalization.test_standard_zero_mean) ... ok
+test_attack_label_parsed_correctly (test_swat.TestSWaTPreprocess.test_attack_label_parsed_correctly)
+Attack rows should map to y=1. ... ok
+test_attack_typo_variant_parsed (test_swat.TestSWaTPreprocess.test_attack_typo_variant_parsed)
+The 'A ttack' (with space) typo should be parsed as attack (y=1). ... ok
+test_labels_are_binary (test_swat.TestSWaTPreprocess.test_labels_are_binary) ... ok
+test_nan_values_handled (test_swat.TestSWaTPreprocess.test_nan_values_handled)
+NaN values in feature columns should be filled (no crash). ... ok
+test_normal_label_parsed_correctly (test_swat.TestSWaTPreprocess.test_normal_label_parsed_correctly)
+Normal rows should map to y=0. ... ok
+test_preprocess_returns_correct_shapes (test_swat.TestSWaTPreprocess.test_preprocess_returns_correct_shapes) ... ok
+test_return_timestamps_flag (test_swat.TestSWaTPreprocess.test_return_timestamps_flag)
+return_timestamps=True should return a 3-tuple. ... ok
+test_timestamp_col_removed_from_features (test_swat.TestSWaTPreprocess.test_timestamp_col_removed_from_features)
+Timestamp must not appear in X. ... ok
+test_whitespace_stripped_from_columns (test_swat.TestSWaTPreprocess.test_whitespace_stripped_from_columns)
+Column names with leading/trailing spaces should be handled. ... ok
+test_x_dtype_is_float32 (test_swat.TestSWaTPreprocess.test_x_dtype_is_float32) ... ok
+test_random_split_no_data_loss (test_swat.TestSWaTSplitting.test_random_split_no_data_loss) ... ok
+test_random_split_sizes (test_swat.TestSWaTSplitting.test_random_split_sizes) ... ok
+test_temporal_split_no_overlap (test_swat.TestSWaTSplitting.test_temporal_split_no_overlap)
+Temporal split must not have any overlapping rows. ... ok
+test_temporal_split_sizes (test_swat.TestSWaTSplitting.test_temporal_split_sizes) ... ok
+test_float32_output (test_swat.TestSlidingWindow.test_float32_output) ... ok
+test_label_alignment (test_swat.TestSlidingWindow.test_label_alignment)
+Last timestep of each window should be the window's label. ... ok
+test_output_shapes (test_swat.TestSlidingWindow.test_output_shapes) ... ok
+test_stride_reduces_samples (test_swat.TestSlidingWindow.test_stride_reduces_samples) ... ok
+test_anomaly_highlighted (test_swat.TestSpectralResidual.test_anomaly_highlighted)
+SR transform should produce higher values at injected anomaly locations. ... ok
+test_no_nan_output (test_swat.TestSpectralResidual.test_no_nan_output) ... ok
+test_output_shape_preserved (test_swat.TestSpectralResidual.test_output_shape_preserved) ... ok
+
+======================================================================
+ERROR: test_cnn_lstm (unittest.loader._FailedTest.test_cnn_lstm)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_cnn_lstm
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/opt/unesco-project/tests/test_cnn_lstm.py", line 9, in <module>
+    import tensorflow as tf
+ModuleNotFoundError: No module named 'tensorflow'
+
+
+======================================================================
+ERROR: test_edge_benchmark (unittest.loader._FailedTest.test_edge_benchmark)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_edge_benchmark
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/opt/unesco-project/tests/test_edge_benchmark.py", line 4, in <module>
+    from src.evaluation.edge_benchmark import EdgeBenchmark
+  File "/opt/unesco-project/src/evaluation/edge_benchmark.py", line 11, in <module>
+    import tensorflow as tf
+ModuleNotFoundError: No module named 'tensorflow'
+
+
+----------------------------------------------------------------------
+Ran 69 tests in 9.748s
+
+FAILED (errors=2)
+[BATADALLoader] Created mock: /tmp/tmp_n8us_w0/batadal_mock.csv
+[BATADALLoader] Created mock: /tmp/tmpnorrv85i/batadal_mock.csv
+[BATADALLoader] Created mock: /tmp/tmp1hw7cp07/batadal_mock.csv
+Iteration 1/3 | Best Fitness: 0.27436 | Diversity: 0.4600 | Alpha: 0.500 | Features: 5
+Iteration 2/3 | Best Fitness: 0.26897 | Diversity: 0.4000 | Alpha: 0.496 | Features: 2
+Iteration 3/3 | Best Fitness: 0.26897 | Diversity: 0.3400 | Alpha: 0.492 | Features: 2
+[SWaTLoader] Created synthetic mock: /tmp/tmpibwcj1od/swat_mock.csv
+  Rows: 5,000 | Attack ratio: 35.06% | Features: 51
+[SWaTLoader] Created synthetic mock: /tmp/tmp_cc4m6qe/swat_mock.csv
+  Rows: 5,000 | Attack ratio: 35.06% | Features: 51
+[SWaTLoader] Created synthetic mock: /tmp/tmp6fz6pi1s/swat_mock.csv
+  Rows: 5,000 | Attack ratio: 35.06% | Features: 51
+[SWaTLoader] Created synthetic mock: /tmp/tmpqza0_iv9/swat_mock.csv
+  Rows: 5,000 | Attack ratio: 35.06% | Features: 51
+exit code: 1

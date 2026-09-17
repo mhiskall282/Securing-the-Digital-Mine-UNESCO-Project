@@ -1,0 +1,1 @@
+{"prediction": "R2L", "confidence": 97.72, "class_probabilities": {"DoS": 0.01, "Normal": 1.8, "Probe": 0.2, "R2L": 97.72, "U2R": 0.27}, "features_used": ["protocol_type", "service", "flag", "src_bytes", "hot", "su_attempted", "serror_rate", "same_srv_rate", "diff_srv_rate", "dst_host_diff_srv_rate"], "latency_ms": 0.5129, "model_version": "v3.0.0-tflite-quantized"}

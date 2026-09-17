@@ -6,10 +6,19 @@ input shapes, and predictions.
 
 import unittest
 import numpy as np
-import tensorflow as tf
-from src.models.cnn_lstm import build_cnn_lstm
+
+# Full TensorFlow is required for Keras model construction tests.  On edge
+# deployments only tflite_runtime is installed; skip these tests cleanly
+# rather than crashing at import time.
+try:
+    import tensorflow as tf
+    from src.models.cnn_lstm import build_cnn_lstm
+    TF_AVAILABLE = True
+except ImportError:
+    TF_AVAILABLE = False
 
 
+@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed — skipping Keras model tests")
 class TestCNNLSTMModel(unittest.TestCase):
     """Tests the Keras architecture assembly and forward propagation."""
 
@@ -53,6 +62,7 @@ class TestCNNLSTMModel(unittest.TestCase):
         np.testing.assert_allclose(np.sum(predictions, axis=-1), np.ones(4), rtol=1e-5)
 
 
+@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed — skipping Keras model tests")
 class TestCNNLSTMV4(unittest.TestCase):
     """Tests the CNN-LSTM v4 strengthened architecture."""
 
@@ -88,6 +98,7 @@ class TestCNNLSTMV4(unittest.TestCase):
         np.testing.assert_allclose(np.sum(predictions, axis=-1), np.ones(4), rtol=1e-4)
 
 
+@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed — skipping Keras model tests")
 class TestCNNLSTMWithAttention(unittest.TestCase):
     """Tests the CNN-LSTM with attention architecture."""
 

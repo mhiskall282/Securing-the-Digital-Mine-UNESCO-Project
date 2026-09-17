@@ -1,0 +1,6 @@
+Class,Support,True Positives,False Positives,False Negatives,Precision (%),Recall (%),F1-Score
+Normal,58,29,29,29,50.0,50.0,0.5
+DoS,58,29,0,29,100.0,50.0,0.6667
+Probe,28,28,0,0,100.0,100.0,1.0
+R2L,28,28,28,0,50.0,100.0,0.6667
+U2R,28,0,29,28,0.0,0.0,0.0

@@ -1,0 +1,32 @@
+=== ENVIRONMENT ===
+Wed Sep 16 13:35:39 UTC 2026
+Python 3.11.16
+8
+MemTotal:       15562652 kB
+MemFree:          228764 kB
+MemAvailable:    6154500 kB
+certifi==2026.7.22
+charset-normalizer==3.5.1
+cloudpickle==3.1.2
+et_xmlfile==2.0.0
+idna==3.19
+joblib==1.6.0
+narwhals==2.26.0
+numpy==2.4.6
+openpyxl==3.1.5
+packaging==26.3
+pandas==3.0.5
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+requests==2.34.2
+scikit-learn==1.9.1
+scipy==1.17.1
+six==1.17.0
+tflite-runtime==2.14.0
+threadpoolctl==3.7.0
+urllib3==2.8.0
+tflite_runtime install log:
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+
+[notice] A new release of pip is available: 24.0 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
