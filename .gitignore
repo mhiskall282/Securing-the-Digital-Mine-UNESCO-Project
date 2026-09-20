@@ -64,3 +64,6 @@ scratch/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Cloned Sub-repositories
+AI-Research-SKILLs/
