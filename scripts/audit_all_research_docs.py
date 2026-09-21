@@ -67,6 +67,7 @@ def audit():
     core_docs = {
         "IEEE Paper (LaTeX)": "research/ieee_paper.tex",
         "IEEE Paper (Markdown)": "research/IEEE_Paper_Submission_Manuscript.md",
+        "IEEE Paper (DOCX)": "research/IEEE_Research_Paper_Digital_Mine.docx",
         "Conference Presentation": "research/conference_presentation.md",
         "Full Monograph (DOCX)": "research/full_research_paper.docx",
         "Technical Report (DOCX)": "research/technical_report.docx",
@@ -104,10 +105,15 @@ def audit():
     print(f"full_research_paper.docx: {len(docx_imgs)} embedded images")
     assert len(docx_imgs) >= 16, "Not all 16 figures embedded in docx!"
 
+    ieee_docx = docx.Document('research/IEEE_Research_Paper_Digital_Mine.docx')
+    ieee_docx_imgs = [r for r in ieee_docx.part.rels.values() if 'image' in r.target_ref]
+    print(f"IEEE_Research_Paper_Digital_Mine.docx: {len(ieee_docx_imgs)} embedded images")
+    assert len(ieee_docx_imgs) >= 11, f"Expected at least 11 figures in IEEE docx, got {len(ieee_docx_imgs)}!"
+
     ieee_pdf = fitz.open('research/IEEE_Research_Paper_Digital_Mine.pdf')
     ieee_imgs = sum(len(p.get_images()) for p in ieee_pdf)
     print(f"IEEE Research Paper PDF: {len(ieee_pdf)} pages, {ieee_imgs} embedded images")
-    assert ieee_imgs >= 6, "Not all 6 figures embedded in IEEE PDF!"
+    assert ieee_imgs >= 11, f"Expected at least 11 figures in IEEE PDF, got {ieee_imgs}!"
 
     mono_pdf = fitz.open('research/Full_Research_Monograph_Digital_Mine.pdf')
     mono_imgs = sum(len(p.get_images()) for p in mono_pdf)
