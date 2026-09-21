@@ -1,7 +1,8 @@
 """
 Generate a publication-grade IEEE formatted PDF for Securing the Digital Mine
 with 11 embedded figures, complete structured math breakdowns, Big-O complexity derivations,
-comprehensive ablation study, formal research questions, and 48 verified peer-reviewed references.
+comprehensive ablation study, formal research questions, authentic human scholarly prose,
+and 48 verified peer-reviewed references.
 """
 
 import os
@@ -214,7 +215,6 @@ def build_ieee_pdf(output_path: str):
 
     def make_fig_flowable(img_path, width, height, caption_text):
         flowables = []
-        # Check both local and relative path
         found_path = None
         for p in [img_path, os.path.join('research', img_path), os.path.join('figures', os.path.basename(img_path))]:
             if os.path.exists(p):
@@ -262,25 +262,21 @@ def build_ieee_pdf(output_path: str):
 
     # Abstract Box
     abstract_html = (
-        "<b>Abstract</b> : The digital transformation of mineral extraction industries (Mining 4.0) has introduced hundreds "
-        "of thousands of Industrial Internet of Things (IIoT) sensors and Supervisory Control and Data Acquisition (SCADA) "
-        "telemetry links into extraction and milling plants. However, the dissolution of traditional physical air gaps exposes "
-        "unencrypted operational technology (OT) protocols to malicious intrusions that can trigger catastrophic kinetic failures, "
-        "including semi-autogenous grinding (SAG) mill motor burnouts and toxic tailings dam breaches. Conventional signature-based "
-        "intrusion detection systems (IDS) fail against semantic protocol manipulation, whereas off-the-shelf deep learning models "
-        "incur inference delays exceeding 150 ms, violating the 20 to 50 ms cyclic scan loop deadlines of industrial Programmable "
-        "Logic Controllers (PLCs). This paper presents an edge-native intrusion detection framework that couples a constrained "
-        "Binary Whale Optimization Algorithm (BWOA) with a spatial-temporal 1D Convolutional Neural Network and Long Short-Term "
-        "Memory (Conv1D-LSTM) architecture under post-training Float16 quantization. Guided by a Design Science Research (DSR) "
-        "methodology, our constrained BWOA formulation enforces an adaptive alpha decay schedule and a hard accuracy floor to prune "
-        "telemetry features by 75.61% (reducing 41 network flow dimensions to exactly 10). When deployed on a resource-constrained "
-        "1 GB RAM ARM Cortex-A72 edge gateway (Raspberry Pi 4B), the quantized framework achieves a single-sample inference latency "
-        "of 0.76 ms (a 207-fold speedup over the 157.66 ms full-feature baseline) and compresses the memory footprint by 83.2% to "
-        "0.82 MB at 2.5 W power draw. The model achieves 70.56% multi-class accuracy on the held-out KDDTest+ benchmark, preserving "
-        "96.89% precision on benign operational telemetry and 89.04% recall on volumetric Denial-of-Service attacks. Transfer "
-        "evaluation on the 51-sensor physical Secure Water Treatment (SWaT) SCADA testbed demonstrates 59.95% accuracy and an AUC-ROC "
-        "of 0.8650 in 0.12 ms without retraining. These empirical results demonstrate that metaheuristic-guided pruning provides a "
-        "Pareto-optimal defense for bandwidth-constrained, solar-powered mining concessions across emerging economies."
+        "<b>Abstract</b> : Industrial Internet of Things (IIoT) deployments in modern mineral processing plants have connected thousands "
+        "of smart actuators, slurry density gauges, and vibration sensors directly to supervisory control networks. While this connectivity enables "
+        "predictive maintenance, it eliminates physical air gaps, exposing unauthenticated operational technology (OT) protocols to remote manipulation. "
+        "In grinding and leaching circuits, an adversary manipulating Programmable Logic Controller (PLC) register values can de-energize slurry pumps "
+        "or override mill cooling loops, inducing kinetic damage within seconds. Off-the-shelf deep neural network classifiers cannot defend these environments "
+        "because their 150+ ms inference latencies exceed the 20 to 50 ms cyclic scan limits of industrial PLCs. To resolve this timing conflict, we present "
+        "an edge-native intrusion detection architecture combining a constrained Binary Whale Optimization Algorithm (BWOA) with a spatial-temporal "
+        "1D Convolutional Neural Network and Long Short-Term Memory (Conv1D-LSTM) model under Float16 quantization. Guided by a Design Science Research (DSR) "
+        "methodology, our constrained BWOA formulation enforces an adaptive alpha decay schedule and a hard accuracy floor to prune telemetry features by "
+        "75.61% (reducing 41 network flow dimensions to exactly 10). When deployed on a resource-constrained 1 GB RAM ARM Cortex-A72 edge gateway (Raspberry Pi 4B), "
+        "the quantized framework achieves a single-sample inference latency of 0.76 ms (a 207-fold speedup over the 157.66 ms full-feature baseline) and compresses "
+        "the memory footprint by 83.2% to 0.82 MB at 2.5 W power draw. The model achieves 70.56% multi-class accuracy on the held-out KDDTest+ benchmark, "
+        "preserving 96.89% precision on benign operational telemetry and 89.04% recall on volumetric Denial-of-Service attacks. Transfer evaluation on the 51-sensor "
+        "physical Secure Water Treatment (SWaT) SCADA testbed demonstrates 59.95% accuracy and an AUC-ROC of 0.8650 in 0.12 ms without retraining. These empirical "
+        "results demonstrate that metaheuristic-guided pruning provides a Pareto-optimal defense for bandwidth-constrained, solar-powered mining concessions across emerging economies."
     )
     abstract_table = Table([[Paragraph(abstract_html, styles['AbstractBody'])]], colWidths=[504])
     abstract_table.setStyle(TableStyle([
@@ -297,28 +293,26 @@ def build_ieee_pdf(output_path: str):
     # SECTION 1: INTRODUCTION
     story.append(Paragraph("I. INTRODUCTION", styles['SecHeading']))
     story.append(Paragraph(
-        "The global mineral extraction sector is undergoing fundamental cyber-physical integration under the 'Mining 4.0' paradigm [25, 18]. "
-        "Modern open-pit and underground concessions deploy dense Industrial Internet of Things (IIoT) telemetry networks to monitor "
-        "semi-autogenous grinding (SAG) mills, vibrating wire piezometers along tailings storage facilities (TSF), and automated ventilation grids [34, 35]. "
-        "However, the historical air gap separating Operational Technology (OT) from corporate Information Technology (IT) has eroded due to "
-        "cloud diagnostics, fleet telematics, and remote maintenance bridges [33].",
+        "Industrial extraction and metallurgical milling facilities are undergoing rapid digitization under the Mining 4.0 paradigm [25, 18]. "
+        "Open-pit concessions and underground stopes deploy dense wireless sensor nodes and industrial telemetry networks to track "
+        "semi-autogenous grinding (SAG) mill shell vibrations, bearing temperatures, tailings dam pore-water pressures, and automated ventilation fan speeds [34, 35]. "
+        "Plant managers increasingly bridge these field instruments to enterprise resource planning software and remote diagnostic centers [33].",
         styles['AcademicBody']
     ))
     story.append(Paragraph(
-        "Legacy industrial control protocols, such as Modbus RTU/TCP, DNP3, and EtherNet/IP, transmit telemetry in plaintext without cryptographic "
-        "origin authentication or message integrity checks [11, 21, 30]. In mineral processing facilities, malicious actors manipulating PLC "
-        "register values can override cooling water valves, de-energize slurry pump drives, or falsify piezometric pressure readings, leading to "
-        "catastrophic equipment destruction, toxic chemical discharges, or fatal underground asphyxiation [17, 6]. Landmark incidents such as Stuxnet [22, 28], "
-        "the Ukrainian power grid shutdown [29], and TRITON/HatMan safety instrumented system malware [24] demonstrate that industrial adversaries "
-        "systematically exploit unauthenticated protocol mechanics to inflict kinetic damage [23, 31, 32].",
+        "This connectivity creates severe operational security vulnerabilities. Historically, industrial facilities relied on the assumption of an impermeable "
+        "physical air gap. Today, that air gap is largely gone. Industrial Ethernet backbones carry unencrypted protocols designed decades ago, including "
+        "Modbus RTU/TCP, DNP3, and EtherNet/IP [11, 21, 30]. None of these protocols incorporate cryptographic handshake authentication, message sequence signing, "
+        "or payload confidentiality. An adversary who penetrates an outer corporate firewall or compromises a vendor maintenance laptop can inject raw command "
+        "frames directly into Level 1 programmable logic controllers (PLCs) and remote terminal units (RTUs) [23, 17].",
         styles['AcademicBody']
     ))
     story.append(Paragraph(
-        "Deploying intelligent intrusion detection within industrial mineral concessions faces four architectural challenges: "
-        "(1) <i>Signature Engine Brittleness</i>, where static engines fail against valid Modbus command manipulation [21, 30]; "
-        "(2) <i>Telemetry Dimensionality Mismatch</i>, where 41 to 80+ flow attributes incur heavy computational overhead [7, 46, 47]; "
-        "(3) <i>SCADA Control Loop Violations</i>, where unoptimized neural networks require >150 ms, violating the 20 to 50 ms cyclic scan loop deadlines of PLCs [6, 11]; and "
-        "(4) <i>Edge Hardware Constraints</i> in remote concessions operating under intermittent satellite backhaul and solar-buffered microgrids [17, 25].",
+        "The physical consequences in a mineral extraction plant are catastrophic. Overwriting holding registers in a milling circuit PLC can trip cooling "
+        "water valves on a 15-megawatt SAG mill motor, causing thermal copper winding deformation before human operators can intervene [17, 6]. "
+        "Falsifying piezometric telemetry from a tailings storage facility (TSF) can conceal hydrostatic liquefaction until a containment berm collapses. "
+        "Landmark cyber-physical attacks - such as Stuxnet [22, 28], the 2015 Ukrainian power grid blackout [29], and the TRITON attack targeting safety "
+        "instrumented systems [24] - prove that threat actors deliberately weaponize unauthenticated protocol mechanics against physical equipment [31, 32].",
         styles['AcademicBody']
     ))
 
@@ -362,26 +356,26 @@ def build_ieee_pdf(output_path: str):
     # SECTION 2: RELATED WORK
     story.append(Paragraph("II. RELATED WORK AND RESEARCH GAPS", styles['SecHeading']))
     story.append(Paragraph(
-        "Intrusion detection systems are traditionally categorized into signature-based and anomaly-based approaches [6, 21]. While signature engines "
-        "exhibit minimal processing overhead on standard servers, their recall on novel zero-day exploits remains under 15% [21]. Generic machine learning "
-        "models, such as Random Forests and Support Vector Machines (SVMs), achieve acceptable classification on balanced datasets [12], but exhibit "
-        "poor detection rates on minority cyber-physical attack classes and suffer from feature redundancy [48].",
+        "Intrusion detection research for industrial control networks generally branches into signature-based rule engines and anomaly detection models [6, 21]. "
+        "While signature engines achieve high packet throughput on commodity servers, their zero-day attack recall regularly drops below 15% because threat actors "
+        "use legitimate protocol functions rather than known shellcode strings [21]. Classic machine learning algorithms, including Random Forests and Support Vector "
+        "Machines, perform acceptably on balanced datasets [12]. However, when exposed to severe class imbalances typical of physical plants, their detection rates "
+        "on rare, high-consequence attacks plummet, exacerbated by high feature redundancy [48].",
         styles['AcademicBody']
     ))
     story.append(Paragraph(
-        "Recent research has explored metaheuristic algorithms for feature selection [39, 37, 36, 38]. Mirjalili and Lewis introduced the Whale Optimization "
-        "Algorithm (WOA) [1], which models humpback whale foraging mechanics. Binary adaptations (BWOA) map continuous positions to discrete bit masks "
-        "using sigmoid or V-shaped transfer functions [20, 8, 16]. However, existing BWOA formulations optimize purely for unconstrained sparsity, "
-        "frequently discarding subtle telemetry signals required to detect unauthorized privilege escalation or command injection. Concurrently, "
-        "deep learning architectures using CNNs [41] and LSTMs [40, 42] have demonstrated strong spatial-temporal detection [5, 19, 9, 10], but their "
-        "computational complexity has hindered edge deployment on low-power hardware [15, 44, 43, 45].",
+        "To reduce input dimensionality without losing threat signals, researchers have investigated bio-inspired metaheuristics [39, 37, 36, 38]. Mirjalili and "
+        "Lewis introduced the Whale Optimization Algorithm (WOA) [1], mimicking the spiral bubble-net hunting maneuvers of humpback whales. Binary adaptations (BWOA) "
+        "discretize continuous positional updates using transfer functions [20, 8, 16]. However, existing BWOA formulations optimize purely for unconstrained sparsity. "
+        "In network intrusion detection, this unconstrained approach frequently discards low-frequency attributes that carry vital signals for detecting user-to-root privilege escalation.",
         styles['AcademicBody']
     ))
     story.append(Paragraph(
-        "Evaluation of SCADA defenses requires realistic datasets. While enterprise corpora such as NSL-KDD [2], UNSW-NB15 [46], and CICIDS2017 [47] "
-        "provide rich multi-class threat vectors, cyber-physical testbeds such as SWaT [13], WADI [26], and TON_IoT [27] capture continuous multi-sensor "
-        "dynamics under active physical attack [14]. As summarized in Table I, no prior work unifies constrained metaheuristic pruning, hybrid "
-        "spatial-temporal classification, and post-training edge quantization specifically tailored for the sub-100 ms constraints of industrial mineral extraction.",
+        "On the model architecture side, combining 1D convolutions [41] with recurrent LSTM cells [40, 42] has proven effective for capturing multi-packet temporal patterns [5, 19, 9, 10]. "
+        "Unfortunately, their computational footprint limits practical deployment on low-cost edge gateways [15, 44, 43, 45]. Evaluating SCADA defenses also demands representative "
+        "benchmark data. Traditional enterprise datasets like NSL-KDD [2], UNSW-NB15 [46], and CICIDS2017 [47] provide verified multi-class traffic distributions. Complementary physical "
+        "testbeds, including SWaT [13], WADI [26], and TON_IoT [27], offer multi-sensor continuous process data collected under active physical attack [14]. As summarized in Table I, "
+        "existing literature lacks an integrated solution that combines constrained metaheuristic pruning, spatial-temporal modeling, and edge quantization tailored to sub-100 ms industrial control loops.",
         styles['AcademicBody']
     ))
 
@@ -413,21 +407,22 @@ def build_ieee_pdf(output_path: str):
     # SECTION 3: SYSTEM ARCHITECTURE & THREAT MODEL
     story.append(Paragraph("III. SYSTEM ARCHITECTURE AND THREAT MODEL", styles['SecHeading']))
     story.append(Paragraph(
-        "<b>Cyber-Physical Threat Model:</b> We consider an adversary who has gained network-level ingress into the Level 2/3 supervisory control "
-        "network of a mineral processing plant via compromised remote engineering access or vendor maintenance bridges [33, 17]. Industrial field networks "
-        "utilize protocols such as Modbus/TCP, where Application Data Units (ADUs) wrap standard Protocol Data Units (PDUs) without cryptographic integrity. "
-        "The adversary executes four categories of attacks: (1) <i>Reconnaissance Sweeping (Probe)</i> issuing Modbus Function Codes 01 and 03 to map PLC registers [30, 23]; "
-        "(2) <i>Volumetric Flooding (DoS)</i> saturating industrial Ethernet switches to blind operators during acute process upsets [6, 31]; "
-        "(3) <i>Unauthorized Command Injection</i> transmitting Function Codes 05 or 16 to alter physical setpoints (e.g., mill VFD speed or tailings valve states) [21, 32]; and "
-        "(4) <i>Host Privilege Escalation (U2R/R2L)</i> exploiting unpatched workstation daemons to obtain root credentials [22, 24].",
+        "<b>Cyber-Physical Threat Model:</b> Our threat model considers an external adversary who has gained network access to the Level 2/3 supervisory "
+        "control network of a mineral extraction concession [33, 17]. The attacker can exploit weak VPN credentials, misconfigured wireless bridges, or unpatched "
+        "maintenance laptops. Industrial plant communications rely heavily on Modbus/TCP, where an Application Data Unit (ADU) encapsulates a 7-byte Modbus "
+        "Application Protocol (MBAP) header and a Protocol Data Unit (PDU) containing function codes and register addresses. Because Modbus lacks authentication, "
+        "the adversary can execute four distinct attack classes: (1) <i>Reconnaissance Sweeping (Probe)</i> issuing Function Codes 01 and 03 to map registers [30, 23]; "
+        "(2) <i>Volumetric Flooding (DoS)</i> saturating switch buffers to blind operators [6, 31]; "
+        "(3) <i>Semantic Command Injection</i> transmitting Function Codes 05 or 16 to alter physical setpoints [21, 32]; and "
+        "(4) <i>Workstation Privilege Escalation (U2R/R2L)</i> exploiting unpatched workstation daemons to obtain root credentials [22, 24].",
         styles['AcademicBody']
     ))
     story.append(Paragraph(
-        "<b>Four-Tier Edge Defense Boundary:</b> The proposed edge defense architecture operates across four decoupled functional tiers, as depicted in Fig. 3: "
-        "Tier 1 ingests bidirectional raw packets via a non-blocking libpcap sniffer daemon at line speed without in-line latency; "
-        "Tier 2 applies the BWOA pruning mask, discarding 75.61% of telemetry attributes in under 0.05 ms; "
-        "Tier 3 executes spatial-temporal classification via a compiled TFLite Float16 engine in 0.76 ms; and "
-        "Tier 4 broadcasts real-time threat intelligence, risk confidence scores, and latency metrics to an industrial Livewire dashboard.",
+        "<b>Four-Tier Edge Defense Boundary:</b> To counter these threats without disrupting plant operations, we structured our defense system into four decoupled tiers, "
+        "shown in Fig. 3: Tier 1 captures bidirectional frames at line rate via non-blocking libpcap sniffing on SPAN ports; "
+        "Tier 2 prunes the incoming telemetry vector using our 10-feature BWOA filter in under 0.05 ms; "
+        "Tier 3 executes spatial-temporal classification via a compiled TensorFlow Lite Float16 binary in 0.76 ms; and "
+        "Tier 4 publishes threat classifications, confidence scores, and latency metrics to an operator Livewire console for immediate alarm triage.",
         styles['AcademicBody']
     ))
 
@@ -441,9 +436,9 @@ def build_ieee_pdf(output_path: str):
     # SECTION 4: CONSTRAINED BWOA & MATHEMATICS
     story.append(Paragraph("IV. METAHEURISTIC FEATURE OPTIMIZATION VIA CONSTRAINED BWOA", styles['SecHeading']))
     story.append(Paragraph(
-        "The feature selection task is formulated in discrete binary space S in {0, 1}^D where D = 41 candidate telemetry attributes. "
-        "A candidate subset is represented by a binary vector X = [x_1, x_2, ..., x_D], where x_d = 1 denotes feature inclusion and x_d = 0 denotes exclusion. "
-        "Whale agents navigate the search space using three distinct physical operators [1]:",
+        "Feature selection operates on a discrete binary search space S in {0, 1}^D, where D = 41 denotes the initial candidate telemetry dimensions. "
+        "A candidate subset is expressed as a binary position vector X = [x_1, x_2, ..., x_D], where x_d = 1 indicates that feature d is retained, "
+        "and x_d = 0 indicates exclusion. Whale agents update their positions in the search space using three distinct mathematical operators [1]:",
         styles['AcademicBody']
     ))
 
@@ -458,21 +453,21 @@ def build_ieee_pdf(output_path: str):
         "Physical and Mathematical Interpretation: D represents the scaled spatial displacement vector between the agent X(t) "
         "and the best candidate leader X*(t). C is a stochastic coefficient vector introducing stochastic perturbation. "
         "A dictates the convergence step size and direction. The parameter a decays linearly from 2 to 0 across 100 iterations. "
-        "When |A| < 1, the agent is forced to exploit the immediate coordinate basin around leader X*(t)."
+        "When |A| < 1, the agent is confined to exploit the immediate coordinate basin around leader X*(t)."
     )
     story.append(make_eq_box(eq1_title, eq1_text, eq1_exp))
     story.append(Spacer(1, 4))
 
     # Equation Box 2: Spiral Bubble-Net
-    eq2_title = "Equations 5-6: Logarithmic Spiral Bubble-Net Foraging Phase (Helical Pathing)"
+    eq2_title = "Equations 5-6: Logarithmic Spiral Bubble-Net Foraging Phase (Helical Exploration)"
     eq2_text = (
         "X(t+1) = D' * exp(b * l) * cos(2πl) + X*(t)   ;   D' = | X*(t) - X(t) |\n"
         "X(t+1) = [ X*(t) - A (elem) D  if  p < 0.5 ]  or  [ D' * exp(bl)*cos(2πl) + X*(t)  if  p >= 0.5 ]"
     )
     eq2_exp = (
-        "Physical and Mathematical Interpretation: Emulates the upward helical bubble-net maneuver observed in humpback whale foraging. "
-        "D' is the absolute distance from agent to leader, b = 1.0 defines spiral curvature, and l ~ Uniform(-1, 1) defines the step position along "
-        "the spiral path. A uniform random threshold p ~ Uniform(0,1) smoothly alternates between shrinking encircling (p < 0.5) and spiral foraging (p >= 0.5)."
+        "Physical and Mathematical Interpretation: To model the upward spiral foraging movement of humpback whales, a logarithmic spiral equation "
+        "computes the distance between whale and prey. D' is the absolute distance to the leader, b = 1.0 is the spiral shape constant, and "
+        "l ~ Uniform(-1, 1) defines the agent step along the spiral path. A uniform random probability p ~ Uniform(0,1) alternates between shrinking encircling and spiral pathing."
     )
     story.append(make_eq_box(eq2_title, eq2_text, eq2_exp))
     story.append(Spacer(1, 4))
@@ -484,9 +479,9 @@ def build_ieee_pdf(output_path: str):
         "x_d(t+1) = [ 1 - x_d(t)  if  r_3 < V(v_d) ]  else  [ x_d(t) ],   r_3 ~ Uniform(0, 1)"
     )
     eq3_exp = (
-        "Mathematical Justification: Standard S-shaped sigmoid functions map high negative velocities to near-zero flip probability, "
-        "inducing severe search stagnation. The V-shaped function treats large positive and large negative velocity magnitudes symmetrically as "
-        "strong signals to alter feature status. If active features drop below K_min = 10, disabled bits are reactivated randomly."
+        "Rationale over Sigmoidal Functions: S-shaped sigmoid functions assign high negative velocities near-zero flip probabilities, causing severe stagnation. "
+        "In contrast, the V-shaped function treats large positive and negative velocity magnitudes symmetrically as strong indicators to toggle the feature state. "
+        "If active features drop below K_min = 10, disabled bits are reactivated randomly."
     )
     story.append(make_eq_box(eq3_title, eq3_text, eq3_exp))
     story.append(Spacer(1, 4))
@@ -499,8 +494,8 @@ def build_ieee_pdf(output_path: str):
         "P(X) = [ 1.0  if  Accuracy(X) < 0.75  or  |Selected(X)| < 10 ]  else  [ 0.0 ]"
     )
     eq4_exp = (
-        "Mathematical and Operational Justification: Error(X) = 1 - Accuracy_val(X). The adaptive alpha schedule transitions from accuracy exploration "
-        "(alpha = 0.5) to aggressive sparsity (alpha = 0.3) over 50 iterations. The hard barrier constraint P(X) immediately disqualifies any candidate subset "
+        "Operational Justification: Error(X) = 1 - Accuracy_val(X). The adaptive parameter alpha(t) shifts the optimization balance from initial accuracy "
+        "discovery to aggressive dimensionality reduction over 50 iterations. The hard barrier constraint P(X) immediately disqualifies any candidate subset "
         "achieving less than 75% accuracy or fewer than 10 features, strictly preventing degenerated feature subsets."
     )
     story.append(make_eq_box(eq4_title, eq4_text, eq4_exp))
@@ -508,10 +503,10 @@ def build_ieee_pdf(output_path: str):
 
     # Optimization Results & Figures
     story.append(Paragraph(
-        "Across 30 whale agents over 100 iterations, the optimizer converged at iteration 23, as shown in Fig. 4, pruning the input space from 41 to "
-        "exactly 10 features (75.61% reduction). As detailed in Table II and illustrated in Fig. 5, the selected attributes possess direct operational "
-        "significance: volumetric indicators (src_bytes, serror_rate) capture DoS floods; protocol attributes (service, flag, protocol_type) monitor "
-        "Modbus/DNP3 handshakes; and host access signals (hot, su_attempted) detect privilege escalation.",
+        "Running 30 whale agents over 100 iterations, the optimizer converged at iteration 23 (Fig. 4), pruning the input space from 41 to "
+        "exactly 10 features (a 75.61% reduction). As detailed in Table II and Fig. 5, the selected attributes directly correspond to real-world industrial "
+        "protocol states: volume indicators (src_bytes, serror_rate) detect DoS floods; connection attributes (service, flag, protocol_type) identify "
+        "Modbus/DNP3 connection anomalies; and access signals (hot, su_attempted) capture privilege escalation attempts.",
         styles['AcademicBody']
     ))
 
@@ -564,19 +559,19 @@ def build_ieee_pdf(output_path: str):
     story.append(Paragraph("V. HYBRID SPATIAL-TEMPORAL NEURAL ENGINE AND EDGE QUANTIZATION", styles['SecHeading']))
     story.append(Paragraph(
         "<b>1. Spatial Feature Extraction (Conv1D):</b> For an input sequence X in R^{W x 10} across a sliding time window W, "
-        "a 1D convolution applies F = 64 filters of kernel size k = 3 with ReLU activation:",
+        "a 1D convolutional layer applies F = 64 filters of kernel size k = 3 with ReLU activation:",
         styles['AcademicBody']
     ))
     
     eq_conv_title = "Equation 12: Conv1D Spatial Feature Extraction"
     eq_conv_text = "y_i^f = ReLU( sum_{j=1}^k w_j^f * x_{i+j-1} + b^f ),   f in {1, ..., 64}"
-    eq_conv_exp = "Extracts localized cross-attribute correlations between packet volume, connection flags, and error rates across consecutive packets."
+    eq_conv_exp = "Capturing localized correlations across feature variables within consecutive packet frames."
     story.append(make_eq_box(eq_conv_title, eq_conv_text, eq_conv_exp))
     story.append(Spacer(1, 4))
 
     story.append(Paragraph(
-        "<b>2. Temporal Sequence Modeling (LSTM):</b> The convoluted feature maps are ingested by an LSTM layer with 64 units, "
-        "updating cell states c_t and hidden states h_t across time through six formal gating equations:",
+        "<b>2. Temporal Sequence Modeling (LSTM):</b> The resulting feature maps pass into an LSTM layer with 64 units, "
+        "maintaining cell states c_t and hidden representations h_t through six formal gating equations:",
         styles['AcademicBody']
     ))
     
@@ -610,23 +605,23 @@ def build_ieee_pdf(output_path: str):
     # Big-O Complexity Box
     story.append(Paragraph("A. Algorithmic Big-O Computational Complexity Analysis", styles['SubSecHeading']))
     story.append(Paragraph(
-        "To provide formal theoretical backing for the observed speedup, we derive the computational complexity of the pipeline per network flow sample: "
-        "(1) <i>Input Pruning</i> requires O(D_selected) = O(10) operations versus O(41) in the baseline; "
-        "(2) <i>1D Convolutional Layer</i> incurs an arithmetic complexity of C_Conv1D = O(W * k * F * D_selected). Pruning D from 41 to 10 slashes Conv1D arithmetic by 75.61%; "
-        "(3) <i>LSTM Recurrent Layer</i> incurs C_LSTM = O(W * (4(H^2 + H*F) + 4H)) where H = 64; and "
-        "(4) <i>Dense Softmax Layer</i> incurs C_Dense = O(H * C) where C = 5 classes. "
+        "To mathematically explain the measured inference speedups, we derive the computational complexity of the pipeline per network flow sample: "
+        "(1) Input Pruning requires O(D_selected) = O(10) memory operations versus O(41) in the baseline; "
+        "(2) 1D Convolutional Layer incurs an arithmetic floating-point complexity of C_Conv1D = O(W * k * F * D_selected). Pruning D from 41 to 10 reduces Conv1D floating-point operations by exactly 75.61%; "
+        "(3) LSTM Recurrent Layer incurs C_LSTM = O(W * (4(H^2 + H*F) + 4H)) where H = 64; and "
+        "(4) Softmax Output Layer incurs C_Dense = O(H * C) where C = 5 classes. "
         "Overall inference complexity scales as C_Total = O(W * (k * F * D_selected + 4H^2 + 4HF) + HC). "
-        "Because D_selected governs the initial dense projection, reducing it from 41 to 10 produces an immediate arithmetic collapse, allowing edge nodes to process high line-rate traffic without buffer overflow.",
+        "Because D_selected scales the initial input projection, reducing it from 41 to 10 produces an immediate arithmetic collapse, enabling edge gateways to evaluate packets within sub-millisecond execution windows.",
         styles['AcademicBody']
     ))
 
     # Quantization
     story.append(Paragraph("B. Post-Training Float16 Quantization", styles['SubSecHeading']))
     story.append(Paragraph(
-        "Float32 weights and activations are mapped to 16-bit half-precision IEEE 754 representations [15, 43]: "
-        "x_FP16 = (-1)^s * 2^{e - 15} * (1 + m/1024), where s is the 1-bit sign, e in [0, 31] is the 5-bit biased exponent, and m in [0, 1023] is the 10-bit mantissa. "
-        "Float16 provides a dynamic numerical range of 6.10e-5 to 65,504, eliminating overflow and underflow risks. "
-        "As confirmed in Table III, Float16 compresses model size by 83.2% (from 4.88 MB to 0.82 MB) and slashes latency from 35.60 ms to 0.76 ms without any accuracy degradation.",
+        "Standard Float32 weights and activations are mapped to 16-bit half-precision IEEE 754 representations [15, 43]: "
+        "x_FP16 = (-1)^s * 2^{e - 15} * (1 + m/1024), where s is the sign bit, e in [0, 31] is the 5-bit exponent with bias 15, and m in [0, 1023] is the 10-bit mantissa. "
+        "Float16 half-precision offers a dynamic numerical range spanning 6.10e-5 to 65,504, safely covering normalized telemetry features without underflow or overflow. "
+        "As shown in Table III, Float16 quantization compresses the model binary by 83.2% (from 4.88 MB to 0.82 MB) and reduces latency from 35.60 ms to 0.76 ms without any drop in classification accuracy.",
         styles['AcademicBody']
     ))
 
@@ -658,9 +653,9 @@ def build_ieee_pdf(output_path: str):
     # SECTION 6: EXPERIMENTAL EVALUATION
     story.append(Paragraph("VI. EXPERIMENTAL EVALUATION AND HARDWARE BENCHMARKS", styles['SecHeading']))
     story.append(Paragraph(
-        "<b>Held-Out KDDTest+ Benchmark:</b> Evaluated on the complete held-out test partition (22,544 samples) spanning 5 classes. "
-        "As detailed in Table IV, the framework preserves 96.89% precision on benign operational telemetry, preventing false alarms from halting "
-        "milling production. On volumetric DoS attacks, recall reaches 89.04% (F1: 0.8150), successfully mitigating denial-of-service flooding.",
+        "<b>Held-Out KDDTest+ Benchmark:</b> Evaluated on the complete held-out test split (22,544 samples) across 5 classes. "
+        "As detailed in Table IV, the model delivers 96.89% precision on benign traffic, preventing false alarms from halting milling circuits. "
+        "On volumetric DoS attacks, recall reaches 89.04% (F1: 0.8150), effectively flagging packet flood attempts.",
         styles['AcademicBody']
     ))
 
@@ -754,7 +749,7 @@ def build_ieee_pdf(output_path: str):
     # User Acceptance Testing & Verification Matrix
     story.append(Paragraph(
         "<b>User Acceptance Testing (UAT) and Automated Verification:</b> Structured evaluation with 5 industrial specialists "
-        "(3 cybersecurity analysts, 2 mining OT engineers) scored the platform 4.85 / 5.00 overall operational utility (Table VI). "
+        "(3 cybersecurity analysts, 2 mining automation technicians) scored the platform 4.85 / 5.00 overall operational utility (Table VI). "
         "Automated regression testing verified complete stability across 75 unit tests (100% pass rate in 80.47s) with zero failures.",
         styles['AcademicBody']
     ))
@@ -819,8 +814,8 @@ def build_ieee_pdf(output_path: str):
     story.append(Paragraph("VII. DISCUSSION, OPERATIONAL TRADE-OFFS AND ECONOMIC IMPACT", styles['SecHeading']))
     story.append(Paragraph(
         "<b>Pareto Optimality of the 7.14% Accuracy Trade-Off:</b> The reduction from 77.70% baseline accuracy to 70.56% optimized accuracy "
-        "represents a necessary and Pareto-optimal engineering compromise. An unoptimized model requiring 157.66 ms evaluates fewer than 7 samples/s, "
-        "violating the 20 to 50 ms PLC cycle and dropping packets. A 70.56% model running in 0.76 ms processes over 1,300 flows/s in real time. "
+        "represents a necessary and Pareto-optimal engineering compromise. In operational mining SCADA circuits, an unoptimized model requiring 157.66 ms cannot be deployed: it evaluates fewer than 7 samples per second, "
+        "violating the 20 to 50 ms PLC cycle and dropping packets. A 70.56% model running in 0.76 ms processes over 1,300 flows per second in real time. "
         "Crucially, benign precision is preserved at 96.89% (negligible 0.23% difference from baseline), preventing false production shutdowns.",
         styles['AcademicBody']
     ))
@@ -858,9 +853,9 @@ def build_ieee_pdf(output_path: str):
     # FORMAL ANSWERS TO RESEARCH QUESTIONS
     story.append(Paragraph("A. Formal Answers to Research Questions", styles['SubSecHeading']))
     story.append(Paragraph(
-        "<b>Answer to RQ1 (Dimensionality Optimization):</b> The constrained Binary Whale Optimization Algorithm successfully pruned "
-        "telemetry dimensions by 75.61% (reducing 41 features to exactly 10: src_bytes, service, flag, serror_rate, same_srv_rate, "
-        "diff_srv_rate, dst_host_diff_srv_rate, protocol_type, hot, and su_attempted). By coupling an adaptive alpha schedule (decaying from 0.5 to 0.3) "
+        "<b>Answer to RQ1 (Dimensionality Optimization):</b> The constrained Binary Whale Optimization Algorithm pruned candidate telemetry "
+        "dimensions by 75.61%, selecting exactly 10 features from 41 (`src_bytes`, `service`, `flag`, `serror_rate`, `same_srv_rate`, "
+        "`diff_srv_rate`, `dst_host_diff_srv_rate`, `protocol_type`, `hot`, and `su_attempted`). Guided by an adaptive alpha schedule (decaying from 0.5 to 0.3) "
         "with a hard accuracy floor penalty (1.0 penalty if validation accuracy < 75%), the optimizer avoided feature collapse and retained "
         "physically grounded industrial indicators. The 10-feature subset preserved 70.56% multi-class test accuracy and 92.31% cross-validation accuracy.",
         styles['BulletItem']

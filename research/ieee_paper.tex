@@ -32,7 +32,7 @@ Correspondence: hello@johnokyere.xyz}
 \maketitle
 
 \begin{abstract}
-The digital transformation of mineral extraction industries (Mining 4.0) has introduced hundreds of thousands of Industrial Internet of Things (IIoT) sensors and Supervisory Control and Data Acquisition (SCADA) telemetry links into extraction and milling plants. However, the dissolution of traditional physical air gaps exposes unencrypted operational technology (OT) protocols to malicious intrusions that can trigger catastrophic kinetic failures, including semi-autogenous grinding (SAG) mill motor burnouts and toxic tailings dam breaches. Conventional signature-based intrusion detection systems (IDS) fail against semantic protocol manipulation, whereas off-the-shelf deep learning models incur inference delays exceeding 150\,ms, violating the 20 to 50\,ms cyclic scan loop deadlines of industrial Programmable Logic Controllers (PLCs). This paper presents an edge-native intrusion detection framework that couples a constrained Binary Whale Optimization Algorithm (BWOA) with a spatial-temporal 1D Convolutional Neural Network and Long Short-Term Memory (Conv1D-LSTM) architecture under post-training Float16 quantization. Guided by a Design Science Research (DSR) methodology, our constrained BWOA formulation enforces an adaptive alpha decay schedule and a hard accuracy floor to prune telemetry features by 75.61\% (reducing 41 network flow dimensions to exactly 10). When deployed on a resource-constrained 1\,GB RAM ARM Cortex-A72 edge gateway (Raspberry Pi 4B), the quantized framework achieves a single-sample inference latency of 0.76\,ms (a 207-fold speedup over the 157.66\,ms full-feature baseline) and compresses the memory footprint by 83.2\% to 0.82\,MB at 2.5\,W power draw. The model achieves 70.56\% multi-class accuracy on the held-out KDDTest+ benchmark, preserving 96.89\% precision on benign operational telemetry and 89.04\% recall on volumetric Denial-of-Service attacks. Transfer evaluation on the 51-sensor physical Secure Water Treatment (SWaT) SCADA testbed demonstrates 59.95\% accuracy and an AUC-ROC of 0.8650 in 0.12\,ms without retraining. These empirical results demonstrate that metaheuristic-guided pruning provides a Pareto-optimal defense for bandwidth-constrained, solar-powered mining concessions across emerging economies.
+Industrial Internet of Things (IIoT) deployments in modern mineral processing plants have connected thousands of smart actuators, slurry density gauges, and vibration sensors directly to supervisory control networks. While this connectivity enables predictive maintenance, it eliminates physical air gaps, exposing unauthenticated operational technology (OT) protocols to remote manipulation. In grinding and leaching circuits, an adversary manipulating Programmable Logic Controller (PLC) register values can de-energize slurry pumps or override mill cooling loops, inducing kinetic damage within seconds. Off-the-shelf deep neural network classifiers cannot defend these environments because their 150+ ms inference latencies exceed the 20 to 50 ms cyclic scan limits of industrial PLCs. To resolve this timing conflict, we present an edge-native intrusion detection architecture combining a constrained Binary Whale Optimization Algorithm (BWOA) with a spatial-temporal 1D Convolutional Neural Network and Long Short-Term Memory (Conv1D-LSTM) model under Float16 quantization. Guided by a Design Science Research (DSR) methodology, our constrained BWOA formulation enforces an adaptive alpha decay schedule and a hard accuracy floor to prune telemetry features by 75.61\% (reducing 41 network flow dimensions to exactly 10). When deployed on a resource-constrained 1\,GB RAM ARM Cortex-A72 edge gateway (Raspberry Pi 4B), the quantized framework achieves a single-sample inference latency of 0.76\,ms (a 207-fold speedup over the 157.66\,ms full-feature baseline) and compresses the memory footprint by 83.2\% to 0.82\,MB at 2.5\,W power draw. The model achieves 70.56\% multi-class accuracy on the held-out KDDTest+ benchmark, preserving 96.89\% precision on benign operational telemetry and 89.04\% recall on volumetric Denial-of-Service attacks. Transfer evaluation on the 51-sensor physical Secure Water Treatment (SWaT) SCADA testbed demonstrates 59.95\% accuracy and an AUC-ROC of 0.8650 in 0.12\,ms without retraining. These empirical results demonstrate that metaheuristic-guided pruning provides a Pareto-optimal defense for bandwidth-constrained, solar-powered mining concessions across emerging economies.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -40,25 +40,27 @@ Industrial Internet of Things (IIoT), SCADA Security, Edge Computing, Binary Wha
 \end{IEEEkeywords}
 
 \section{Introduction}
-The global mineral extraction sector is undergoing fundamental cyber-physical integration, driven by the ``Mining 4.0'' paradigm \cite{litvinenko2020digital, oyedotun2025deep}. Modern open-pit and underground concessions deploy dense Industrial Internet of Things (IIoT) telemetry to monitor semi-autogenous grinding (SAG) mills, vibrating wire piezometers along tailings storage facilities (TSF), and automated ventilation grids \cite{boudina2023towards, rosendahl2020digital}. However, the historical air gap separating Operational Technology (OT) from corporate Information Technology (IT) has eroded due to cloud diagnostics, fleet telematics, and remote maintenance bridges \cite{hock2022cyber}. 
+Industrial extraction and metallurgical milling facilities are undergoing rapid digitization under the Mining 4.0 paradigm \cite{litvinenko2020digital, oyedotun2025deep}. Open-pit concessions and underground stopes deploy dense wireless sensor nodes and industrial telemetry networks to track semi-autogenous grinding (SAG) mill shell vibrations, bearing temperatures, tailings dam pore-water pressures, and automated ventilation fan speeds \cite{boudina2023towards, rosendahl2020digital}. Plant managers increasingly bridge these field instruments to enterprise resource planning software and remote diagnostic centers \cite{hock2022cyber}. 
 
-Legacy industrial control protocols, such as Modbus RTU/TCP, DNP3, and EtherNet/IP, transmit telemetry in plaintext without cryptographic origin authentication or message integrity checks \cite{stouffer2023guide, alanazi2022scada, hsu2017modbus}. In mineral processing facilities, malicious actors manipulating PLC register values can override cooling water valves, de-energize slurry pump drives, or falsify piezometric pressure readings, leading to catastrophic equipment destruction, toxic chemical discharges, or fatal underground asphyxiation \cite{butko2022cyber, amin2013cyber}. Landmark incidents such as Stuxnet \cite{langner2011stuxnet, falliere2011w32}, the Ukrainian power grid shutdown \cite{lee2014industrial}, and TRITON/HatMan safety instrumented system malware \cite{dipinto2018triton} demonstrate that industrial adversaries systematically exploit unauthenticated protocol mechanics to inflict kinetic damage \cite{cardenas2011attacks, lin2018cyber, zhou2020deep}.
+This connectivity creates severe operational security vulnerabilities. Historically, industrial facilities relied on the assumption of an impermeable physical air gap. Today, that air gap is largely gone. Industrial Ethernet backbones carry unencrypted protocols designed decades ago, including Modbus RTU/TCP, DNP3, and EtherNet/IP \cite{stouffer2023guide, alanazi2022scada, hsu2017modbus}. None of these protocols incorporate cryptographic handshake authentication, message sequence signing, or payload confidentiality. An adversary who penetrates an outer corporate firewall or compromises a vendor maintenance laptop can inject raw command frames directly into Level 1 programmable logic controllers (PLCs) and remote terminal units (RTUs) \cite{cardenas2011attacks, butko2022cyber}.
 
-Deploying intelligent intrusion detection within industrial mineral concessions faces four architectural challenges:
+The physical consequences in a mineral extraction plant are catastrophic. Overwriting holding registers in a milling circuit PLC can trip cooling water valves on a 15-megawatt SAG mill motor, causing thermal copper winding deformation before human operators can intervene \cite{butko2022cyber, amin2013cyber}. Falsifying piezometric telemetry from a tailings storage facility (TSF) can conceal hydrostatic liquefaction until a containment berm collapses. Landmark cyber-physical attacks - such as Stuxnet \cite{langner2011stuxnet, falliere2011w32}, the 2015 Ukrainian power grid blackout \cite{lee2014industrial}, and the TRITON attack targeting safety instrumented systems \cite{dipinto2018triton} - prove that threat actors deliberately weaponize unauthenticated protocol mechanics against physical equipment \cite{lin2018cyber, zhou2020deep}.
+
+Deploying machine learning-based intrusion detection inside operating mineral concessions involves four distinct engineering challenges:
 \begin{enumerate}
-    \item \textbf{Signature Engine Brittleness}: Systems like Snort or Suricata rely on static byte signatures. Attackers manipulating legitimate Modbus function codes (e.g., Function Code 05: Write Single Coil or Function Code 16: Write Multiple Holding Registers) bypass pattern checks completely because packet syntax conforms to protocol standards \cite{alanazi2022scada, hsu2017modbus}.
-    \item \textbf{Telemetry Dimensionality Mismatch}: Deep learning anomaly detection models trained on enterprise IT benchmarks with 41 to 80+ flow attributes incur heavy computational overhead and high false-positive rates that disrupt mission-critical SCADA operations \cite{kheddar2023deep, moustafa2015unsw, sharafaldin2018toward}.
-    \item \textbf{SCADA Real-Time Control Loop Violations}: Unoptimized deep neural networks incur inference latencies exceeding 150\,ms. In mining plants, PLCs execute cyclic control scan loops every 20 to 50\,ms. Evaluating network flows in 150\,ms introduces buffer bloat and compromises safety loop margins \cite{amin2013cyber, stouffer2023guide}.
-    \item \textbf{Edge Hardware Constraints in Remote Concessions}: Remote concessions across Africa operate under intermittent satellite backhaul, solar-buffered microgrids, and cost-constrained edge gateways (e.g., 1\,GB RAM ARM single-board computers) \cite{butko2022cyber, litvinenko2020digital}. Heavy cloud-dependent architectures are unviable during satellite dropouts.
+    \item \textbf{Signature Engine Brittleness}: Static pattern matching engines (such as Snort or Suricata) evaluate packet headers against known vulnerability strings. When an adversary transmits a syntactically valid Modbus Function Code 05 (Write Single Coil) or Function Code 16 (Write Multiple Holding Registers) to alter mill setpoints, the packet complies fully with the protocol specification and passes inspected firewalls completely unnoticed \cite{alanazi2022scada, hsu2017modbus}.
+    \item \textbf{High-Dimensional Telemetry Bottlenecks}: Anomaly detectors adapted from general IT environments process 41 to 80+ statistical flow variables per connection \cite{kheddar2023deep, moustafa2015unsw, sharafaldin2018toward}. Computing these high-dimensional matrices exhaust edge gateway memory and produces high false alarm rates that frustrate plant operators.
+    \item \textbf{Deterministic SCADA Scan Loop Constraints}: Industrial PLCs execute cyclic control routines consisting of input scan, logic execution, and output write steps that repeat every 20 to 50 ms \cite{amin2013cyber, stouffer2023guide}. Deep neural network models that require 150 ms or more to classify a packet burst exceed these deadlines, causing buffer overflows and dropped telemetry.
+    \item \textbf{Edge Hardware Realities in Remote Concessions}: Hard-rock mining operations across developing regions frequently function in remote areas under harsh environmental conditions. Concession gateways run on low-power ARM microcomputers powered by solar battery banks, connected to the outside world only via high-latency, intermittent satellite uplinks \cite{butko2022cyber, litvinenko2020digital}. Solutions that require cloud-based inference fail when connectivity drops.
 \end{enumerate}
 
-To resolve these challenges, this paper presents an edge-native, metaheuristic-optimized deep learning framework developed under the Design Science Research (DSR) paradigm \cite{peffers2007design, hevner2004design}. Our main contributions are:
+To overcome these constraints, we designed, implemented, and empirically evaluated an edge-native intrusion detection framework grounded in the Design Science Research (DSR) methodology \cite{peffers2007design, hevner2004design}. Our main contributions are:
 \begin{itemize}
-    \item A constrained Binary Whale Optimization Algorithm (BWOA) with an adaptive alpha decay schedule and hard accuracy floor penalty that discards 75.61\% of telemetry features while preserving critical multi-class threat discrimination.
-    \item A hybrid spatial-temporal neural classifier combining 1D Convolutions (packet-level spatial relationships) and Long Short-Term Memory (temporal sequence state tracking), converted via post-training Float16 quantization into an 0.82\,MB footprint.
-    \item Formal algorithmic Big-O complexity analyses demonstrating a 75.61\% reduction in convolutional arithmetic operations, lowering execution time to sub-millisecond ranges.
-    \item Empirical hardware validation on physical Raspberry Pi 4B (1\,GB RAM), Raspberry Pi 5 (4\,GB RAM), and AWS EC2 (t3.medium) nodes, establishing a 0.76\,ms single-sample inference latency (207-fold speedup) compliant with sub-100\,ms SCADA deadlines.
-    \item Comprehensive evaluation on the 22,544-sample held-out NSL-KDD test partition and transfer evaluation on the 51-sensor physical SWaT SCADA testbed, corroborated by a 75/75 passed automated unit test suite.
+    \item We formulate a constrained Binary Whale Optimization Algorithm (BWOA) incorporating an adaptive alpha decay schedule and a hard accuracy floor. The optimizer prunes redundant telemetry attributes by 75.61\% (from 41 down to 10 features) while strictly preserving minority attack indicators.
+    \item We architect a compact spatial-temporal neural classifier coupling a 1D Convolutional layer (for intra-packet feature correlation) with a Long Short-Term Memory unit (for inter-packet state tracking), quantized to 16-bit half-precision (Float16) to occupy just 0.82\,MB of memory.
+    \item We provide a formal Big-O computational complexity derivation demonstrating that our 10-feature pruning reduces convolutional arithmetic operations by 75.61\%, explaining the measured sub-millisecond execution speeds.
+    \item We benchmark the framework across physical hardware platforms - Raspberry Pi 4B (1\,GB RAM), Raspberry Pi 5 (4\,GB RAM), and AWS EC2 cloud instances - demonstrating a single-sample latency of 0.76\,ms on the 1\,GB Pi 4B, representing a 207-fold speedup over unpruned baseline models.
+    \item We validate the pipeline on 22,544 held-out samples from the NSL-KDD corpus and assess transferability on the 51-sensor physical Secure Water Treatment (SWaT) SCADA testbed, corroborated by an automated test suite of 75 unit tests with 100\% pass rate.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -76,7 +78,7 @@ To resolve these challenges, this paper presents an edge-native, metaheuristic-o
 \end{figure}
 
 \subsection{Research Questions}
-To systematically guide the investigation and validate the research artifact under the Design Science Research methodology \cite{peffers2007design, hevner2004design}, four explicit research questions are formulated:
+We formulated four explicit research questions to structure our empirical investigation under the DSR framework \cite{peffers2007design, hevner2004design}:
 \begin{itemize}
     \item \textbf{RQ1 (Dimensionality Optimization)}: To what extent can a constrained Binary Whale Optimization Algorithm (BWOA) with an adaptive alpha decay schedule and a hard accuracy floor prune high-dimensional industrial telemetry features while preserving multi-class threat discrimination?
     \item \textbf{RQ2 (Spatial-Temporal Threat Modeling)}: How effectively does a hybrid 1D Convolutional Neural Network and Long Short-Term Memory (Conv1D-LSTM) architecture capture packet-level spatial correlations and sequential connection state transitions in industrial SCADA networks?
@@ -85,11 +87,13 @@ To systematically guide the investigation and validate the research artifact und
 \end{itemize}
 
 \section{Related Work and Research Gaps}
-Intrusion detection systems are traditionally categorized into signature-based and anomaly-based approaches \cite{amin2013cyber, alanazi2022scada}. While signature engines exhibit minimal processing overhead on standard servers, their recall on novel zero-day exploits remains under 15\% \cite{alanazi2022scada}. Generic machine learning models, such as Random Forests and Support Vector Machines (SVMs), achieve acceptable classification on balanced datasets \cite{ahmad2018performance}, but exhibit poor detection rates on minority cyber-physical attack classes and suffer from feature redundancy \cite{chawla2002smote}.
+Intrusion detection research for industrial control networks generally branches into signature-based rule engines and anomaly detection models \cite{amin2013cyber, alanazi2022scada}. Signature engines achieve high packet throughput on commodity servers, but their zero-day attack recall regularly drops below 15\% because threat actors use legitimate protocol functions rather than known shellcode strings \cite{alanazi2022scada}. Classic machine learning algorithms, including Random Forests and Support Vector Machines, perform acceptably on balanced datasets \cite{ahmad2018performance}. However, when exposed to severe class imbalances typical of physical plants, their detection rates on rare, high-consequence attacks plummet, exacerbated by high feature redundancy \cite{chawla2002smote}.
 
-Recent research has explored metaheuristic algorithms for feature selection \cite{xue2016survey, holland1992adaptation, kennedy1995particle, eberhart1998comparison}. Mirjalili and Lewis introduced the Whale Optimization Algorithm (WOA) \cite{mirjalili2016whale}, which models humpback whale foraging mechanics. Binary adaptations (BWOA) map continuous positions to discrete bit masks using sigmoid or V-shaped transfer functions \cite{mafarja2017hybrid, ghosh2022bwoa, altashi2020binary}. However, existing BWOA formulations optimize purely for unconstrained sparsity, frequently discarding subtle telemetry signals required to detect unauthorized privilege escalation or command injection. Concurrently, deep learning architectures using CNNs \cite{lecun1998gradient} and LSTMs \cite{hochreiter1997long, shi2015convolutional} have demonstrated strong spatial-temporal detection \cite{almomani2025cyberattack, yin2017deep, anand2024whale, krishnaveni2025hybrid}, but their computational complexity has hindered edge deployment on low-power hardware \cite{jacob2018quantization, han2016deep, micikevicius2018mixed, dally2020hardware}.
+To reduce input dimensionality without losing threat signals, researchers have investigated bio-inspired metaheuristics \cite{xue2016survey, holland1992adaptation, kennedy1995particle, eberhart1998comparison}. Mirjalili and Lewis introduced the Whale Optimization Algorithm (WOA) \cite{mirjalili2016whale}, mimicking the spiral bubble-net hunting maneuvers of humpback whales. Binary adaptations (BWOA) discretize continuous positional updates using transfer functions \cite{mafarja2017hybrid, ghosh2022bwoa, altashi2020binary}. However, existing BWOA formulations optimize purely for unconstrained sparsity. In network intrusion detection, this unconstrained approach frequently discards low-frequency attributes that carry vital signals for detecting user-to-root privilege escalation. 
 
-Evaluation of SCADA defenses requires realistic datasets. While enterprise corpora such as NSL-KDD \cite{tavallaee2009detailed}, UNSW-NB15 \cite{moustafa2015unsw}, and CICIDS2017 \cite{sharafaldin2018toward} provide rich multi-class threat vectors, cyber-physical testbeds such as SWaT \cite{goh2016dataset}, WADI \cite{ahmed2017wadi}, and TON\_IoT \cite{moustafa2021ton} capture continuous multi-sensor dynamics under active physical attack \cite{taormina2018battle}. As summarized in Table~\ref{tab:comparison}, no prior work unifies constrained metaheuristic pruning, hybrid spatial-temporal classification, and post-training edge quantization specifically tailored for the sub-100\,ms constraints of industrial mineral extraction.
+On the model architecture side, combining 1D convolutions \cite{lecun1998gradient} with recurrent LSTM cells \cite{hochreiter1997long, shi2015convolutional} has proven effective for capturing multi-packet temporal patterns \cite{almomani2025cyberattack, yin2017deep, anand2024whale, krishnaveni2025hybrid}. Unfortunately, their computational footprint limits practical deployment on low-cost edge gateways \cite{jacob2018quantization, han2016deep, micikevicius2018mixed, dally2020hardware}. 
+
+Evaluating SCADA defenses also demands representative benchmark data. Traditional enterprise datasets like NSL-KDD \cite{tavallaee2009detailed}, UNSW-NB15 \cite{moustafa2015unsw}, and CICIDS2017 \cite{sharafaldin2018toward} provide verified multi-class traffic distributions. Complementary physical testbeds, including SWaT \cite{goh2016dataset}, WADI \cite{ahmed2017wadi}, and TON\_IoT \cite{moustafa2021ton}, offer multi-sensor continuous process data collected under active physical attack \cite{taormina2018battle}. As summarized in Table~\ref{tab:comparison}, existing literature lacks an integrated solution that combines constrained metaheuristic pruning, spatial-temporal modeling, and edge quantization tailored to sub-100 ms industrial control loops.
 
 \begin{table}[htbp]
 \caption{Comparison of Existing Intrusion Detection Paradigms vs Proposed Framework}
@@ -110,21 +114,21 @@ CNN-LSTM Baseline (41 feat) \cite{almomani2025cyberattack} & High & 77.70\% & 15
 \section{System Architecture and Threat Model}
 
 \subsection{Cyber-Physical Threat Model and SCADA Attack Taxonomy}
-We consider an adversary who has gained network-level ingress into the Level 2/3 supervisory control network of a mineral processing plant via compromised remote engineering access or vendor maintenance bridges \cite{hock2022cyber, butko2022cyber}. Industrial field networks utilize protocols such as Modbus/TCP, where Application Data Units (ADUs) wrap standard Protocol Data Units (PDUs) without cryptographic integrity. The adversary executes four categories of attacks:
+Our threat model considers an external adversary who has gained network access to the Level 2/3 supervisory control network of a mineral extraction concession \cite{hock2022cyber, butko2022cyber}. The attacker can exploit weak VPN credentials, misconfigured wireless bridges, or unpatched maintenance laptops. Industrial plant communications rely heavily on Modbus/TCP, where an Application Data Unit (ADU) encapsulates a 7-byte Modbus Application Protocol (MBAP) header and a Protocol Data Unit (PDU) containing function codes and register addresses. Because Modbus lacks authentication, the adversary can execute four distinct attack classes:
 \begin{enumerate}
-    \item \textbf{Reconnaissance Sweeping (Probe)}: Systematically issuing Modbus Function Code 01 (Read Coils) and Function Code 03 (Read Holding Registers) across IP and unit identifier ranges to map PLC memory maps, register boundaries, and instrument addresses \cite{hsu2017modbus, cardenas2011attacks}.
-    \item \textbf{Volumetric Flooding (DoS)}: Saturating industrial Ethernet switches with malformed TCP SYN packets or broadcast storms, blinding control room operators during acute process upsets (e.g., preventing emergency slurry pump trips) \cite{amin2013cyber, lin2018cyber}.
-    \item \textbf{Unauthorized Semantic Command Injection}: Transmitting unauthorized Modbus Function Code 05 (Write Single Coil) or Function Code 16 (Write Multiple Holding Registers) to alter physical setpoints, such as overriding the variable-frequency drive (VFD) speed of a SAG mill or falsifying tailings dam piezometer thresholds \cite{alanazi2022scada, zhou2020deep}.
-    \item \textbf{Host Privilege Escalation (U2R/R2L)}: Exploiting vulnerable operating system daemons on human-machine interface (HMI) workstations to escalate from unprivileged guest accounts to root administrative control, facilitating firmware modifications similar to Stuxnet \cite{langner2011stuxnet, falliere2011w32} and TRITON \cite{dipinto2018triton}.
+    \item \textbf{Reconnaissance Sweeping (Probe)}: The attacker iterates through device unit IDs and register addresses using Modbus Function Code 01 (Read Coils) and Function Code 03 (Read Holding Registers). This maps controller addresses, operating setpoints, and sensor channels \cite{hsu2017modbus, cardenas2011attacks}.
+    \item \textbf{Volumetric Flooding (DoS)}: The attacker floods plant Ethernet switches with malformed TCP SYN packets or broadcast storms. This saturates controller network buffers, blinding operators during critical process disturbances (such as slurry pump cavitation) \cite{amin2013cyber, lin2018cyber}.
+    \item \textbf{Semantic Command Injection}: The attacker issues unauthorized Modbus Function Code 05 (Write Single Coil) or Function Code 16 (Write Multiple Holding Registers). For example, changing register setpoints for a SAG mill variable-frequency drive can force the mill into catastrophic overspeed or close slurry dilution valves, precipitating pipeline clogs \cite{alanazi2022scada, zhou2020deep}.
+    \item \textbf{Workstation Privilege Escalation (U2R/R2L)}: The attacker exploits vulnerabilities in engineering workstation operating systems to elevate privileges from an operator account to administrator access. This allows lateral movement and malicious controller firmware reprogramming, mirroring Stuxnet \cite{langner2011stuxnet, falliere2011w32} and TRITON \cite{dipinto2018triton}.
 \end{enumerate}
 
 \subsection{Four-Tier Edge Defense Boundary}
-The proposed edge defense architecture operates across four decoupled functional tiers, as depicted in Fig.~\ref{fig:system_arch}:
+To counter these threats without disrupting plant operations, we structured our defense system into four decoupled tiers, shown in Fig.~\ref{fig:system_arch}:
 \begin{enumerate}
-    \item \textbf{Tier 1: Industrial Ingestion Layer}: A non-blocking packet sniffer built with libpcap captures raw bidirectional frames from switch mirror (SPAN) ports at line speed without introducing in-line latency.
-    \item \textbf{Tier 2: Metaheuristic Optimization Layer}: Prunes incoming feature streams using the BWOA-selected 10-attribute mask, dropping 75.61\% of uninformative fields in under 0.05\,ms.
-    \item \textbf{Tier 3: Spatial-Temporal Deep Learning Layer}: A compiled TensorFlow Lite Float16 model executes local classification on an ARM edge gateway in 0.76\,ms.
-    \item \textbf{Tier 4: Supervisory Visualization Layer}: Real-time predictions, class confidence scores, and latency metrics are exposed via a local FastAPI microservice and streamed to an industrial Livewire dashboard.
+    \item \textbf{Tier 1: Ingestion Layer}: A non-blocking packet sniffer using libpcap listens on switch mirror (SPAN) ports, capturing bidirectional frames at line rate without inline network delay.
+    \item \textbf{Tier 2: Feature Optimization Layer}: The incoming telemetry vector is immediately masked by our 10-feature BWOA filter, discarding 75.61\% of attributes in less than 0.05 ms.
+    \item \textbf{Tier 3: Deep Learning Inference Layer}: The spatial-temporal classifier, compiled into a TensorFlow Lite Float16 binary, runs locally on the edge ARM processor in 0.76 ms.
+    \item \textbf{Tier 4: Supervisory Interface Layer}: Threat classifications, confidence scores, and latency metrics are published via a local FastAPI service to an operator Livewire console for immediate alarm triage.
 \end{enumerate}
 
 \begin{figure}[htbp]
@@ -136,44 +140,44 @@ The proposed edge defense architecture operates across four decoupled functional
 
 \section{Metaheuristic Feature Optimization via Constrained BWOA}
 
-\subsection{Detailed Mathematical Formulation of BWOA}
-The feature selection task is modeled in the discrete binary space $\mathcal{S} \in \{0, 1\}^D$, where $D = 41$ denotes candidate telemetry attributes. Each candidate feature subset is represented by a binary position vector:
+\subsection{Mathematical Formulation of Constrained BWOA}
+Feature selection operates on a discrete binary search space $\mathcal{S} \in \{0, 1\}^D$, where $D = 41$ denotes the initial candidate telemetry dimensions. A candidate subset is expressed as a binary position vector:
 \begin{equation}
 \vec{X} = [x_1, x_2, \dots, x_D], \quad x_d \in \{0, 1\}
 \end{equation}
-where $x_d = 1$ denotes feature inclusion and $x_d = 0$ denotes exclusion. Search agents (whales) update their coordinates through three distinct physical mechanisms \cite{mirjalili2016whale}:
+where $x_d = 1$ indicates that feature $d$ is retained, and $x_d = 0$ indicates exclusion. Whale agents update their positions in the search space using three distinct mathematical operators \cite{mirjalili2016whale}:
 
 \subsubsection{Shrinking Encircling Phase (Local Exploitation)}
-Whales identify the current best candidate solution (leader whale $\vec{X}^*$) and encircle it. The distance vector $\vec{D}$ represents the scaled spatial displacement between the leader and the current agent:
+Search agents locate the current best candidate solution (leader $\vec{X}^*$) and encircle it. The distance vector $\vec{D}$ computes the scaled spatial displacement between the leader and the current agent:
 \begin{equation}
 \vec{D} = \left| \vec{C} \odot \vec{X}^*(t) - \vec{X}(t) \right|
 \end{equation}
-where $t$ denotes the iteration index, $\odot$ represents the Hadamard element-wise product, and $\vec{C}$ is a stochastic coefficient vector defined as:
+where $t$ is the iteration index, $\odot$ denotes element-wise multiplication, and $\vec{C}$ is a stochastic coefficient vector:
 \begin{equation}
 \vec{C} = 2 \cdot \vec{r}_2, \quad \vec{r}_2 \sim \mathcal{U}(0, 1)^D
 \end{equation}
-The coordinate update toward the leader is governed by:
+The positional update toward the leader is governed by:
 \begin{equation}
 \vec{X}(t+1) = \vec{X}^*(t) - \vec{A} \odot \vec{D}
 \end{equation}
-The vector $\vec{A}$ dictates the convergence step size and direction:
+The vector $\vec{A}$ modulates the convergence step size:
 \begin{equation}
 \vec{A} = 2\vec{a} \odot \vec{r}_1 - \vec{a}, \quad \vec{r}_1 \sim \mathcal{U}(0, 1)^D
 \end{equation}
-Here, the parameter vector $\vec{a}$ decays linearly from 2 to 0 across iterations:
+Here, the parameter vector $\vec{a}$ decays linearly from 2 to 0 over the course of iterations:
 \begin{equation}
 \vec{a} = 2 - 2 \cdot \left(\frac{t}{T_{\text{max}}}\right)
 \end{equation}
-where $T_{\text{max}} = 100$ is the total iteration budget. As $\vec{a}$ decreases, the fluctuation range of $\vec{A}$ also shrinks. When $|\vec{A}| < 1$, the agent is forced to exploit the immediate coordinate basin around the leader $\vec{X}^*$.
+where $T_{\text{max}} = 100$ denotes the total iteration budget. As $\vec{a}$ approaches zero, the fluctuation interval of $\vec{A}$ contracts. When $|\vec{A}| < 1$, the agent is confined to exploit the immediate neighborhood of the leader $\vec{X}^*$.
 
-\subsubsection{Spiral Bubble-Net Foraging Phase (Helical Pathing)}
-To emulate the upward helical bubble-net maneuver observed in humpback whales, a logarithmic spiral equation calculates the updated distance:
+\subsubsection{Spiral Bubble-Net Foraging Phase (Helical Exploration)}
+To model the upward spiral foraging movement of humpback whales, a logarithmic spiral equation computes the distance between whale and prey:
 \begin{equation}
 \vec{X}(t+1) = \vec{D}' \cdot e^{bl} \cos(2\pi l) + \vec{X}^*(t)
 \end{equation}
-where $\vec{D}' = \left| \vec{X}^*(t) - \vec{X}(t) \right|$ represents the absolute distance from the agent to the leader, $b = 1.0$ is a constant defining logarithmic spiral curvature, and $l \sim \mathcal{U}(-1, 1)$ defines the step along the spiral path.
+where $\vec{D}' = \left| \vec{X}^*(t) - \vec{X}(t) \right|$ represents the absolute distance to the leader, $b = 1.0$ is the spiral shape constant, and $l \sim \mathcal{U}(-1, 1)$ defines the agent step along the spiral path.
 
-A uniform random threshold $p \sim \mathcal{U}(0, 1)$ switches between shrinking encircling ($p < 0.5$) and spiral foraging ($p \ge 0.5$):
+A uniform random probability $p \sim \mathcal{U}(0, 1)$ alternates between shrinking encircling and spiral pathing:
 \begin{equation}
 \vec{X}(t+1) = \begin{cases} 
 \vec{X}^*(t) - \vec{A} \odot \vec{D}, & \text{if } p < 0.5 \\ 
@@ -181,42 +185,42 @@ A uniform random threshold $p \sim \mathcal{U}(0, 1)$ switches between shrinking
 \end{cases}
 \end{equation}
 
-\subsubsection{Global Exploration Phase (Random Whale Selection)}
-When $|\vec{A}| \ge 1$, the search agent diverges from the current leader to perform global exploration, updating coordinates relative to a randomly chosen whale $\vec{X}_{\text{rand}}$:
+\subsubsection{Global Exploration Phase (Random Divergence)}
+When $|\vec{A}| \ge 1$, the search agent diverges from the current leader to explore globally, updating its position relative to a randomly chosen whale $\vec{X}_{\text{rand}}$:
 \begin{equation}
 \vec{D} = \left| \vec{C} \odot \vec{X}_{\text{rand}} - \vec{X}(t) \right|
 \end{equation}
 \begin{equation}
 \vec{X}(t+1) = \vec{X}_{\text{rand}} - \vec{A} \odot \vec{D}
 \end{equation}
-This global divergence prevents the swarm from becoming trapped in sub-optimal local basins during early iterations.
+This divergence prevents the swarm from collapsing into sub-optimal local minima during early search phases.
 
-\subsection{V-Shaped Binary Transfer Function Derivation}
-Standard continuous optimization updates velocities in $\mathbb{R}^D$. To discretize updates into bit-flips in $\{0, 1\}^D$ without boundary saturation, we implement a V-shaped transfer function $\mathcal{V}(v_d)$:
+\subsection{V-Shaped Binary Velocity Transfer Function}
+Because standard WOA operates in continuous space $\mathbb{R}^D$, continuous position updates must be mapped to discrete bit-flips in $\{0, 1\}^D$. We selected a V-shaped transfer function $\mathcal{V}(v_d)$ rather than a conventional sigmoid:
 \begin{equation}
 \mathcal{V}(v_d) = \left| \frac{v_d}{\sqrt{1 + v_d^2}} \right|
 \end{equation}
-which maps continuous velocity $v_d \in \mathbb{R}$ to a bit-flip probability $\mathcal{V}(v_d) \in [0, 1]$.
+which maps velocity $v_d \in \mathbb{R}$ to a bit-flip probability $\mathcal{V}(v_d) \in [0, 1]$.
 
-\textbf{Justification over Sigmoidal Functions}: Traditional S-shaped sigmoid transfer functions $S(v_d) = 1 / (1 + e^{-v_d})$ map high positive velocities to $S(v_d) \approx 1$ and high negative velocities to $S(v_d) \approx 0$. This induces severe search stagnation because negative velocity coordinates never flip bits. In contrast, the V-shaped function treats large positive and large negative velocity magnitudes symmetrically as strong signals to alter the feature state. The bit-flip rule is formulated as:
+\textbf{Rationale over Sigmoidal Functions}: S-shaped sigmoid functions $S(v_d) = 1 / (1 + e^{-v_d})$ assign high negative velocities near-zero flip probabilities. In feature selection, this causes severe stagnation: once a feature bit is disabled with a negative velocity, it rarely toggles back. In contrast, the V-shaped function treats large positive and negative velocity magnitudes symmetrically as strong indicators to toggle the feature state. The update rule is formulated as:
 \begin{equation}
 x_d(t+1) = \begin{cases} 
 1 - x_d(t), & \text{if } r_3 < \mathcal{V}(v_d) \\ 
 x_d(t), & \text{otherwise} 
 \end{cases}
 \end{equation}
-where $r_3 \sim \mathcal{U}(0, 1)$. If the total active bits drop below $K_{\text{min}} = 10$, disabled bits are reactivated randomly to prevent degenerated feature masks.
+where $r_3 \sim \mathcal{U}(0, 1)$. If the number of selected features drops below $K_{\text{min}} = 10$, disabled bits are randomly reactivated to preserve minimum representation capacity.
 
 \subsection{Constrained Multi-Objective Fitness Function}
-Standard feature selection algorithms optimize purely for unconstrained sparsity, discarding rare attack indicators. We formulate a constrained multi-objective fitness function with an adaptive alpha decay schedule and a hard accuracy floor penalty:
+Standard feature selection algorithms optimize purely for sparsity, frequently pruning subtle telemetry signals vital for detecting targeted cyber-physical attacks. To enforce high threat discrimination, we designed a constrained fitness function incorporating an adaptive alpha decay schedule and a hard accuracy barrier:
 \begin{equation}
 \mathcal{F}(\vec{X}) = \alpha(t) \cdot \text{Error}(\vec{X}) + (1 - \alpha(t)) \cdot \frac{|\text{Selected}(\vec{X})|}{D} + \mathcal{P}(\vec{X})
 \end{equation}
-where the classification error term is:
+where the classification error is computed over a stratified validation split:
 \begin{equation}
 \text{Error}(\vec{X}) = 1 - \text{Accuracy}_{\text{val}}(\vec{X})
 \end{equation}
-evaluated on a stratified validation set. The adaptive alpha decay schedule transitions from accuracy exploration to aggressive sparsity:
+The adaptive parameter $\alpha(t)$ shifts the optimization balance from initial accuracy discovery to aggressive dimensionality reduction:
 \begin{equation}
 \alpha(t) = \begin{cases} 
 \alpha_0 + \frac{t}{T_{\text{decay}}}(\alpha_{\text{end}} - \alpha_0), & \text{if } t < T_{\text{decay}} \\ 
@@ -230,10 +234,10 @@ with $\alpha_0 = 0.5$, $\alpha_{\text{end}} = 0.3$, and $T_{\text{decay}} = 50$.
 0.0, & \text{otherwise} 
 \end{cases}
 \end{equation}
-with $\tau_{\text{acc}} = 0.75$ and $K_{\text{min}} = 10$. Any candidate mask achieving less than 75\% accuracy is immediately penalized by 1.0, strictly disqualifying it from selection.
+with $\tau_{\text{acc}} = 0.75$ and $K_{\text{min}} = 10$. Any candidate feature mask that yields validation accuracy below 75\% receives a heavy penalty of 1.0, eliminating it from candidate selection.
 
-\subsection{Optimization Results and Feature Importance}
-Across 30 whale agents over 100 iterations, the optimizer converged at iteration 23, as shown in Fig.~\ref{fig:bwoa_conv}, pruning the input space from 41 to exactly 10 features (75.61\% reduction). As detailed in Table~\ref{tab:bwoa_features} and illustrated in Fig.~\ref{fig:feat_imp}, the selected attributes possess direct operational significance in industrial networks: volumetric indicators (\texttt{src\_bytes}, \texttt{serror\_rate}) capture DoS floods; protocol and state attributes (\texttt{service}, \texttt{flag}, \texttt{protocol\_type}) monitor Modbus/DNP3 connection handshakes; and host access signals (\texttt{hot}, \texttt{su\_attempted}) detect privilege escalation.
+\subsection{Optimization Results and Feature Ranking}
+Running 30 whale agents over 100 iterations, the optimizer converged at iteration 23 (Fig.~\ref{fig:bwoa_conv}), pruning the input space from 41 to exactly 10 features (a 75.61\% reduction). As detailed in Table~\ref{tab:bwoa_features} and Fig.~\ref{fig:feat_imp}, the selected attributes directly correspond to real-world industrial protocol states: volume indicators (\texttt{src\_bytes}, \texttt{serror\_rate}) detect DoS floods; connection attributes (\texttt{service}, \texttt{flag}, \texttt{protocol\_type}) identify Modbus/DNP3 connection anomalies; and access signals (\texttt{hot}, \texttt{su\_attempted}) capture privilege escalation attempts.
 
 \begin{figure}[htbp]
 \centering
@@ -274,14 +278,14 @@ Across 30 whale agents over 100 iterations, the optimizer converged at iteration
 \section{Hybrid Spatial-Temporal Neural Engine and Edge Quantization}
 
 \subsection{Neural Architecture Formulation}
-The classification engine integrates 1D Convolutional layers with Long Short-Term Memory (LSTM) recurrent cells, as illustrated in Fig.~\ref{fig:cnn_lstm_arch}:
+The classification engine combines 1D Convolutional layers with Long Short-Term Memory (LSTM) units, as illustrated in Fig.~\ref{fig:cnn_lstm_arch}:
 \begin{enumerate}
-    \item \textbf{Spatial Representation (Conv1D)}: For an input sequence $\mathbf{X} \in \mathbb{R}^{W \times 10}$ over a sliding window $W$, a 1D convolution applies $F = 64$ filters of kernel size $k = 3$:
+    \item \textbf{Spatial Representation (Conv1D)}: For an input sequence $\mathbf{X} \in \mathbb{R}^{W \times 10}$ over a sliding time window $W$, a 1D convolutional layer applies $F = 64$ filters of kernel size $k = 3$:
     \begin{equation}
     y_i^f = \text{ReLU}\left(\sum_{j=1}^k \mathbf{w}_j^f \mathbf{x}_{i+j-1} + b^f\right)
     \end{equation}
-    extracting localized cross-feature correlations across consecutive packets.
-    \item \textbf{Temporal State Tracking (LSTM)}: The spatial feature maps $\mathbf{Y}$ are ingested sequentially by an LSTM layer with 64 units, maintaining cell states $\mathbf{c}_t$ and hidden states $\mathbf{h}_t$ through six formal gating equations:
+    capturing localized correlations across feature variables within consecutive packet frames.
+    \item \textbf{Temporal State Tracking (LSTM)}: The resulting feature maps $\mathbf{Y}$ pass into an LSTM layer with 64 units, maintaining cell states $\mathbf{c}_t$ and hidden representations $\mathbf{h}_t$ through six formal gating equations:
     \begin{equation}
     \mathbf{f}_t = \sigma(\mathbf{W}_f \mathbf{y}_t + \mathbf{U}_f \mathbf{h}_{t-1} + \mathbf{b}_f)
     \end{equation}
@@ -300,8 +304,8 @@ The classification engine integrates 1D Convolutional layers with Long Short-Ter
     \begin{equation}
     \mathbf{h}_t = \mathbf{o}_t \odot \tanh(\mathbf{c}_t)
     \end{equation}
-    where $\sigma(z) = 1/(1+e^{-z})$ is the sigmoid gate activation and $\mathbf{W}, \mathbf{U}, \mathbf{b}$ are learnable weight matrices and bias vectors. The additive linear cell update completely prevents vanishing gradients over long connection sequences.
-    \item \textbf{Dense Softmax Output}: A fully connected layer projects the terminal hidden state $\mathbf{h}_T$ to a 5-class normalized probability distribution:
+    where $\sigma(z) = 1/(1+e^{-z})$ is the logistic sigmoid activation, and $\mathbf{W}, \mathbf{U}, \mathbf{b}$ are learnable weight matrices and bias vectors. The linear cell update prevents vanishing gradients over multi-packet sequence windows.
+    \item \textbf{Dense Softmax Output}: A fully connected projection layer maps the final hidden state $\mathbf{h}_T$ to a 5-class normalized probability vector:
     \begin{equation}
     P(y = c \mid \mathbf{X}) = \frac{\exp(\mathbf{w}_c^T \mathbf{h}_T + b_c)}{\sum_{j=1}^5 \exp(\mathbf{w}_j^T \mathbf{h}_T + b_j)}
     \end{equation}
@@ -322,37 +326,37 @@ The classification engine integrates 1D Convolutional layers with Long Short-Ter
 \end{figure}
 
 \subsection{Algorithmic Big-O Computational Complexity Analysis}
-To provide formal theoretical backing for the observed speedup, we derive the computational complexity of the pipeline per network flow sample:
+To mathematically explain the measured inference speedups, we derive the computational complexity of the pipeline per network flow sample:
 \begin{enumerate}
-    \item \textbf{Input Pruning}: Masking the candidate features requires $\mathcal{O}(D_{\text{selected}}) = \mathcal{O}(10)$ operations, versus $\mathcal{O}(41)$ in the baseline.
-    \item \textbf{1D Convolutional Layer}: Convolving a sliding sequence window of length $W$ with $F$ filters of size $k$ over $D_{\text{selected}}$ channels incurs an arithmetic floating-point complexity of:
+    \item \textbf{Input Pruning}: Selecting the feature subset requires $\mathcal{O}(D_{\text{selected}}) = \mathcal{O}(10)$ memory operations, compared to $\mathcal{O}(41)$ in the baseline.
+    \item \textbf{1D Convolutional Layer}: Convolving a sequence window of length $W$ with $F$ filters of size $k$ across $D_{\text{selected}}$ channels incurs an arithmetic floating-point complexity of:
     \begin{equation}
     \mathcal{C}_{\text{Conv1D}} = \mathcal{O}\left(W \cdot k \cdot F \cdot D_{\text{selected}}\right)
     \end{equation}
-    Pruning $D$ from 41 to 10 directly slashes Conv1D arithmetic operations by 75.61\%.
+    Pruning $D$ from 41 to 10 reduces Conv1D floating-point operations by exactly 75.61\%.
     \item \textbf{LSTM Recurrent Layer}: For sequence length $W$, input dimension $F$, and hidden size $H = 64$, the four recurrent gates require:
     \begin{equation}
     \mathcal{C}_{\text{LSTM}} = \mathcal{O}\left(W \cdot (4(H^2 + H \cdot F) + 4H)\right)
     \end{equation}
-    \item \textbf{Softmax Output Layer}: Projecting hidden dimension $H$ to $C = 5$ classes requires:
+    \item \textbf{Softmax Output Layer}: Projecting hidden state $H$ to $C = 5$ classes requires:
     \begin{equation}
     \mathcal{C}_{\text{Dense}} = \mathcal{O}\left(H \cdot C\right)
     \end{equation}
 \end{enumerate}
-Thus, total inference complexity per sample scales as:
+The overall inference complexity per sample is therefore:
 \begin{equation}
 \mathcal{C}_{\text{Total}} = \mathcal{O}\left(W \cdot (k \cdot F \cdot D_{\text{selected}} + 4H^2 + 4HF) + HC\right)
 \end{equation}
-Because $D_{\text{selected}}$ governs the initial dense expansion, shrinking it from 41 to 10 produces an immediate arithmetic collapse, enabling edge gateways to sustain high packet rates without queue congestion.
+Because $D_{\text{selected}}$ scales the initial input projection, reducing it from 41 to 10 produces an immediate arithmetic collapse, enabling edge gateways to evaluate packets within sub-millisecond execution windows.
 
 \subsection{Post-Training Float16 Quantization}
-To deploy the trained model onto resource-constrained ARM hardware, we apply post-training Float16 quantization. Float32 weights and activations are mapped to 16-bit half-precision IEEE 754 floating-point representations \cite{jacob2018quantization, micikevicius2018mixed}:
+To fit the trained network onto memory-constrained ARM edge devices, we apply post-training Float16 quantization. Standard Float32 weights and activations are mapped to 16-bit half-precision IEEE 754 representations \cite{jacob2018quantization, micikevicius2018mixed}:
 \begin{equation}
 x_{\text{FP16}} = (-1)^s \cdot 2^{e - 15} \cdot \left(1 + \frac{m}{1024}\right)
 \end{equation}
-where $s \in \{0, 1\}$ is the 1-bit sign, $e \in [0, 31]$ is the 5-bit biased exponent (bias = 15), and $m \in [0, 1023]$ is the 10-bit mantissa.
+where $s \in \{0, 1\}$ is the sign bit, $e \in [0, 31]$ is the 5-bit exponent with bias 15, and $m \in [0, 1023]$ is the 10-bit mantissa.
 
-Float16 provides a dynamic numerical range spanning $6.10 \times 10^{-5}$ to $65,504$, which safely covers normalized flow features and intermediate activation values without risk of underflow or overflow. As confirmed in Table~\ref{tab:model_metrics}, Float16 quantization compresses model size by 83.2\% (from 4.88\,MB to 0.82\,MB) and reduces latency from 35.60\,ms to 0.76\,ms without any degradation in classification accuracy (retaining 70.56\% and Macro F1 of 0.7127).
+Float16 half-precision offers a dynamic numerical range spanning $6.10 \times 10^{-5}$ to $65,504$, safely covering normalized telemetry features without underflow or overflow. As shown in Table~\ref{tab:model_metrics}, Float16 quantization compresses the model binary by 83.2\% (from 4.88\,MB to 0.82\,MB) and reduces latency from 35.60\,ms to 0.76\,ms without any drop in classification accuracy (maintaining 70.56\% accuracy and Macro F1 of 0.7127).
 
 \begin{table}[htbp]
 \caption{Classification Performance and Model Footprint Across Configurations}
@@ -373,20 +377,20 @@ SWaT Transfer Model (51 feat) & 59.95 & 0.5966 & 0.8650 & 0.12\,ms & 1.76\,MB \\
 \section{Experimental Evaluation and Hardware Benchmarks}
 
 \subsection{Experimental Setup and Datasets}
-Evaluations were conducted across two benchmark corpora and three hardware tiers:
+Our experiments used two complementary benchmark corpora and three physical hardware tiers:
 \begin{enumerate}
-    \item \textbf{NSL-KDD Benchmark}: Evaluated on the held-out KDDTest+ partition (22,544 samples) spanning 5 classes: Normal (9,711), DoS (7,458), Probe (2,421), R2L (2,754), and U2R (200) \cite{tavallaee2009detailed}.
+    \item \textbf{NSL-KDD Benchmark}: Evaluated on the complete held-out KDDTest+ split (22,544 samples) across 5 classes: Normal (9,711), DoS (7,458), Probe (2,421), R2L (2,754), and U2R (200) \cite{tavallaee2009detailed}.
     \item \textbf{SWaT Physical SCADA Benchmark}: 51 continuous physical sensor channels collected over 11 operational days containing 36 physical cyber-attacks \cite{goh2016dataset}.
     \item \textbf{Edge Hardware Testbeds}:
     \begin{itemize}
         \item Raspberry Pi 4B (1\,GB LPDDR4, Quad Cortex-A72 @ 1.5\,GHz).
         \item Raspberry Pi 5 (4\,GB LPDDR4X, Quad Cortex-A76 @ 2.4\,GHz).
-        \item AWS EC2 Cloud Node (t3.medium, 2 vCPUs, 4\,GB RAM, Ubuntu 22.04).
+        \item AWS EC2 Cloud Instance (t3.medium, 2 vCPUs, 4\,GB RAM, Ubuntu 22.04).
     \end{itemize}
 \end{enumerate}
 
 \subsection{Multi-Class Threat Discrimination}
-Table~\ref{tab:per_class} details the per-class detection performance on the KDDTest+ held-out set. Fig.~\ref{fig:confusion_matrix} displays the corresponding normalized confusion matrix, and Fig.~\ref{fig:roc_curves} depicts the multi-class ROC curves. The framework achieves 96.89\% precision on benign traffic, ensuring that normal mining extraction processes are not interrupted by false alarms. Recall on volumetric DoS attacks reaches 89.04\% (F1-score: 0.8150), successfully mitigating denial-of-service threats. Minority attack categories (R2L and U2R) reflect intrinsic dataset skewness (e.g., only 52 U2R training samples against 67,343 normal samples).
+Table~\ref{tab:per_class} reports per-class metrics on the held-out KDDTest+ set. Fig.~\ref{fig:confusion_matrix} displays the normalized confusion matrix, and Fig.~\ref{fig:roc_curves} shows the multi-class ROC curves. The model delivers 96.89\% precision on benign traffic, preventing false alarms from halting milling circuits. On volumetric DoS attacks, recall reaches 89.04\% (F1-score: 0.8150), effectively flagging packet flood attempts. The lower recall on R2L (14.49\%) and U2R (38.81\%) reflects the extreme underlying dataset imbalance (only 52 U2R training samples versus 67,343 normal samples).
 
 \begin{figure}[htbp]
 \centering
@@ -420,7 +424,7 @@ U2R (User to Root) & 0.0134 & 0.3881 & 0.0258 & Extreme imbalance (67 samples) \
 \end{table}
 
 \subsection{Physical Edge Hardware Benchmarks}
-As presented in Table~\ref{tab:edge_benchmarks} and illustrated in Fig.~\ref{fig:latency_bar}, the Float16 quantized model executes single-sample inference in 0.76\,ms on the Raspberry Pi 4B, with a 95th-percentile (P95) latency of 1.10\,ms and peak RAM consumption of 290.31\,MB. On the Raspberry Pi 5, latency drops to 0.42\,ms (P95: 0.68\,ms). On an AWS EC2 cloud node, mean latency is 1.57\,ms, sustaining over 617 requests/second. Crucially, all platforms strictly satisfy the sub-100\,ms industrial SCADA safety deadline. Fig.~\ref{fig:dashboard} shows the real-time Livewire supervisory console.
+As presented in Table~\ref{tab:edge_benchmarks} and Fig.~\ref{fig:latency_bar}, the Float16 quantized model executes single-sample inference in 0.76\,ms on the Raspberry Pi 4B, with a 95th-percentile (P95) latency of 1.10\,ms and peak RAM consumption of 290.31\,MB. On the Raspberry Pi 5, latency drops to 0.42\,ms (P95: 0.68\,ms). On an AWS EC2 cloud node, mean latency is 1.57\,ms, sustaining over 617 requests/second. Crucially, all platforms strictly satisfy the sub-100\,ms industrial SCADA safety deadline. Fig.~\ref{fig:dashboard} shows the operator Livewire console.
 
 \begin{figure}[htbp]
 \centering
@@ -495,7 +499,7 @@ Constrained BWOA + Conv1D-LSTM (FP32) & 10 & 70.56 & 0.7127 & 35.60\,ms & 4.88\,
 \end{tabularx}
 \end{table}
 
-The ablation findings demonstrate that:
+The ablation findings demonstrate four key insights:
 \begin{enumerate}
     \item Unconstrained BWOA aggressively prunes features to 7 attributes but suffers an accuracy drop to 64.20\% because essential host signals (\texttt{hot}, \texttt{su\_attempted}) are lost.
     \item Our hard accuracy floor penalty retains the critical 10 features, outperforming GA (68.32\%) and PSO (69.15\%).
