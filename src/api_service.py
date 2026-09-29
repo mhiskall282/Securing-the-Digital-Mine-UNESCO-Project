@@ -42,6 +42,10 @@ SCALER_PATH = os.environ.get(
     os.path.join(os.path.dirname(__file__), "../data/processed/scaler.pkl"),
 )
 
+# Maximum allowed request body size (64 KB) to prevent memory exhaustion on Pi hardware.
+# A full 41-feature NSL-KDD JSON payload is well under 2 KB.
+MAX_REQUEST_BODY_BYTES = 64 * 1024  # 64 KB
+
 # ---------------------------------------------------------------------------
 # Class labels matching the trained model output order (alphabetical)
 # ---------------------------------------------------------------------------
@@ -455,8 +459,25 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
             self._send_json({"error": "Not found"}, status=404)
 
     def _handle_analyze(self):
-        """Parse the request body and run TFLite inference."""
+        """Parse the request body and run TFLite inference.
+
+        Validation rules (returns HTTP 400 if violated):
+          - Body must be ≤ MAX_REQUEST_BODY_BYTES (64 KB)
+          - Body must be valid JSON and a JSON object (not an array)
+          - All 10 BWOA-selected features must be present in the request body.
+            Missing fields are NOT silently defaulted to 0.0 because all-zero
+            feature vectors map to a false DoS classification (99.67% confidence).
+        """
         content_length = int(self.headers.get("Content-Length", 0))
+
+        # Guard: reject oversized bodies before reading them into memory
+        if content_length > MAX_REQUEST_BODY_BYTES:
+            self._send_json(
+                {"error": f"Request body too large ({content_length} bytes). Maximum allowed: {MAX_REQUEST_BODY_BYTES} bytes."},
+                status=413,
+            )
+            return
+
         raw_body = self.rfile.read(content_length)
 
         try:
@@ -467,6 +488,22 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
 
         if not isinstance(payload, dict):
             self._send_json({"error": "Request body must be a JSON object"}, status=400)
+            return
+
+        # Require all 10 BWOA-selected features to be present.
+        # Silently defaulting missing features to 0.0 produces all-zero input vectors
+        # which the model classifies as DoS (99.67% confidence) — a false positive.
+        missing = [f for f in SELECTED_FEATURES if f not in payload]
+        if missing:
+            self._send_json(
+                {
+                    "error": "Missing required features",
+                    "missing_features": missing,
+                    "required_features": SELECTED_FEATURES,
+                    "hint": "Provide all 10 BWOA-selected features. See GET /api/features for the full list.",
+                },
+                status=400,
+            )
             return
 
         try:

@@ -109,19 +109,24 @@ curl -i http://localhost/api/health
 ```
 
 ### Anomaly Inference Evaluation
-Send a sample BWOA feature telemetry payload:
+
+Send a sample BWOA feature telemetry payload. Use the SYN-flood canonical profile (`flag: "S0"`,
+`src_bytes: 0`, `serror_rate: 0.95`) to reliably trigger a DoS classification. Payloads with
+`flag: "SF"` and non-zero `src_bytes` can be misclassified as R2L because those features overlap
+with FTP remote-access patterns in the NSL-KDD training distribution.
+
 ```bash
 curl -X POST http://localhost/api/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "protocol_type": "tcp",
     "service": "http",
-    "flag": "SF",
-    "src_bytes": 1024,
+    "flag": "S0",
+    "src_bytes": 0,
     "hot": 0,
     "su_attempted": 0,
-    "serror_rate": 0.85,
-    "same_srv_rate": 0.15,
+    "serror_rate": 0.95,
+    "same_srv_rate": 0.08,
     "diff_srv_rate": 0.0,
     "dst_host_diff_srv_rate": 0.0
   }'
@@ -131,11 +136,11 @@ curl -X POST http://localhost/api/analyze \
 ```json
 {
   "prediction": "DoS",
-  "confidence": 97.42,
-  "features_triggered": [
-    "high_serror_rate"
-  ],
-  "latency_ms": 0.7642
+  "confidence": 97.5,
+  "class_probabilities": {"DoS": 97.5, "Normal": 1.8, "Probe": 0.4, "R2L": 0.2, "U2R": 0.1},
+  "features_used": ["protocol_type", "service", "flag", "src_bytes", "hot", "su_attempted", "serror_rate", "same_srv_rate", "diff_srv_rate", "dst_host_diff_srv_rate"],
+  "latency_ms": 0.76,
+  "model_version": "v3.0.0-tflite-quantized"
 }
 ```
 

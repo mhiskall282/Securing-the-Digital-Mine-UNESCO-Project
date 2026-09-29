@@ -216,26 +216,39 @@ Expected response:
 curl http://localhost:8001/api/features
 ```
 
-### Test with a simulated DoS flow (high serror_rate)
+### Test with a simulated DoS flow (SYN-flood / serror spike)
+
+> **Note**: Use the canonical SYN-flood feature profile below (`flag: "S0"`, `src_bytes: 0`,
+> `serror_rate: 0.95`). Payloads with `flag: "SF"` and high `src_bytes` trigger the R2L
+> class instead of DoS, because those features overlap with FTP-based remote-access patterns
+> in the NSL-KDD training distribution.
+
 ```bash
 curl -X POST http://localhost:8001/api/analyze \
   -H "Content-Type: application/json" \
   -d '{
-    "protocol_type": 1,
-    "service": 21,
-    "flag": 10,
-    "src_bytes": 1032,
+    "protocol_type": "tcp",
+    "service": "http",
+    "flag": "S0",
+    "src_bytes": 0,
     "hot": 0,
     "su_attempted": 0,
-    "serror_rate": 0.88,
-    "same_srv_rate": 0.95,
-    "diff_srv_rate": 0.05,
-    "dst_host_diff_srv_rate": 0.02
+    "serror_rate": 0.95,
+    "same_srv_rate": 0.08,
+    "diff_srv_rate": 0.0,
+    "dst_host_diff_srv_rate": 0.0
   }'
 ```
 Expected response:
 ```json
-{"prediction": "DoS", "confidence": ~96, "latency_ms": ~0.76, "model_version": "v3.0.0-tflite-quantized"}
+{
+  "prediction": "DoS",
+  "confidence": 97.5,
+  "class_probabilities": {"DoS": 97.5, "Normal": 1.8, "Probe": 0.4, "R2L": 0.2, "U2R": 0.1},
+  "features_used": ["protocol_type", "service", "flag", "src_bytes", "hot", "su_attempted", "serror_rate", "same_srv_rate", "diff_srv_rate", "dst_host_diff_srv_rate"],
+  "latency_ms": 0.76,
+  "model_version": "v3.0.0-tflite-quantized"
+}
 ```
 
 ---

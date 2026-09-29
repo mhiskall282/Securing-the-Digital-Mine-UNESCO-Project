@@ -447,23 +447,28 @@ class BenchmarkRunner:
                 writer.writerow(row)
         print(f"  [+] Saved Confusion Matrix:    {cm_path}")
 
-        # Also update research/tables/table5_edge_deployment_benchmarks.csv with empirical measurement
-        t5_path = "research/tables/table5_edge_deployment_benchmarks.csv"
-        try:
-            if os.path.exists("research/tables"):
-                s = metrics["summary"]
-                rows = [
-                    {"Hardware Platform": "Raspberry Pi 4B (1GB RAM)", "Quantization": "TFLite Float16", "Mean Latency": "0.76ms", "P95 Latency": "1.10ms", "Peak RAM": "290.31MB", "Power Draw": "2.5W", "Verdict": "PASS (Sub-100ms)"},
-                    {"Hardware Platform": "Raspberry Pi 5 (4GB RAM)", "Quantization": "TFLite Float16", "Mean Latency": "0.42ms", "P95 Latency": "0.68ms", "Peak RAM": "295.10MB", "Power Draw": "3.8W", "Verdict": "PASS (Sub-100ms)"},
-                    {"Hardware Platform": "AWS EC2 (t3.medium Ubuntu)", "Quantization": s["quantization"], "Mean Latency": f"{s['rtt_latency_mean_ms']}ms", "P95 Latency": f"{s['rtt_latency_p95_ms']}ms", "Peak RAM": "180.20MB", "Power Draw": "Cloud Managed", "Verdict": s["scada_verdict"]},
-                ]
-                with open(t5_path, "w", newline="", encoding="utf-8") as f:
-                    writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
-                    writer.writeheader()
-                    writer.writerows(rows)
-                print(f"  [+] Updated Paper Table 5:     {t5_path}")
-        except Exception:
-            pass
+        # Update research/tables/table5_edge_deployment_benchmarks.csv ONLY when the caller
+        # explicitly passes --update-paper-tables.  Running a benchmark should NOT silently
+        # overwrite the paper's hand-verified Table 5 rows with unreviewed numbers.
+        if getattr(self, '_update_paper_tables', False):
+            t5_path = "research/tables/table5_edge_deployment_benchmarks.csv"
+            try:
+                if os.path.exists("research/tables"):
+                    s = metrics["summary"]
+                    rows = [
+                        {"Hardware Platform": "Raspberry Pi 4B (1GB RAM)", "Quantization": "TFLite Float16", "Mean Latency": "0.76ms", "P95 Latency": "1.10ms", "Peak RAM": "290.31MB", "Power Draw": "2.5W", "Verdict": "PASS (Sub-100ms)"},
+                        {"Hardware Platform": "Raspberry Pi 5 (4GB RAM)", "Quantization": "TFLite Float16", "Mean Latency": "0.42ms", "P95 Latency": "0.68ms", "Peak RAM": "295.10MB", "Power Draw": "3.8W", "Verdict": "PASS (Sub-100ms)"},
+                        {"Hardware Platform": "AWS EC2 (t3.medium Ubuntu)", "Quantization": s["quantization"], "Mean Latency": f"{s['rtt_latency_mean_ms']}ms", "P95 Latency": f"{s['rtt_latency_p95_ms']}ms", "Peak RAM": "180.20MB", "Power Draw": "Cloud Managed", "Verdict": s["scada_verdict"]},
+                    ]
+                    with open(t5_path, "w", newline="", encoding="utf-8") as f:
+                        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+                        writer.writeheader()
+                        writer.writerows(rows)
+                    print(f"  [+] Updated Paper Table 5:     {t5_path}")
+            except Exception:
+                pass
+        else:
+            print("  [i] Skipping paper Table 5 update (pass --update-paper-tables to enable).")
 
     def export_excel_workbook(self, metrics: Dict[str, Any]):
         """Export multi-sheet, beautifully styled publication-grade Excel workbook."""
@@ -700,7 +705,10 @@ class BenchmarkRunner:
             f.write("## Table: AWS EC2 Cloud Edge Performance Benchmarks\n\n")
             f.write("| Platform / Node | Quantization | Mean Latency (ms) | P95 Latency (ms) | Throughput (req/s) | Accuracy (%) | Macro F1 | SCADA Deadline Compliance |\n")
             f.write("| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |\n")
-            f.write(f"| **AWS EC2 (t3.medium)** | {s['quantization']} | **{s['rtt_latency_mean_ms']} ms** | **{s['rtt_latency_p95_ms']} ms** | **{s['throughput_rps']}** | **{s['overall_accuracy_pct']}%** | **{s['macro_f1_score']}** | **PASS (<100ms)** |\n")
+            # Use the computed verdict — do NOT hardcode PASS here; a broken model run
+            # (e.g. ABI mismatch, zero successful inferences) must propagate as FAIL.
+            ec2_verdict = s['scada_verdict']
+            f.write(f"| **AWS EC2 (t3.medium)** | {s['quantization']} | **{s['rtt_latency_mean_ms']} ms** | **{s['rtt_latency_p95_ms']} ms** | **{s['throughput_rps']}** | **{s['overall_accuracy_pct']}%** | **{s['macro_f1_score']}** | **{ec2_verdict}** |\n")
             f.write(f"| Raspberry Pi 4B (1GB RAM) | TFLite Float16 | 0.76 ms | 1.10 ms | 1,315 | 70.56% | 0.7127 | PASS (<100ms) |\n")
             f.write(f"| Raspberry Pi 5 (4GB RAM) | TFLite Float16 | 0.42 ms | 0.68 ms | 2,380 | 70.56% | 0.7127 | PASS (<100ms) |\n\n")
 
@@ -787,9 +795,19 @@ def main():
     parser.add_argument("--url", default="http://localhost:8001", help="API base URL (e.g. http://localhost:8001 or http://51.21.219.29)")
     parser.add_argument("--samples", type=int, default=100, help="Number of benchmark evaluation samples (default: 100)")
     parser.add_argument("--output-dir", default="research/reports", help="Directory where CSV and XLSX reports will be saved")
+    parser.add_argument(
+        "--update-paper-tables",
+        action="store_true",
+        default=False,
+        help="If set, overwrite research/tables/table5_edge_deployment_benchmarks.csv with "
+             "empirical results from this run. Disabled by default to prevent accidental "
+             "overwrites of hand-verified paper figures."
+    )
     args = parser.parse_args()
 
     runner = BenchmarkRunner(base_url=args.url, num_samples=args.samples, output_dir=args.output_dir)
+    # Propagate the flag so export_csv_files() can gate Table 5 updates
+    runner._update_paper_tables = args.update_paper_tables
 
     # 1. Health check
     if not runner.check_health():
@@ -820,9 +838,16 @@ def main():
     runner.export_paper_tables(metrics)
     runner.export_zip_archive()
 
-    # 5. Display Summary
-    print("\n[4/4] Benchmark Completed Successfully!")
+    # 5. Display Summary and determine exit code
+    print("\n[4/4] Benchmark Completed!")
     runner.print_terminal_summary(metrics)
+
+    # Exit with non-zero code when the SCADA verdict is a FAIL so CI/CD pipelines
+    # can catch broken-model or ABI-mismatch runs automatically.
+    verdict = metrics["summary"].get("scada_verdict", "")
+    if verdict.startswith("FAIL"):
+        print(f"\n[-] Benchmark exiting with code 1: {verdict}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
