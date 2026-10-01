@@ -492,7 +492,7 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
 
         # Require all 10 BWOA-selected features to be present.
         # Silently defaulting missing features to 0.0 produces all-zero input vectors
-        # which the model classifies as DoS (99.67% confidence) — a false positive.
+        # which the model classifies as DoS (99.67% confidence) - a false positive.
         missing = [f for f in SELECTED_FEATURES if f not in payload]
         if missing:
             self._send_json(

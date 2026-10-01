@@ -170,7 +170,10 @@ sudo certbot renew --dry-run
 | `Connection refused (502 Bad Gateway)` | `api_service.py` process stopped or crashed | Run `sudo systemctl restart mine-sec-api` and inspect `journalctl -u mine-sec-api.service -n 50`. |
 | `Timeout / No response from public IP` | AWS Security Group inbound port 80/443 blocked | Check EC2 Security Group rules; ensure `0.0.0.0/0` is allowed for HTTP (port 80). |
 | `Permission denied` on `deploy_ec2.sh` | Missing execute permission | Run `chmod +x scripts/deploy_ec2.sh`. |
+| `AttributeError: _ARRAY_API not found` or `CreateWrapperFromFile` exception | NumPy 2.x ABI incompatibility with `tflite-runtime` | Pin NumPy to 1.x: `pip install "numpy>=1.24.0,<2"`. `tflite-runtime` requires NumPy 1.x ABI. |
 | `503` from `/api/analyze` | TFLite model file not present on EC2 | Complete Section 8 below and restart the service. |
+| `400 Bad Request` with `missing_features` | Payload missing required BWOA features | Ensure all 10 BWOA-selected features are provided. Check `GET /api/features` for required keys. |
+| `413 Payload Too Large` | Request body exceeds 64 KB cap | Reduce payload size. Standard 10-feature telemetry JSON is under 1 KB. |
 
 ---
 
@@ -305,6 +308,10 @@ python3 scripts/benchmark_and_export.py --url http://127.0.0.1:8001 --samples 10
 
 # High-throughput stress test (e.g., 500 samples)
 python3 scripts/benchmark_and_export.py --url http://127.0.0.1:8001 --samples 500
+
+# Explicitly update research/tables/table5_edge_deployment_benchmarks.csv with live run:
+# (Disabled by default to protect hand-verified manuscript figures from unreviewed overwrites)
+python3 scripts/benchmark_and_export.py --url http://127.0.0.1:8001 --samples 100 --update-paper-tables
 ```
 
 #### Option B: Running Remotely from your Local Laptop against AWS EC2

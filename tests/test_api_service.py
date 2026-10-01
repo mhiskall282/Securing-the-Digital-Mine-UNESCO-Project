@@ -47,5 +47,21 @@ class TestAPIServiceEndpoints(unittest.TestCase):
         for i, feat in zip(SELECTED_INDICES, SELECTED_FEATURES):
             self.assertEqual(ALL_FEATURES[i], feat)
 
+    def test_max_request_body_bytes_defined(self):
+        """MAX_REQUEST_BODY_BYTES must be defined and set to 64 KB."""
+        from src.api_service import MAX_REQUEST_BODY_BYTES
+        self.assertEqual(MAX_REQUEST_BODY_BYTES, 64 * 1024)
+
+    def test_missing_features_detection(self):
+        """Validation logic identifies missing BWOA features in partial payloads."""
+        from src.api_service import SELECTED_FEATURES
+        partial_payload = {"protocol_type": "tcp", "service": "http"}
+        missing = [f for f in SELECTED_FEATURES if f not in partial_payload]
+        self.assertEqual(len(missing), 8)
+        self.assertIn("flag", missing)
+        self.assertIn("src_bytes", missing)
+        self.assertIn("serror_rate", missing)
+
+
 if __name__ == "__main__":
     unittest.main()

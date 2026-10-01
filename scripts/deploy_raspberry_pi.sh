@@ -49,8 +49,8 @@ fi
 
 source venv/bin/activate
 pip install --upgrade pip
-pip install -r requirements.txt || true
-pip install requests
+pip install -r requirements.txt
+pip install tflite-runtime || pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite-runtime || true
 
 # 5. Build & Install Global CLI Packet Scanner Agent (unesco-mine-sec-cli)
 echo "[5/6] Building and installing unesco-mine-sec-cli agent..."
@@ -61,17 +61,24 @@ if [ -d "npm-packet-scanner" ]; then
     cd "${PROJECT_DIR}"
 fi
 
-# 6. Install & Register Systemd Edge Daemon Service
-echo "[6/6] Registering Systemd Edge Agent Service (mine-sec-agent.service)..."
+# 6. Install & Register Systemd Edge Services
+echo "[6/6] Registering Systemd Edge Services (mine-sec-api.service and mine-sec-agent.service)..."
+CURRENT_USER="${SUDO_USER:-$USER}"
+sudo cp scripts/mine-sec-api.service /etc/systemd/system/mine-sec-api.service
+sudo sed -i "s/User=ubuntu/User=${CURRENT_USER}/g" /etc/systemd/system/mine-sec-api.service
 sudo cp scripts/mine-sec-agent.service /etc/systemd/system/mine-sec-agent.service
+
 sudo systemctl daemon-reload
-sudo systemctl enable mine-sec-agent.service
-sudo systemctl restart mine-sec-agent.service
+sudo systemctl enable mine-sec-api.service mine-sec-agent.service
+sudo systemctl restart mine-sec-api.service mine-sec-agent.service
 
 echo "======================================================================"
 echo " Raspberry Pi Edge Deployment Complete!"
-echo " Service Status:"
-sudo systemctl status mine-sec-agent.service --no-pager | head -n 12
+echo " Service Status (API):"
+sudo systemctl status mine-sec-api.service --no-pager | head -n 10 || true
+echo ""
+echo " Service Status (Agent):"
+sudo systemctl status mine-sec-agent.service --no-pager | head -n 10 || true
 echo ""
 echo " Global CLI Agent installed: unesco-mine-sec-cli"
 echo " Run 'unesco-mine-sec-cli' interactively or use 'sudo systemctl status mine-sec-agent'."

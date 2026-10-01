@@ -174,14 +174,33 @@ Checks edge hardware compatibility and handles quantization.
 FastAPI / HTTP server handling TFLite Float16 inference evaluations.
 
 #### Endpoints
-* `GET /api/health`: Returns model health, version (`v3.0.0-quantized`), and framework status.
-* `POST /api/analyze`: Accepts JSON payload containing BWOA selected network telemetry features (`serror_rate`, `same_srv_rate`, `hot`, `src_bytes`, etc.). Evaluates CNN-LSTM feature thresholds and returns:
+* `GET /api/health`: Returns model health (`status`: `"healthy"` or `"degraded"`), readiness (`model_ready`: `true`/`false`), model version (`v3.0.0-tflite-quantized`), and runtime framework status.
+* `GET /api/features`: Returns the 10 BWOA-selected feature names (`selected_features`), their indices in the 41-feature NSL-KDD vector, and the feature reduction percentage (75.61%).
+* `POST /api/analyze`: Accepts a JSON payload containing all 10 BWOA-selected network telemetry features (`protocol_type`, `service`, `flag`, `src_bytes`, `hot`, `su_attempted`, `serror_rate`, `same_srv_rate`, `diff_srv_rate`, `dst_host_diff_srv_rate`).
+
+  **Request Validation**:
+  - Maximum body size: 64 KB (returns HTTP 413 `Request body too large` if exceeded).
+  - Body must be a JSON object (returns HTTP 400 if invalid).
+  - All 10 BWOA-selected features must be present. Missing fields return HTTP 400 with a list of `missing_features` (missing fields are not silently defaulted to zero to prevent false-positive DoS predictions).
+
+  **Response Format**:
   ```json
   {
     "prediction": "Normal|DoS|Probe|U2R|R2L",
-    "confidence": 98.45,
-    "features_triggered": ["high_serror_rate"],
-    "latency_ms": 0.82
+    "confidence": 97.5,
+    "class_probabilities": {
+      "DoS": 97.5,
+      "Normal": 1.8,
+      "Probe": 0.4,
+      "R2L": 0.2,
+      "U2R": 0.1
+    },
+    "features_used": [
+      "protocol_type", "service", "flag", "src_bytes", "hot",
+      "su_attempted", "serror_rate", "same_srv_rate", "diff_srv_rate", "dst_host_diff_srv_rate"
+    ],
+    "latency_ms": 0.76,
+    "model_version": "v3.0.0-tflite-quantized"
   }
   ```
 

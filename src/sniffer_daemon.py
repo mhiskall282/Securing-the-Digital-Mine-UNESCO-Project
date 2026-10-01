@@ -145,13 +145,16 @@ def main():
             else:
                 print(f"Model service returned error status: {response.status_code}")
         except requests.exceptions.RequestException as e:
+            # Fallback when inference API is unreachable: record fallback status honestly
+            # rather than spoofing high confidence or sub-millisecond inference time.
+            is_dos = flow.get('serror_rate', 0.0) >= 0.5
             prediction = {
-                'prediction': 'Normal' if flow['serror_rate'] < 0.5 else 'DoS',
-                'confidence': 97.5,
-                'latency_ms': 0.12
+                'prediction': 'DoS (Fallback)' if is_dos else 'Normal (Fallback)',
+                'confidence': 50.0,
+                'latency_ms': 0.0
             }
             log_flow(flow, prediction)
-            print(f"Flow logged (Backup Classifier) -> {prediction['prediction']}")
+            print(f"[WARN] Inference API unreachable ({e}). Logged fallback heuristic -> {prediction['prediction']}")
             
         count += 1
         if is_cron and count >= burst_limit:

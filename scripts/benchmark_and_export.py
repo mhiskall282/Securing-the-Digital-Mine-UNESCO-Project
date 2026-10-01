@@ -386,14 +386,14 @@ class BenchmarkRunner:
             "scada_deadline_compliance_pct": round(scada_pass_pct, 2),
             # Verdict gates on BOTH successful inference count AND latency compliance.
             # A broken model or ABI mismatch produces successful_requests=0 with every
-            # request returning HTTP 500 in under 100ms — that must be a FAIL, not a PASS.
+            # request returning HTTP 500 in under 100ms - that must be a FAIL, not a PASS.
             "scada_verdict": (
                 "PASS (Sub-100ms Deadline Compliant)"
                 if successful > 0 and round(scada_pass_pct, 2) == 100.0
                 else (
-                    f"FAIL – No successful inferences ({successful}/{total} requests succeeded)"
+                    f"FAIL - No successful inferences ({successful}/{total} requests succeeded)"
                     if successful == 0
-                    else f"FAIL – Latency exceedances detected ({round(scada_pass_pct, 2)}% < 100ms)"
+                    else f"FAIL - Latency exceedances detected ({round(scada_pass_pct, 2)}% < 100ms)"
                 )
             ),
         }
@@ -705,7 +705,7 @@ class BenchmarkRunner:
             f.write("## Table: AWS EC2 Cloud Edge Performance Benchmarks\n\n")
             f.write("| Platform / Node | Quantization | Mean Latency (ms) | P95 Latency (ms) | Throughput (req/s) | Accuracy (%) | Macro F1 | SCADA Deadline Compliance |\n")
             f.write("| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |\n")
-            # Use the computed verdict — do NOT hardcode PASS here; a broken model run
+            # Use the computed verdict - do NOT hardcode PASS here; a broken model run
             # (e.g. ABI mismatch, zero successful inferences) must propagate as FAIL.
             ec2_verdict = s['scada_verdict']
             f.write(f"| **AWS EC2 (t3.medium)** | {s['quantization']} | **{s['rtt_latency_mean_ms']} ms** | **{s['rtt_latency_p95_ms']} ms** | **{s['throughput_rps']}** | **{s['overall_accuracy_pct']}%** | **{s['macro_f1_score']}** | **{ec2_verdict}** |\n")

@@ -169,8 +169,12 @@ Evaluating on KDDTest+ / SWaT datasets on Raspberry Pi 4B (1.5GHz ARM Cortex-A72
 | :--- | :--- | :--- |
 | `Permission denied (raw socket)` | Sniffer requires root privileges for `libpcap` | Run daemon with `sudo` or execute via systemd service (`User=root`). |
 | `No network flows captured` | Network interface not in promiscuous mode or wrong NIC selected | Run `sudo ip link set eth1 promisc on` and verify with `tcpdump -i eth1 -c 5`. |
-| `tflite-runtime import error` | Python wheel mismatch on ARM64 | Run `pip install tflite-runtime` or use precompiled TFLite wheels for Raspberry Pi OS 64-bit. |
+| `AttributeError: _ARRAY_API not found` or `CreateWrapperFromFile` exception | NumPy 2.x ABI incompatibility with `tflite-runtime` | Pin NumPy to 1.x: `pip install "numpy>=1.24.0,<2"`. `tflite-runtime 2.14.0` was compiled against NumPy 1.x ABI and fails under NumPy 2.x. |
+| `tflite-runtime import error` | Python wheel mismatch on ARM64 | Run `pip install tflite-runtime` (with `numpy<2` pinned) or use precompiled TFLite wheels for Raspberry Pi OS 64-bit. |
 | `503 Service Unavailable` from `/api/analyze` | TFLite model file missing | Complete Section 8 (model transfer) or set `MODEL_PATH` env var. |
+| `400 Bad Request` with `missing_features` | Payload missing required BWOA features | Ensure all 10 BWOA-selected features are present in the JSON body. Check `GET /api/features` for the complete list. |
+| `413 Payload Too Large` | Request body exceeds 64 KB cap | Reduce payload size. Standard 10-feature telemetry JSON is under 1 KB. |
+| `Connection refused` on port 8001 | `mine-sec-api.service` is not running | Start the API service: `sudo systemctl restart mine-sec-api.service` and verify logs with `journalctl -u mine-sec-api -n 20`. |
 
 ---
 
