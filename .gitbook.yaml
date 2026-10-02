@@ -1,4 +1,4 @@
-# GitBook Configuration
+# GitBook Space Configuration
 # https://docs.gitbook.com/integrations/git-sync/gitbook-yaml
 
 root: ./
@@ -6,6 +6,3 @@ root: ./
 structure:
   readme: README.md
   summary: SUMMARY.md
-
-redirects:
-  docs: docs/architecture.md

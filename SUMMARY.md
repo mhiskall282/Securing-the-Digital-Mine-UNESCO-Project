@@ -6,8 +6,6 @@
 ## Core Architecture & Algorithms
 * [System Architecture & 4-Tier Pipeline](docs/architecture.md)
 * [Binary Whale Optimization Algorithm (BWOA)](docs/bwoa_algorithm.md)
-* [Explainable AI (SHAP) Attribution Layer](README.md#explainable-ai-shap-layer--three-phase-roadmap)
-* [Three-Phase Implementation Roadmap](docs/research_papers_and_specifications.md#three-phase-framework--implementation-roadmap)
 
 ## Edge & Cloud Deployment
 * [Raspberry Pi Edge Deployment Guide](docs/raspberry_pi_deployment.md)

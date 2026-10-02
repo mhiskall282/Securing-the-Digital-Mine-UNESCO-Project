@@ -1,0 +1,11 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: Securing the Digital Mine
+  structure:
+    - type: space
+      key: digital-mine-docs
+      title: Securing the Digital Mine
+      path: docs
+      default: true
+      content:
+        directory: ./
