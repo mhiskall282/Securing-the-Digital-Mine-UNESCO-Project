@@ -1,8 +1,9 @@
 # Academic Research Papers & Engineering Specifications Index
 
 This directory documents the formal scholarly and engineering deliverables produced for the research project:
-**"Securing the Digital Mine: A Metaheuristic-Optimized Deep Learning Framework for Intrusion Detection in IoT-Enabled Mineral Resource Operations"**
-*Presented at the Russian-African Forum of Young Scientists (UNESCO Project) - Track 3: Smart Subsoil.*
+**"Securing the Digital Mine: An Explainable, Metaheuristic-Optimized Deep Learning Framework for Intrusion Detection in IoT-Enabled Mineral Resource Operations"**  
+*Nomination: Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex*  
+*Russian-African Forum of Young Scientists: "Future Engineers of the World - The Foundation of Sustainable Development", Empress Catherine II Saint Petersburg Mining University, under the auspices of the UNESCO International Centre of Competence in Mining Engineering Education.*
 
 ---
 
@@ -10,11 +11,15 @@ This directory documents the formal scholarly and engineering deliverables produ
 
 | Deliverable | File Path | Format & Extent | Standards & Description |
 | :--- | :--- | :--- | :--- |
+| **Official Conference Abstract** | [`research/abstract.md`](../research/abstract.md) | Markdown | Official submission abstract, Track 3 nomination, 3-phase framework, UN SDGs, and 12 literature references. |
+| **IEEE Paper Manuscript** | [`research/IEEE_Paper_Submission_Manuscript.md`](../research/IEEE_Paper_Submission_Manuscript.md) | Markdown (~8,500 words) | Full IEEE-style conference paper manuscript with BWOA, CNN-LSTM, Float16, SHAP explainability, 3-phase roadmap, and 58 bibliography items. |
+| **IEEE Paper LaTeX Source** | [`research/ieee_paper.tex`](../research/ieee_paper.tex) | LaTeX (IEEEtran) | Complete compilable LaTeX source for IEEE conference proceedings with vector equations, algorithm environment, and BibTeX integration. |
 | **Full Research Paper** | [`research/full_research_paper.docx`](../research/full_research_paper.docx) | Word DOCX (~16,000 words, ~50 pages) | Full 6-chapter Design Science Research manuscript: 12pt Times New Roman, 1.5 line spacing, XML table borders, APA 7th citations, formal mathematical equations, unified References, and Appendices A-M. |
 | **Executive Summary & Blueprint** | [`research/Project_Evaluation_and_Executive_Summary.pdf`](../research/Project_Evaluation_and_Executive_Summary.pdf) | 3-Page Dense PDF | Comprehensive 3-page project evaluation, mathematical engine, benchmark tables, edge benchmarks, UAT scores, and slide-by-slide presentation blueprint. |
 | **Technical Report** | [`research/technical_report.docx`](../research/technical_report.docx) | Word DOCX | Comprehensive architecture deep-dive, step-by-step Raspberry Pi and AWS EC2 deployment runbooks, and Appendices A-E. |
 | **Product Requirements Document (PRD)** | [`research/PRD.docx`](../research/PRD.docx) | Word DOCX | Product vision, target user personas (SCADA engineer, SOC analyst, mine manager), functional (FR-01 to FR-08) and non-functional requirements (NFR-01 to NFR-07), and release roadmap. |
 | **Software Requirements Specification (SRS)** | [`research/SRS.docx`](../research/SRS.docx) | Word DOCX (IEEE 830-1998) | Formal IEEE 830 specification covering external interfaces, system features, and automated verification test gates (unit, integration, dry-run, UAT). |
+| **Conference Presentation Script** | [`research/conference_presentation.md`](../research/conference_presentation.md) | Markdown (14 Slides + Q&A) | Full 15-minute presentation script, slide visual content, speaker notes, and comprehensive jury defense cheat-sheet. |
 | **Presentation Slide Deck** | [`research/DigitalMine_Presentation (1).pdf`](../research/DigitalMine_Presentation%20(1).pdf) | Conference Slide Deck (PDF) | Official slide deck for the UNESCO Russian-African Forum 2026. |
 | **Formal Abstract** | [`research/Abstract_DigitalMine_Final (2).pdf`](../research/Abstract_DigitalMine_Final%20(2).pdf) | Conference Abstract (PDF) | Official abstract approved for the forum proceedings. |
 
@@ -22,7 +27,16 @@ This directory documents the formal scholarly and engineering deliverables produ
 
 ## 🏛️ Design Science Research (DSR) Chapter Alignment
 
-The research paper strictly adheres to the 5-chapter Design Science Research guidelines (`research/Design Science projects.pdf`):
+```mermaid
+flowchart TD
+    DSR1["1. Problem Identification<br/>(Mining 4.0, Loss of Air-Gap)"] --> DSR2["2. Define Objectives<br/>(Sub-100ms Latency, 75%+ Pruning)"]
+    DSR2 --> DSR3["3. Knowledge Base / Lit Review<br/>(BWOA, ICS DL, SCADA Protocols)"]
+    DSR3 --> DSR4["4. Design & Architecture<br/>(4-Tier Edge System, ER, UML)"]
+    DSR4 --> DSR5["5. Development & Implementation<br/>(Python, TFLite Float16, Sniffer CLI)"]
+    DSR5 --> DSR6["6. Demonstration<br/>(Live Mirror Port Ingestion & API)"]
+    DSR6 --> DSR7["7. Empirical Evaluation<br/>(NSL-KDD, SWaT SCADA, Pi 4B Benchmarks)"]
+    DSR7 --> DSR8["8. Scholarly Communication<br/>(UNESCO Russian-African Proceedings)"]
+```
 
 ```
 +-----------------------------------------------------------------------------------------------+
@@ -61,6 +75,11 @@ $$X_d(t+1) = \begin{cases} 1 - X_d(t) & \text{if } \text{rand}() < V(x_d) \\ X_d
 ### 4. Constrained Multi-Objective Fitness Function with Accuracy Floor
 $$\text{Fitness}(\vec{X}) = \alpha \cdot (1 - \text{Accuracy}(\vec{X})) + (1 - \alpha) \cdot \left( \frac{|\vec{X}|}{D} \right) + \text{Penalty}(\vec{X}) \quad (6)$$
 where $\alpha = 0.3$ (70% weight to error minimization), $|\vec{X}|$ is the selected feature count ($D=41$), and $\text{Penalty}(\vec{X}) = 1.0$ if $\text{Accuracy}(\vec{X}) < 0.75$ or $|\vec{X}| < 10$.
+
+### 5. SHAP Additive Feature Attribution for Operator Explainability
+$$g(z') = \phi_0 + \sum_{i=1}^M \phi_i z_i' \quad (7)$$
+$$\phi_i(f, x) = \sum_{S \subseteq F \setminus \{i\}} \frac{|S|!(|F| - |S| - 1)!}{|F|!} [f_x(S \cup \{i\}) - f_x(S)] \quad (8)$$
+where $\phi_i$ denotes the Shapley contribution of feature $i$, and $f_x(S)$ is the conditional expectation given subset $S$. To protect the sub-100 ms real-time latency target, explanations are generated exclusively for flagged anomaly events, ensuring routine operational flows execute with zero explainability overhead (Oyedotun et al., 2025).
 
 ---
 
@@ -108,3 +127,50 @@ The following empirical benchmark artifacts were generated during live productio
 * [`research/reports/ec2_benchmark_confusion_matrix.csv`](../research/reports/ec2_benchmark_confusion_matrix.csv) - Multi-class confusion matrix grid.
 * [`research/reports/ec2_benchmark_paper_tables.md`](../research/reports/ec2_benchmark_paper_tables.md) - Formatted Markdown tables ready for deliverable inclusion.
 * [`research/reports/ec2_benchmark_tables.tex`](../research/reports/ec2_benchmark_tables.tex) - LaTeX `\begin{table}` snippets for IEEE/Springer conference manuscripts.
+
+---
+
+## 🗺️ Three-Phase Framework & Implementation Roadmap
+
+The operationalization of the explainable BWOA and CNN-LSTM detector follows a structured three-phase transition pathway:
+
+1. **Phase 1: Data Partnership & Ingestion**
+   * Capture real-world OT traffic at pilot mining concessions (e.g., Gold Fields Tarkwa mine in Ghana) and academic testbeds.
+   * Employ a two-instance AWS EC2 and CICFlowMeter setup to generate labeled benign and attack traffic for industrial SCADA protocols (Modbus RTU/TCP, DNP3, OPC-UA) and IoT sensor telemetry.
+2. **Phase 2: Model Adaptation & Explainability**
+   * Retrain BWOA feature selection and CNN-LSTM spatial-temporal networks directly on domain-specific OT telemetry.
+   * Cross-validate on the physical 51-sensor SWaT and BATADAL benchmarks.
+   * Integrate the SHAP explanation layer to provide plain-language, ranked attribution diagnostics to non-specialist control room operators.
+3. **Phase 3: Deployment Readiness & Localization**
+   * Benchmark execution latency and memory constraints on Raspberry Pi-class edge hardware, strictly maintaining sub-100 ms response times.
+   * Enforce decoupled execution: generate SHAP explanations only for flagged anomaly events to eliminate latency overhead on routine flows.
+   * Train local cybersecurity and SCADA engineering personnel at partner sites to foster sovereign African technical capacity rather than transferring opaque foreign tools.
+
+```mermaid
+flowchart LR
+    subgraph Phase1["Phase 1: Data Partnership"]
+        direction TB
+        P1A["Tarkwa Mine, Ghana & Testbeds"]
+        P1B["2-Instance AWS EC2 + CICFlowMeter"]
+        P1C["Capture Modbus, DNP3, OPC-UA Telemetry"]
+        P1A --> P1B --> P1C
+    end
+
+    subgraph Phase2["Phase 2: Model Adaptation"]
+        direction TB
+        P2A["Retrain BWOA & CNN-LSTM on OT Data"]
+        P2B["Cross-Validate on SWaT / BATADAL"]
+        P2C["Calibrate SHAP Operator Explanations"]
+        P2A --> P2B --> P2C
+    end
+
+    subgraph Phase3["Phase 3: Deployment Readiness"]
+        direction TB
+        P3A["Sub-100 ms Validation on Raspberry Pi"]
+        P3B["Decoupled Event-Driven Trigger"]
+        P3C["Train Local African Engineering Personnel"]
+        P3A --> P3B --> P3C
+    end
+
+    Phase1 --> Phase2 --> Phase3
+```

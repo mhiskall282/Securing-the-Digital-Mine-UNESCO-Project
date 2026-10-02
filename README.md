@@ -1,8 +1,10 @@
 # Securing the Digital Mine
+## An Explainable, Metaheuristic-Optimized Deep Learning Framework for Intrusion Detection in IoT-Enabled Mineral Resource Operations
 
-> **Track 3: "Smart Subsoil"** | Russian-African Forum-Contest of Young Scientists 2026
-> Under the Auspices of UNESCO | Empress Catherine II Saint Petersburg Mining University
-> 12-17 October 2026 | Saint Petersburg, Russia
+> **Nomination: Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex**  
+> **Russian-African Forum of Young Scientists: "Future Engineers of the World - The Foundation of Sustainable Development"**  
+> Under the Auspices of UNESCO | Empress Catherine II Saint Petersburg Mining University  
+> 12-17 October 2026 | Saint Petersburg, Russia  
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mhiskall282/unesco-project/blob/main/notebooks/00_colab_setup_and_train.ipynb)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
@@ -17,54 +19,84 @@
 
 ## What This Project Is
 
-African and Russian mining operations are digitalizing rapidly through IoT sensors, SCADA systems, and cloud-connected digital twins. This same connectivity expands the attack surface of facilities that were historically air-gapped. Most intrusion detection systems are trained on conventional IT traffic benchmarks and have never seen a Modbus packet or a SCADA polling cycle. For remote African mining sites operating on intermittent power and limited bandwidth, a cloud-dependent IDS is not viable: a full inference pass on the standard baseline takes 157ms, which violates the sub-100ms constraint of live SCADA control loops.
+African mining operations are digitalizing quickly through IoT sensor networks, SCADA systems, and cloud-connected digital twins (e.g., Gold Fields' Tarkwa mine in Ghana), yet cybersecurity for these operational technology (OT) environments lags behind conventional IT (Alanazi, Mahmood, & Chowdhury, 2022). This work adapts a Binary Whale Optimization Algorithm (BWOA) and CNN-LSTM intrusion detector, validated on generic network traffic, to mining IoT and SCADA traffic. A SHAP-based explanation layer shows which traffic features triggered each alert, giving non-specialist operators a reason with every detection (Oyedotun, Oise, & Ozobialu, 2025). A three-phase roadmap, data partnerships, and links to the UN Sustainable Development Goals are outlined.
 
-We built a three-layer system to solve this. A Binary Whale Optimization Algorithm (BWOA) identifies the minimal sufficient feature subset from network traffic, reducing 41 NSL-KDD features to 10 (75.61% dimensionality reduction) while maintaining above 70% classification accuracy. A CNN-LSTM deep learning classifier detects attack patterns in those 10 features, combining Conv1D spatial extraction with LSTM temporal sequence modeling to capture multi-stage intrusion patterns. A float16 TFLite quantization pipeline then compresses the trained model by 83% and executes the full inference stack at 0.76ms on a Raspberry Pi 4, well within the edge hardware constraint. The framework is validated on NSL-KDD (125,973 training samples, 22,544 test samples) and adapted to SWaT industrial sensor data via transfer learning.
+We built a multi-tier system to solve this. A Binary Whale Optimization Algorithm (BWOA) identifies the minimal sufficient feature subset from network traffic, reducing 41 NSL-KDD features to 10 (75.61% dimensionality reduction) while maintaining above 70% multi-class classification accuracy. A CNN-LSTM deep learning classifier detects attack patterns in those 10 features, combining Conv1D spatial extraction with LSTM temporal sequence modeling to capture multi-stage intrusion patterns. A float16 TFLite quantization pipeline compresses the trained model by 83% and executes the full inference stack at 0.76ms on a Raspberry Pi 4, well within the sub-100ms constraint of live SCADA control loops. Attached to this is an event-triggered SHAP explanation layer that generates plain-language diagnostic reasons for flagged events without adding latency to routine traffic inspection. The framework is validated on NSL-KDD (125,973 training samples, 22,544 test samples) and adapted to SWaT industrial sensor data via transfer learning.
 
-This work was selected for presentation at the Russian-African Forum-Contest of Young Scientists 2026, hosted by Empress Catherine II Saint Petersburg Mining University under UNESCO auspices. The forum brings together young scientists from Russia and Africa to address shared industrial challenges under the framework of the UN Sustainable Development Goals. Our project proposes the first systematic framework for adapting metaheuristic-optimized deep learning intrusion detection to the distinct OT and IIoT environments of African mining infrastructure, and outlines a three-phase roadmap for field validation at partner mining sites across both regions.
+### End-to-End System Architecture
+
+```mermaid
+flowchart TD
+    subgraph S1["Level 0/1: Industrial Mining Operations"]
+        M1["SAG Grinding Mills (15 MW Motors)"]
+        M2["Jaw Crushers & Conveyor Systems"]
+        M3["Froth Flotation & Leaching Circuits"]
+        M4["Tailings Storage Facility (Piezometers)"]
+        M5["Underground Ventilation-on-Demand Fans"]
+    end
+
+    subgraph S2["Level 2: OT Telemetry & Control Network"]
+        PLC["Programmable Logic Controllers (PLCs) & RTUs"]
+        NET["Industrial Ethernet (Modbus TCP, DNP3, OPC-UA)"]
+        SPAN["SPAN / Mirror Port (Line-Rate Promiscuous Feed)"]
+        M1 --> PLC
+        M2 --> PLC
+        M3 --> PLC
+        M4 --> PLC
+        M5 --> PLC
+        PLC <--> NET
+        NET --> SPAN
+    end
+
+    subgraph S3["Edge Defense Gateway (Raspberry Pi 4B / Pi 5)"]
+        SNIFF["Passive Libpcap Sniffer Daemon (Zero In-Line Delay)"]
+        BWOA["BWOA Feature Pruner (41 to 10 Features, 75.6% Reduction)"]
+        TFLITE["Quantized TFLite Spatial-Temporal Engine (0.76 ms, Float16)"]
+        XAI{"Event Classifier"}
+        SHAP["Decoupled SHAP Attribution Engine (Async Background Thread)"]
+        
+        SPAN --> SNIFF
+        SNIFF --> BWOA
+        BWOA --> TFLITE
+        TFLITE --> XAI
+        XAI -- "Benign Flow (96.89% Precision)" --> PASS["Log Operational Baseline (<0.8 ms Total)"]
+        XAI -- "Intrusion Flagged (DoS, Probe, Privilege)" --> SHAP
+    end
+
+    subgraph S4["Level 3: Mine Control Room & Supervisory Console"]
+        DASH["FastAPI Microservice + Livewire SCADA Dashboard"]
+        ALERT["Actionable Plain-Language Alert + Ranked Feature Causes"]
+        REMED["Automated Subnet Isolation & Technician Dispatch"]
+        
+        SHAP --> ALERT
+        ALERT --> DASH
+        DASH --> REMED
+    end
+
+    classDef mining fill:#e8f4fd,stroke:#1b6ec2,stroke-width:1px;
+    classDef ot fill:#fff3cd,stroke:#d39e00,stroke-width:1px;
+    classDef edge fill:#d4edda,stroke:#28a745,stroke-width:1px;
+    classDef scada fill:#f8d7da,stroke:#dc3545,stroke-width:1px;
+
+    class M1,M2,M3,M4,M5 mining;
+    class PLC,NET,SPAN ot;
+    class SNIFF,BWOA,TFLITE,XAI,SHAP,PASS edge;
+    class DASH,ALERT,REMED scada;
+```
+
+This work was nominated for Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex, at the Russian-African Forum of Young Scientists: "Future Engineers of the World - The Foundation of Sustainable Development", hosted by Empress Catherine II Saint Petersburg Mining University under UNESCO auspices.
 
 ---
 
 ## Research Abstract
 
-> African mining operations are digitalizing rapidly through IoT sensor networks,
-> SCADA systems, and cloud connected digital twins, yet cybersecurity for these
-> operational technology environments lags behind conventional IT networks
-> (Alanazi, Mahmood, and Chowdhury, 2022). This work proposes adapting a Binary
-> Whale Optimization Algorithm combined with a CNN-LSTM classifier from generic
-> network intrusion detection toward the distinct traffic patterns of mining IoT
-> and SCADA infrastructure. A three-phase adaptation roadmap is outlined,
-> required data partnerships are identified, and the proposal is mapped to
-> relevant UN Sustainable Development Goals.
+> African mining operations are digitalizing quickly through IoT sensor networks, SCADA systems, and cloud-connected digital twins, yet cybersecurity for these operational technology (OT) environments lags behind conventional IT (Alanazi, Mahmood, & Chowdhury, 2022). This work adapts a Binary Whale Optimization Algorithm (BWOA) and CNN-LSTM intrusion detector, validated on generic network traffic, to mining IoT and SCADA traffic. A SHAP-based explanation layer shows which traffic features triggered each alert, giving non-specialist operators a reason with every detection (Oyedotun, Oise, & Ozobialu, 2025). A three-phase roadmap, data partnerships, and links to the UN Sustainable Development Goals are outlined.
 
-**Full Abstract** available here: [Click on this link](https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link)
-
-**Presentation Slides** available here: [Click on this link](https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link)
-
-**Keywords:** intrusion detection; metaheuristic optimization; Whale Optimization Algorithm; CNN-LSTM; Industrial IoT; SCADA; mining digitalization; cybersecurity; Africa
-
-**Nomination:** Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex
-
----
-
-## Institutional Recognition & Forum Selection
-
-This project represents an official research delegation selected for presentation at the:
-
-* **Event**: Russian-African Forum-Contest of Young Scientists: *Future Engineers of the World: The Foundation of Sustainable Development*
-* **Auspices**: Held under the Auspices of the **United Nations Educational, Scientific and Cultural Organization (UNESCO)**
-* **Host Institution**: **Empress Catherine II Saint Petersburg Mining University**, Saint Petersburg, Russia
-* **Track**: **Track 3 ("Smart Subsoil")**: Digital Transformation and Automation in the Mineral Resources Complex
-* **Event Dates**: 12 to 17 October 2026
-* **Institutional Delegation**: **University of Education, Winneba** (Ghana) and **UEW Innovation Hub**
-* **Research Documentation & Scholarly Papers**:
-  * [Full ~50-Page DSR Research Paper (DOCX)](research/full_research_paper.docx)
-  * [3-Page Project Evaluation & Executive Summary (PDF)](research/Project_Evaluation_and_Executive_Summary.pdf)
-  * [Technical Report & Deployment Specifications (DOCX)](research/technical_report.docx)
-  * [Product Requirements Document (PRD) (DOCX)](research/PRD.docx)
-  * [Software Requirements Specification (SRS - IEEE 830) (DOCX)](research/SRS.docx)
-  * [Full Research Papers & Specifications Index](docs/research_papers_and_specifications.md)
-  * [Saint Petersburg Mining University UNESCO Forum Portal](https://youthafrica.spmi.ru)
+* **Official Conference Abstract**: [`research/abstract.md`](research/abstract.md)
+* **Full Abstract (Google Drive)**: [Click on this link](https://drive.google.com/file/d/1SS40i_wyjIAllRItygb_wXr3D7aMYbFt/view?usp=drive_link)
+* **Presentation Slides (Google Drive)**: [Click on this link](https://drive.google.com/file/d/1kgmFS5CS3oQ0YsNLBVTF-mg4qbue68PI/view?usp=drive_link)
+* **Keywords**: intrusion detection; explainable AI; SHAP; Whale Optimization Algorithm; CNN-LSTM; Industrial IoT; SCADA; mining digitalization; Africa
+* **Nomination**: Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex
 
 ---
 
@@ -74,11 +106,15 @@ This repository provides complete, formal academic and engineering documentation
 
 | Deliverable Document | File Path | Format & Scope | Key Highlights |
 | :--- | :--- | :--- | :--- |
+| **Official Conference Abstract** | [`research/abstract.md`](research/abstract.md) | Markdown | Official submission abstract, Track 3 nomination, 3-phase framework, UN SDGs, and 12 literature references. |
+| **IEEE Paper Manuscript** | [`research/IEEE_Paper_Submission_Manuscript.md`](research/IEEE_Paper_Submission_Manuscript.md) | Markdown (~8,500 words) | Full IEEE-style conference paper manuscript with BWOA, CNN-LSTM, Float16, SHAP explainability, 3-phase roadmap, and 58 references. |
+| **IEEE Paper LaTeX Source** | [`research/ieee_paper.tex`](research/ieee_paper.tex) | LaTeX (IEEEtran) | Complete compilable LaTeX source for IEEE conference proceedings with vector equations, algorithm environment, and BibTeX integration. |
 | **Full Research Paper** | [`research/full_research_paper.docx`](research/full_research_paper.docx) | Word DOCX (~16,000 words, ~50 pages) | Full 6-chapter DSR manuscript: 12pt Times New Roman, 1.5 line spacing, XML table borders, APA 7th citations, numbered equations, unified References, and Appendices A-M. |
 | **Executive Summary & Blueprint** | [`research/Project_Evaluation_and_Executive_Summary.pdf`](research/Project_Evaluation_and_Executive_Summary.pdf) | 3-Page Dense PDF | Comprehensive 3-page project evaluation, mathematical engine, benchmark tables, edge benchmarks, UAT scores, and slide-by-slide presentation blueprint. |
 | **Technical Report** | [`research/technical_report.docx`](research/technical_report.docx) | Word DOCX | Architecture deep-dive, step-by-step Raspberry Pi & AWS EC2 deployment runbooks, and Appendices A-E. |
 | **Product Requirements (PRD)** | [`research/PRD.docx`](research/PRD.docx) | Word DOCX | Product vision, target user personas (SCADA engineer, SOC analyst, mine manager), functional & non-functional requirements, and release roadmap. |
-| **Software Requirements (SRS)** | [`research/SRS.docx`](research/SRS.docx) | Word DOCX (IEEE 830) | Formal IEEE 830 specification covering external interfaces, system features, and automated verification test gates (75 unit tests). |
+| **Software Requirements (SRS)** | [`research/SRS.docx`](research/SRS.docx) | Word DOCX (IEEE 830) | Formal IEEE 830 specification covering external interfaces, system features, and automated verification test gates (77 unit tests). |
+| **Conference Presentation Script** | [`research/conference_presentation.md`](research/conference_presentation.md) | Markdown (14 Slides + Q&A) | Full 15-minute presentation script, slide visual content, speaker notes, and comprehensive jury defense cheat-sheet. |
 | **Presentation Slide Deck** | [`research/DigitalMine_Presentation (1).pdf`](research/DigitalMine_Presentation%20(1).pdf) | Slide Deck (PDF) | Official presentation slide deck for the UNESCO Russian-African Forum 2026. |
 | **Formal Abstract** | [`research/Abstract_DigitalMine_Final (2).pdf`](research/Abstract_DigitalMine_Final%20(2).pdf) | Abstract (PDF) | Official abstract approved for the forum proceedings. |
 
@@ -635,13 +671,86 @@ See [docs/bwoa_algorithm.md](docs/bwoa_algorithm.md) for the full mathematical f
 
 ---
 
+## Explainable AI (SHAP) Layer & Three-Phase Roadmap
+
+### Decoupled SHAP Explainability Layer
+To address operator distrust of deep learning "black boxes" in mission-critical mining environments (Oyedotun et al., 2025), our framework incorporates a post-hoc SHAP (SHapley Additive exPlanations) attribution layer (Lundberg & Lee, 2017).
+* **Decoupled Architecture**: To strictly maintain the sub-100 ms real-time SCADA control loop deadline, SHAP is not executed on routine benign flows (which evaluate in 0.76 ms). Explanations are triggered asynchronously only when an anomaly or intrusion is flagged.
+* **Plain-Language Diagnostics**: Non-specialist control room technicians receive an interpretable breakdown of the exact telemetry features (e.g., volumetric byte surges or cyclic Modbus polling shifts) pushing the model toward its alert, enabling rapid, informed incident response without needing a dedicated data scientist.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Switch as SCADA Switch SPAN Port
+    participant Sniffer as Edge Sniffer Daemon
+    participant BWOA as BWOA Feature Pruner
+    participant Engine as TFLite Float16 Engine
+    participant SHAP as Decoupled SHAP Engine
+    participant Console as Operator SCADA Console
+
+    Switch->>Sniffer: Bidirectional Network Frames (Line Rate)
+    Sniffer->>BWOA: 41 Raw Telemetry Fields
+    Note over BWOA: Prune 31 Redundant Dimensions<br/>Retain 10 Optimal Features
+    BWOA->>Engine: 10-Feature Vector
+    Note over Engine: Conv1D Spatial + LSTM Temporal<br/>Inference: 0.76 ms (Sub-100ms PASS)
+    Engine-->>Sniffer: Softmax Probabilities & Predicted Class
+
+    alt Benign Flow (Normal Traffic)
+        Engine->>Console: Status: Normal (Zero Line-Rate Overhead)
+    else Intrusion Flagged (DoS / Reconnaissance / Privilege Escalation)
+        Engine->>SHAP: Trigger Async Attribution (Event-Driven)
+        Note over SHAP: Calculate Shapley Values for 10 Features<br/>Rank Top Root-Cause Indicators
+        SHAP->>Console: Plain-Language Diagnostic Alert<br/>e.g. "DoS Detected: src_bytes (+0.42), serror_rate (+0.28)"
+        Console->>Console: Operator Triggers Kinetic Check / PLC Isolation
+    end
+```
+
+### Three-Phase Implementation Roadmap
+1. **Phase 1: Data Partnership & Ingestion**: Capture live operational technology traffic at partner mining sites (e.g., Gold Fields' Tarkwa concession in Ghana) and testbeds, deploying a two-instance AWS EC2 + CICFlowMeter architecture to capture and label Modbus RTU/TCP, DNP3, OPC-UA, and sensor telemetry.
+2. **Phase 2: Model Adaptation & Explainability**: Retrain BWOA feature selection and CNN-LSTM spatial-temporal networks on domain-specific OT attributes, benchmark against the physical 51-sensor SWaT and BATADAL datasets, and calibrate the SHAP explanation layer for operator readability.
+3. **Phase 3: Deployment Readiness & Localization**: Validate real-time sub-100 ms execution on low-cost Raspberry Pi edge gateways, and conduct hands-on training for local mine engineers and technicians to build indigenous African technical sovereignty rather than transferring opaque foreign tools.
+
+```mermaid
+flowchart LR
+    subgraph Phase1["Phase 1: Data Partnership & OT Capture"]
+        direction TB
+        P1A["Pilot Mining Concessions<br/>(e.g., Gold Fields Tarkwa, Ghana)"]
+        P1B["2-Instance AWS EC2 + CICFlowMeter Pipeline"]
+        P1C["Capture Modbus, DNP3, OPC-UA & Telemetry"]
+        P1D["Labeled African Mining OT Benchmark Corpus"]
+        P1A --> P1B --> P1C --> P1D
+    end
+
+    subgraph Phase2["Phase 2: Model Adaptation & Explainability"]
+        direction TB
+        P2A["Retrain Constrained BWOA Feature Selection"]
+        P2B["Fine-tune Spatial-Temporal CNN-LSTM on OT Data"]
+        P2C["Cross-Validation on SWaT & BATADAL SCADA"]
+        P2D["Attach & Calibrate SHAP Operator Diagnostic Layer"]
+        P2A --> P2B --> P2C --> P2D
+    end
+
+    subgraph Phase3["Phase 3: Deployment Readiness & Localization"]
+        direction TB
+        P3A["Sub-100 ms Profiling on 1GB RAM Raspberry Pi"]
+        P3B["Float16 Quantization (0.82 MB Footprint)"]
+        P3C["Offline Survivability & Local SQLite Buffering"]
+        P3D["Indigenous Training: Local Mine Cybersecurity Staff"]
+        P3A --> P3B --> P3C --> P3D
+    end
+
+    Phase1 --> Phase2 --> Phase3
+```
+
+---
+
 ## SDG Alignment
 
 | SDG | Goal | How This Project Contributes |
 | :--- | :--- | :--- |
-| SDG 9 | Industry, Innovation and Infrastructure | Strengthens cybersecurity resilience of digitalizing mining infrastructure |
-| SDG 8 | Decent Work and Economic Growth | Protects worker safety and operational continuity at mining facilities |
-| SDG 17 | Partnerships for the Goals | Russian-African collaborative data collection and joint research pathway |
+| **SDG 9** | Industry, Innovation and Infrastructure | Strengthens cybersecurity resilience of digitalizing industrial and subsoil extraction infrastructure. |
+| **SDG 8** | Decent Work and Economic Growth | Protects worker lives and operational continuity by shielding automated ventilation and tailings dam sensors from kinetic sabotage. |
+| **SDG 17** | Partnerships for the Goals | Cross-continental scientific cooperation and sovereign data sharing between African institutions and Saint Petersburg Mining University under UNESCO auspices. |
 
 The Russian-African academic network convened by Saint Petersburg Mining University provides a direct partnership pathway for Phase 1 field data collection across both regions, establishing a model for South-South and North-South scientific cooperation on shared industrial security challenges.
 
@@ -651,15 +760,13 @@ The Russian-African academic network convened by Saint Petersburg Mining Univers
 
 - **John Okyere** - Team Lead and AI Security Researcher. University of Education, Winneba, [johnokyere.xyz](https://johnokyere.xyz)
 
-- **Ezekeil Baah** - Machine Learning Engineer and Data Scientist. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
+- **Ezekeil Baah** - Machine Learning Engineer and Data Scientist. University of Education, Winneba.
 
-- **Clement Baffour** - Edge Deployment and Quantization Engineer. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
+- **Clement Baffour** - Edge Deployment and Quantization Engineer. University of Education, Winneba.
 
-- **Parker Paa Annobil** - Machine Learning Engineer and Data Scientist. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
+- **Parker Paa Annobil** - Machine Learning Engineer and Data Scientist. University of Education, Winneba.
 
-- **George Akwesi Bonnah** - Cloud Services Engineer. University of Education, Winneba. [Email: [EMAIL_ADDRESS]]
-
-
+- **George Akwesi Bonnah** - Cloud Services Engineer. University of Education, Winneba.
 
 ---
 
@@ -670,9 +777,9 @@ If you reference this research project in your publications, please cite the wor
 ```bibtex
 @inproceedings{okyere2026securing,
   author    = {Okyere, John and Baah, Ezekeil and Baffour, Clement and Annobil, Parker Paa and Bonnah, George Akwesi},
-  title     = {Securing the Digital Mine: A Metaheuristic Optimized Deep Learning Framework for Intrusion Detection in IoT Enabled Mineral Resource Operations},
-  booktitle = {Proceedings of the Russian-African Forum-Contest of Young Scientists: Future Engineers of the World: The Foundation of Sustainable Development},
-  publisher = {Empress Catherine II Saint Petersburg Mining University},
+  title     = {Securing the Digital Mine: An Explainable, Metaheuristic-Optimized Deep Learning Framework for Intrusion Detection in IoT-Enabled Mineral Resource Operations},
+  booktitle = {Proceedings of the Russian-African Forum of Young Scientists: Future Engineers of the World - The Foundation of Sustainable Development},
+  publisher = {Empress Catherine II Saint Petersburg Mining University under the Auspices of UNESCO},
   year      = {2026},
   address   = {Saint Petersburg, Russia},
   month     = {October}
@@ -683,19 +790,18 @@ If you reference this research project in your publications, please cite the wor
 
 ## References
 
-1. Mirjalili, S., and Lewis, A. (2016). The whale optimization algorithm. *Advances in Engineering Software*, 95, 51-67. https://doi.org/10.1016/j.advengsoft.2016.01.008
-
-2. Kheddar, H., Himeur, Y., and Awad, A. I. (2023). Deep transfer learning for intrusion detection in industrial control networks. *Journal of Network and Computer Applications*. https://doi.org/10.48550/arXiv.2304.10550
-
-3. Alanazi, M., Mahmood, A., and Chowdhury, M. J. M. (2022). SCADA vulnerabilities and attacks. *Computers and Security*, 125, 103028. https://doi.org/10.1016/j.cose.2022.103028
-
-4. Almomani, O., Akour, I., and Habeb, A. (2025). Cyberattack detection for SCADA in IIoT. *Symmetry*, 17(4), 480. https://doi.org/10.3390/sym17040480
-
-5. Krishnaveni, S., Chen, T. M., Sivamohan, S., and Subbiah, S. (2025). Hybrid metaheuristic IDS for WSN. *Cluster Computing*, 28, 5248. https://doi.org/10.1007/s10586-025-05248-6
-
-6. Anand, M., and Arul, U. (2024). WOA enhanced LSTM for intrusion detection. *Cryptography*, 8(4), 73. https://doi.org/10.3390/cryptography8040073
-
-7. Tavallaee, M., Bagheri, E., Lu, W., and Ghorbani, A. A. (2009). A detailed analysis of the KDD CUP 99 data set. *Proceedings of the IEEE Symposium on Computational Intelligence for Security and Defense Applications (CISDA)*, 1-6. https://doi.org/10.1109/CISDA.2009.5356528
+1. African Mining Market. (2024, April 8). Cybersecurity concerns mount in mining arena. https://africanminingmarket.com/cybersecurity-concerns-mount-in-mining-arena/18217/
+2. Alanazi, M., Mahmood, A., & Chowdhury, M. J. M. (2022). SCADA vulnerabilities and attacks: A review of the state-of-the-art and open issues. *Computers & Security*, 125, 103028. https://doi.org/10.1016/j.cose.2022.103028
+3. Almomani, O., Akour, I., & Habeb, A. (2025). Symmetrical resilience: Detection of cyberattacks for SCADA systems used in IIoT in big data environments. *Symmetry*, 17(4), 480. https://doi.org/10.3390/sym17040480
+4. Anand, M., & Arul, U. (2024). Whale optimization algorithm enhanced long short-term memory classifier with novel wrapped feature selection for intrusion detection. *Cryptography*, 8(4), 73. https://doi.org/10.3390/cryptography8040073
+5. IT-Online. (2026, February 16). Digital innovations reshape the future of mining in Africa. https://it-online.co.za/2026/02/16/digital-innovations-reshape-the-future-of-mining-in-africa/
+6. Kheddar, H., Himeur, Y., & Awad, A. I. (2023). Deep transfer learning for intrusion detection in industrial control networks: A comprehensive review. *Journal of Network and Computer Applications*. https://doi.org/10.48550/arXiv.2304.10550
+7. Krishnaveni, S., Chen, T. M., Sivamohan, S., & Subbiah, S. (2025). Optimizing feature selection in imbalanced intrusion detection systems using hybrid metaheuristic algorithms for wireless sensor networks. *Cluster Computing*, 28, 5248. https://doi.org/10.1007/s10586-025-05248-6
+8. Lundberg, S. M., & Lee, S.-I. (2017). A unified approach to interpreting model predictions. *Advances in Neural Information Processing Systems*, 30. https://arxiv.org/abs/1705.07874
+9. Mirjalili, S., & Lewis, A. (2016). The whale optimization algorithm. *Advances in Engineering Software*, 95, 51-67. https://doi.org/10.1016/j.advengsoft.2016.01.008
+10. Nigerian Mineral Exchange. (2025, May 5). Smart mines, bigger profits: How IoT and big data are transforming Nigeria's mining efficiency. https://nigerianmineralexchange.com/smart-mines-bigger-profits-how-iot-and-big-data-are-transforming-nigerias-mining-efficiency/
+11. Oyedotun, S. A., Oise, G. P., & Ozobialu, C. E. (2025). Towards intelligent cybersecurity in SCADA and DCS environments: Anomaly detection using multimodal deep learning and explainable AI. *Journal of Scientific Research and Reviews*, 2(1), 20-31.
+12. United Nations. (2015). Transforming our world: The 2030 agenda for sustainable development (A/RES/70/1). https://sdgs.un.org/2030agenda
 
 ---
 

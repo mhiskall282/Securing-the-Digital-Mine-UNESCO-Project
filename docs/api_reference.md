@@ -173,6 +173,36 @@ Checks edge hardware compatibility and handles quantization.
 ### `ModelInferenceHandler` (`src/api_service.py`)
 FastAPI / HTTP server handling TFLite Float16 inference evaluations.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client as Sniffer / Edge Client
+    participant FastAPI as FastAPI API Service
+    participant Validator as Input Validator (64 KB Cap)
+    participant Scaler as StandardScaler Preprocessor
+    participant TFLite as TFLite Float16 Runtime
+    participant SHAP as Decoupled SHAP Engine
+
+    Client->>FastAPI: POST /api/analyze (JSON payload)
+    FastAPI->>Validator: Validate body size (< 64 KB) & required 10 features
+    alt Payload > 64 KB
+        Validator-->>Client: HTTP 413 (Payload Too Large)
+    else Missing any of 10 BWOA features
+        Validator-->>Client: HTTP 400 (Missing Required Features)
+    else Validation Succeeded
+        Validator->>Scaler: Normalize numeric fields
+        Scaler->>TFLite: Transformed 10-feature tensor
+        TFLite-->>FastAPI: Softmax probabilities & predicted class
+        alt Predicted Class == "Normal"
+            FastAPI-->>Client: HTTP 200 (Prediction, Confidence, Latency: 0.76ms)
+        else Anomaly Detected (DoS, Probe, Privilege Escalation)
+            FastAPI->>SHAP: Trigger Async Explanation Task
+            FastAPI-->>Client: HTTP 200 (Prediction, Confidence, Latency: 0.76ms)
+            Note over SHAP: Background SHAP attribution for operator console
+        end
+    end
+```
+
 #### Endpoints
 * `GET /api/health`: Returns model health (`status`: `"healthy"` or `"degraded"`), readiness (`model_ready`: `true`/`false`), model version (`v3.0.0-tflite-quantized`), and runtime framework status.
 * `GET /api/features`: Returns the 10 BWOA-selected feature names (`selected_features`), their indices in the 41-feature NSL-KDD vector, and the feature reduction percentage (75.61%).

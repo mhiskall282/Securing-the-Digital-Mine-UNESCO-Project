@@ -1,8 +1,8 @@
 # Conference Presentation: Securing the Digital Mine
-## A Metaheuristic-Optimized Deep Learning Framework for Edge Intrusion Detection in Industrial Mining IoT
+## An Explainable, Metaheuristic-Optimized Deep Learning Framework for Intrusion Detection in IoT-Enabled Mineral Resource Operations
 
-**Venue**: Russian-African Forum-Contest of Young Scientists / UNESCO International Centre of Competence in Mining Engineering Education  
-**Track**: Track 3: Smart Subsoil - Digital Transformation and Automation in Mineral Resources  
+**Nomination**: Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex  
+**Venue**: Russian-African Forum of Young Scientists: "Future Engineers of the World - The Foundation of Sustainable Development", Empress Catherine II Saint Petersburg Mining University, under the auspices of the UNESCO International Centre of Competence in Mining Engineering Education  
 **Presentation Timing**: 15 Minutes (14 Slides) + 5 Minutes Q&A  
 **Presenters**: John Okyere (Lead Author), Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah  
 *University of Education, Winneba (UEW), Ghana | UEW Innovation Hub*
@@ -12,18 +12,19 @@
 ## Slide 1: Title & Institutional Context (0:00 - 1:00)
 
 ### Slide Visual Content
-- **Title**: Securing the Digital Mine: A Metaheuristic-Optimized Deep Learning Framework for Edge Intrusion Detection in Industrial Mining IoT
+- **Title**: Securing the Digital Mine: An Explainable, Metaheuristic-Optimized Deep Learning Framework for Intrusion Detection in IoT-Enabled Mineral Resource Operations
+- **Track**: Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex
 - **Authors**: John Okyere, Ezekeil Baah, Clement Baffour, Parker Paa Annobil, George Akwesi Bonnah
 - **Affiliation**: Cyber-Physical Systems Research Group, Department of ICT & UEW Innovation Hub, University of Education, Winneba, Ghana
-- **Conference Banner**: UNESCO Russian-African Forum-Contest of Young Scientists, Empress Catherine II Saint Petersburg Mining University
-- **Core Callout**: *75.6% Feature Pruning | 0.76 ms Edge Inference | 207x Latency Acceleration on 1GB RAM ARM Gateways*
+- **Conference Banner**: Russian-African Forum of Young Scientists, Empress Catherine II Saint Petersburg Mining University
+- **Core Callout**: *75.6% Feature Pruning | 0.76 ms Edge Inference | SHAP Explainability for Operators | Sub-100 ms SCADA Deadline Compliant*
 
 ### Speaker Notes (130 words | ~1 min)
 > "Distinguished session chairs, esteemed colleagues, and fellow researchers from across the African continent and the Russian Federation. I am John Okyere, representing the University of Education, Winneba and the UEW Innovation Hub in Ghana.
 > 
-> Today, our team presents our Design Science Research artifact: **'Securing the Digital Mine.'** As mineral resource extraction transitions to the Smart Subsoil paradigm - deploying hundreds of thousands of Industrial IoT telemetry sensors and automated SCADA systems - we face an urgent cybersecurity challenge.
+> Today, our team presents our research: **'Securing the Digital Mine: An Explainable, Metaheuristic-Optimized Deep Learning Framework for Intrusion Detection in IoT-Enabled Mineral Resource Operations.'**
 > 
-> In this talk, we present an edge-native intrusion detection framework that combines a constrained Binary Whale Optimization Algorithm with a spatial-temporal CNN-LSTM neural network and Float16 quantization, achieving sub-millisecond threat detection on 1GB RAM hardware. Let us examine why traditional IT security models fail in mineral extraction."
+> As African and global mining complexes accelerate digitalization - deploying IoT sensor grids and SCADA networks at operations like Gold Fields' Tarkwa mine - cybersecurity for operational technology lags dangerously behind. In this presentation, we detail a lightweight, explainable architecture combining constrained Binary Whale Optimization, spatial-temporal CNN-LSTM modeling, and a SHAP explanation layer to deliver sub-millisecond, interpretable threat detection on low-cost edge gateways."
 
 ---
 
@@ -94,15 +95,22 @@
 
 ---
 
-## Slide 5: Architectural Blueprint: 4-Tier Edge Defense (4:00 - 5:15)
+## Slide 5: Architectural Blueprint: 4-Tier Edge Defense with SHAP Explainability (4:00 - 5:15)
 
 ### Slide Visual Content
 - **Diagram**: 4-Tier End-to-End System Flow
   - **Tier 1 (Ingestion)**: Libpcap edge sniffer (`@mhiskall282/unesco-mine-sec-cli`) capturing bi-directional packets at line speed.
   - **Tier 2 (Optimization)**: BWOA feature pruner dropping 75.6% of fields (41 -> 10 features).
   - **Tier 3 (Inference)**: TFLite Float16 spatial-temporal engine executing in 0.76 ms.
-  - **Tier 4 (Supervision)**: FastAPI microservice + Livewire SCADA monitoring console.
-- **Key Metric**: Fully self-contained edge execution with zero external cloud dependency.
+  - **Tier 4 (Supervision & Explainability)**: FastAPI microservice + SHAP explanation layer (Oyedotun et al., 2025) delivering plain-language diagnostics for flagged events to the Livewire SCADA console.
+- **Key Metric**: Fully self-contained edge execution with decoupled, event-triggered explainability.
+
+```mermaid
+flowchart LR
+    T1["Tier 1: Libpcap Sniffer<br/>(Mirror Port Line Rate)"] --> T2["Tier 2: BWOA Pruner<br/>(41 to 10 Features, 0.05ms)"]
+    T2 --> T3["Tier 3: CNN-LSTM TFLite<br/>(Float16, 0.76ms Engine)"]
+    T3 --> T4["Tier 4: Decoupled SHAP & UI<br/>(Plain-Language Alerts)"]
+```
 
 ### Speaker Notes (130 words | ~1 min 15 sec)
 > "To solve this, we engineered a decoupled four-tier architecture.
@@ -113,7 +121,7 @@
 > 
 > At Tier 3, a lightweight spatial-temporal neural network - compressed via post-training Float16 quantization - evaluates the flow in 0.76 milliseconds on a single ARM core.
 > 
-> Finally, at Tier 4, localized predictions and confidence scores are streamed to a control room dashboard via a high-speed FastAPI microservice. The entire pipeline operates 100% offline, guaranteeing autonomous defense even if satellite backhaul is completely severed."
+> Finally, at Tier 4, localized predictions stream to a control room dashboard. Critically, we attach an asynchronous SHAP explanation layer: every flagged alert provides non-specialist operators with a ranked list of contributing features in plain language, without burdening routine traffic evaluation."
 
 ---
 
@@ -121,8 +129,9 @@
 
 ### Slide Visual Content
 - **Binary Whale Optimization Algorithm (BWOA)**:
-  - Models humpback whale bubble-net foraging in discrete binary space $\{0, 1\}^{41}$.
+  - Models humpback whale bubble-net foraging in discrete binary space $\{0, 1\}^{41}$ (Mirjalili & Lewis, 2016).
   - Shrinking encircling ($|A| < 1$) + logarithmic spiral updating ($p \ge 0.5$) + random exploration ($|A| \ge 1$).
+  - Hybrid metaheuristic feature selection validated on industrial and sensor networks (Krishnaveni et al., 2025; Anand & Arul, 2024).
 - **V-Shaped Transfer Function**:
   - $\mathcal{V}(v_d) = |v_d / \sqrt{1 + v_d^2}|$ treats positive and negative velocities symmetrically, completely preventing search stagnation.
 - **Constrained Multi-Objective Fitness Function**:
@@ -142,25 +151,36 @@
 
 ---
 
-## Slide 7: Physical Meaning of Selected Features (6:30 - 7:45)
+## Slide 7: Physical Feature Meaning & The SHAP Explanation Layer (6:30 - 7:45)
 
 ### Slide Visual Content
-- **The Top 10 BWOA-Selected Features & Gini Importance**:
-  1. `src_bytes` (0.2451): Captures volumetric buffer floods and DoS bursts.
-  2. `service` (0.1982): Maps connection type to Modbus/DNP3 industrial ports.
-  3. `flag` (0.1420): Connection state tracking (SYN/FIN/RST anomalies).
-  4. `serror_rate` (0.1185): SYN error percentage - primary DoS signature.
-  5. `same_srv_rate` (0.0894): Detects repeated polling abuse of specific registers.
-  6. `diff_srv_rate` (0.0652): Reconnaissance port sweeps across PLCs.
-  7. `dst_host_diff_srv_rate` (0.0521): Host-level scanning of substation devices.
-  8. `protocol_type` (0.0412): TCP vs UDP vs ICMP segregation.
-  9. `hot` (0.0278): Unauthorized access to sensitive system directories.
-  10. `su_attempted` (0.0205): Escalation to root privileges on engineering workstations.
+- **Top 10 BWOA-Selected Features & Physical Mining Vector**:
+  - `src_bytes` (0.2451): Volumetric DoS bursts blinding operator consoles.
+  - `service` (0.1982) & `flag` (0.1420): Modbus/DNP3 industrial ports & session anomalies.
+  - `serror_rate` (0.1185) & `same_srv_rate` (0.0894): SYN error surges & cyclic register polling abuse.
+  - `diff_srv_rate` (0.0652) & `dst_host_diff_srv_rate` (0.0521): Reconnaissance sweeps across PLCs.
+  - `protocol_type` (0.0412), `hot` (0.0278), `su_attempted` (0.0205): Insider escalation & unauthorized access.
+- **SHAP-Based Explanation Layer (Lundberg & Lee, 2017; Oyedotun et al., 2025)**:
+  - Additive feature attribution: $g(z') = \phi_0 + \sum_{i=1}^M \phi_i z_i'$
+  - **Decoupled Real-Time Architecture**: SHAP runs strictly on *flagged events*, preserving 0.76 ms line-rate inspection.
+  - **Plain-Language Operator Reason**: Non-specialist operators receive plain English diagnostics with every alert (e.g., *'Alert: DoS flood detected. Main triggers: src_bytes (+0.42), serror_rate (+0.28). Recommended: check PLC cooling loop'*).
 
-### Speaker Notes (135 words | ~1 min 15 sec)
-> "What is remarkable about our BWOA optimizer is that it did not select features arbitrarily. Every single chosen feature corresponds directly to physical cyber-physical attack vectors.
+```mermaid
+flowchart TD
+    DEC{"Event Decision"}
+    DEC -- "Benign Flow (96.89% Prec)" --> OK["Baseline Operational Log (0.76 ms)"]
+    DEC -- "Intrusion Flagged" --> SHAP["Async SHAP Attribution Engine"]
+    SHAP --> REASON["Plain-Language Operator Reason<br/>'DoS: src_bytes (+0.42), serror_rate (+0.28)'"]
+```
+
+### Speaker Notes (140 words | ~1 min 15 sec)
+> "What is remarkable about our BWOA optimizer is that it did not select features arbitrarily. Every chosen feature corresponds directly to physical cyber-physical attack vectors in industrial control systems.
 > 
-> The top feature - `src_bytes`, with a Gini importance of 0.2451 - detects volumetric Denial-of-Service floods attempting to blind operator displays.
+> The top feature - `src_bytes`, with a Gini importance of 0.2451 - detects volumetric Denial-of-Service floods attempting to blind operator displays. Connection flags and error rates track industrial protocol states, while access flags detect root privilege escalation.
+> 
+> Crucially, deep learning models are often rejected by mine operators as untrustworthy 'black boxes'. To solve this, we incorporate a SHAP explanation layer based on Shapley values.
+> 
+> To protect our sub-100 ms real-time latency target, explanations are generated exclusively for flagged anomaly events, not routine traffic. When an intrusion is intercepted, the operator receives an intuitive, plain-language breakdown of the top contributing features, empowering local technicians to make immediate, confident operational decisions."
 > 
 > `service`, `flag`, and `serror_rate` track industrial protocol connection states, immediately flagging malformed TCP handshakes and Modbus session resets.
 > 
@@ -243,49 +263,60 @@
 
 ---
 
-## Slide 11: Operational Trade-Off & Pareto Optimality (11:30 - 12:30)
+## Slide 11: Three-Phase Implementation Roadmap & Pilot Deployments (11:30 - 12:30)
 
 ### Slide Visual Content
-- **The Core Trade-off**:
-  - Baseline (41 features): 77.70% accuracy @ 157.66 ms latency
-  - BWOA Quantized (10 features): 70.56% accuracy @ 0.76 ms latency
-  - Delta: -7.14% theoretical accuracy for a **207x real-time speedup**.
-- **Pareto Optimality Argument**:
-  - A 77.7% model that takes 157 ms cannot be deployed in SCADA (0% real protection).
-  - A 70.56% model operating in 0.76 ms delivers continuous, actionable real-time security.
-- **User Acceptance Testing (UAT)**:
-  - 5 industrial specialists scored the system **4.85 / 5.00 overall operational utility**.
+- **Structured 3-Phase Translation Pathway**:
+  - **Phase 1 (Data Partnership & OT Capture)**:
+    - Deploy pilot capture testbeds with mining and academic partners (e.g., Gold Fields Tarkwa, Ghana).
+    - 2-instance AWS EC2 + CICFlowMeter harness generating labeled attack & benign traffic for Modbus TCP/RTU, DNP3, OPC-UA, and sensor telemetry.
+  - **Phase 2 (Model Adaptation & Explainability)**:
+    - Retrain constrained BWOA and CNN-LSTM on OT-specific protocol features.
+    - Benchmark against SWaT (water treatment) and BATADAL (distribution) physical datasets.
+    - Attach SHAP explanation layer giving non-specialist operators plain-language reasons with every alert.
+  - **Phase 3 (Deployment Readiness & Localization)**:
+    - Validate real-time sub-100 ms latency constraints on Raspberry Pi-class edge nodes.
+    - Decoupled event-driven trigger: explanations generated strictly for flagged events.
+    - Train local cybersecurity staff at partner sites to build indigenous African engineering capacity.
 
-### Speaker Notes (135 words | ~1 min)
-> "A rigorous reviewer will ask: 'Why accept a 7% decrease in overall accuracy, from 77.7% to 70.5%?'
+```mermaid
+flowchart LR
+    P1["Phase 1: Data Partnership<br/>(Gold Fields Tarkwa, Ghana)"] --> P2["Phase 2: Model Adaptation<br/>(SWaT / BATADAL + SHAP)"]
+    P2 --> P3["Phase 3: Deployment Readiness<br/>(Sub-100ms Edge & Staff Training)"]
+```
+
+### Speaker Notes (140 words | ~1 min)
+> "Our contribution extends beyond an isolated algorithm: we provide a concrete, literature-grounded three-phase implementation roadmap designed for resource-constrained African mining contexts.
 > 
-> In industrial systems engineering, this trade-off is completely Pareto-optimal.
-> A model requiring 157 milliseconds cannot run in real time. It cannot be deployed on a 50-millisecond control loop. Its theoretical 77.7% accuracy provides exactly zero real-world protection.
+> In Phase 1, we partner with operating mines - such as Gold Fields' Tarkwa operation in Ghana - and academic testbeds, using our dual-instance AWS EC2 and CICFlowMeter architecture to capture labeled benign and attack traffic across industrial protocols like Modbus, DNP3, and OPC-UA.
 > 
-> In contrast, our 70.56% model runs in 0.76 milliseconds. It evaluates every single packet at line speed.
-> Furthermore, the accuracy delta is concentrated in extreme minority classes like User-to-Root, where the benchmark contains only 52 training examples. On the attacks that matter most to plant survival - DoS and normal baseline filtering - our model provides enterprise-grade reliability."
+> In Phase 2, we retrain our BWOA feature selector and CNN-LSTM detector on these industrial protocol fields, benchmark against physical cyber-physical testbeds like SWaT and BATADAL, and attach the SHAP explanation layer.
+> 
+> In Phase 3, we validate sub-100 ms edge execution on Raspberry Pi hardware and train local mine cybersecurity personnel, ensuring the framework builds sovereign African technical capability rather than acting as a foreign black-box tool."
 
 ---
 
-## Slide 12: Formal Answers to Research Questions (12:30 - 13:30)
+## Slide 12: Operational Trade-Off & Formal Research Questions (12:30 - 13:30)
 
 ### Slide Visual Content
+- **The Core Engineering Trade-Off**:
+  - Baseline (41 features): 77.70% accuracy @ 157.66 ms latency (fails real-time loop).
+  - BWOA Quantized (10 features): 70.56% accuracy @ 0.76 ms latency (207x acceleration).
+  - 96.89% normal precision, 89.04% DoS recall; delta concentrated in minority classes.
 - **Empirical Grounding of RQ1-RQ4**:
-  - **RQ1 Answer (Pruning)**: Constrained BWOA pruned 75.61% of dimensions (41 -> 10 features), maintaining 70.56% multi-class accuracy and 92.31% cross-validation accuracy.
-  - **RQ2 Answer (Modeling)**: Spatial-temporal Conv1D-LSTM captured cross-packet dependencies and temporal states, delivering 96.89% normal precision and 89.04% DoS recall (0.8471 AUC-ROC).
-  - **RQ3 Answer (Edge Quantization)**: Float16 quantization compressed model to 0.82 MB (83.2% reduction) and achieved 0.76 ms inference on 1GB RAM Pi 4B (207x faster, 131x under 100 ms deadline).
-  - **RQ4 Answer (Generalization & ROI)**: Generalized to SWaT testbed (0.8650 AUC in 0.12 ms) and established 200x to 300x financial ROI while eliminating worker life-safety risks.
+  - **RQ1 (Pruning)**: BWOA pruned 75.61% of dimensions; converged in 23 iterations.
+  - **RQ2 (Modeling)**: Conv1D-LSTM decoupled spatial cross-features from sequential temporal states.
+  - **RQ3 (Edge Quantization)**: Float16 reduced model to 0.82 MB, running in 0.76 ms on 1GB RAM Pi 4B.
+  - **RQ4 (Generalization & ROI)**: Generalized to SWaT SCADA (0.8650 AUC) with 200x-300x financial ROI.
 
 ### Speaker Notes (135 words | ~1 min)
-> "Returning to our four research questions, our empirical data provides unambiguous, definitive answers.
+> "In industrial engineering, this trade-off is completely Pareto-optimal.
 > 
-> For RQ1: Constrained BWOA pruned 75.61% of features down to 10, retaining 70.56% test accuracy and 92.31% CV accuracy.
+> A baseline model requiring 157 milliseconds cannot run in real time. It cannot be deployed on a 50-millisecond control loop; it would drop 95% of incoming traffic and provide zero real protection.
 > 
-> For RQ2: Conv1D-LSTM effectively decoupled spatial cross-feature maps from temporal sequence states, achieving 96.89% precision on benign traffic and 89.04% recall on DoS intrusions.
+> In contrast, our 70.56% model runs in 0.76 milliseconds, processing over 1,300 packets per second. On normal operational traffic, precision remains at 96.89%, and on DoS attacks, recall reaches 89.04%.
 > 
-> For RQ3: Float16 quantization compressed the network to 0.82 megabytes and clocked 0.76 milliseconds on a 1GB Raspberry Pi 4B, easily satisfying real-time PLC cyclic scan loops.
-> 
-> And for RQ4: Cross-domain transferability on the SWaT testbed reached an AUC-ROC of 0.8650 in 0.12 milliseconds, while economic modeling confirmed over 200x return on investment in preventing costly downtime."
+> This definitively answers our research questions: BWOA successfully pruned 75.6% of dimensions; Conv1D-LSTM captured temporal-spatial states; Float16 quantization achieved sub-millisecond edge latency; and transferability to physical SCADA testbeds was empirically confirmed."
 
 ---
 
@@ -296,44 +327,45 @@
   - Autonomous Haulage Truck ($12.5k/hr outage): **200x ROI**
   - Crusher & Milling SCADA ($25k/hr outage): **300x ROI**
   - Ventilation Safety Grid ($50k/hr outage): **260x ROI + Worker Life Safety**
-- **UN Sustainable Development Goals**:
-  - **SDG 9**: Resilient industrial infrastructure for developing economies.
-  - **SDG 8**: Worker safety and life preservation in underground mines.
-  - **SDG 17**: Bilateral UNESCO scientific collaboration between Ghana and Russia.
+- **Direct Alignment with UN Sustainable Development Goals**:
+  - **SDG 9 (Industry, Innovation and Infrastructure)**: Strengthening cyber-resilience of digitalizing industrial infrastructure.
+  - **SDG 8 (Decent Work and Economic Growth)**: Protecting operational continuity and underground worker safety from kinetic cyber-physical sabotage.
+  - **SDG 17 (Partnerships for the Goals)**: Cross-continental scientific cooperation between African institutions and Empress Catherine II Saint Petersburg Mining University.
 
 ### Speaker Notes (125 words | ~45 sec)
 > "The socio-economic significance of this work directly addresses the United Nations Sustainable Development Goals.
 > 
-> From an economic standpoint, unplanned downtime in mining costs between $50,000 and $500,000 per hour. Deploying an open-source IDS on a $45 edge gateway yields an estimated return on investment exceeding **200x**.
+> Economically, under SDG 9 and SDG 8, unplanned downtime in mineral extraction costs $50,000 to $500,000 per hour. Deploying an open-source, edge-native intrusion detector on a $45 gateway delivers an estimated return on investment exceeding 200x while protecting workers from catastrophic ventilation or tailings dam failures.
 > 
-> But more importantly, this is about human lives. Underground miners depend on automated ventilation-on-demand and toxic gas scrubbers. Intercepting cyber intrusions before they tamper with ventilation controls prevents fatal asphyxiation disasters.
+> Environmentally, securing control loops prevents toxic chemical spills from unmonitored leaching tanks.
 > 
-> Under the auspices of UNESCO and Empress Catherine II Saint Petersburg Mining University, this research exemplifies true scientific partnership - building sovereign engineering capacity for the African mining sector."
+> And under SDG 17, this project embodies true Russian-African scientific partnership, uniting the University of Education, Winneba with Saint Petersburg Mining University under the auspices of the UNESCO International Centre of Competence in Mining Engineering Education."
 
 ---
 
-## Slide 14: Conclusion & Open-Source Artifacts (14:15 - 15:00)
+## Slide 14: Conclusion & Sovereign Technical Capacity (14:15 - 15:00)
 
 ### Slide Visual Content
-- **Summary of Achievements**:
-  - 75.61% feature dimensionality reduction via constrained BWOA.
-  - 0.76 ms edge latency on 1GB RAM Raspberry Pi 4B (207x faster than baseline).
+- **Summary of Core Contributions**:
+  - 75.61% feature dimensionality reduction via constrained BWOA (Mirjalili & Lewis, 2016).
+  - 0.76 ms edge latency on 1GB RAM Raspberry Pi 4B (207x faster than baseline, sub-100 ms compliant).
   - 0.82 MB model size under Float16 quantization (83.2% compression).
-  - 96.89% normal precision, 89.04% DoS recall, sub-100 ms SCADA compliant.
-- **Production Artifacts**:
+  - Decoupled SHAP explainability layer providing transparent diagnostics for non-specialist operators.
+  - Structured 3-Phase Roadmap from generic baseline to operational mine testbeds.
+- **Production Artifacts & Open-Source Release**:
   - Open-Source Repo: `github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project`
   - Global Sniffer CLI: `@mhiskall282/unesco-mine-sec-cli` (GitHub Packages)
-  - Full IEEE Manuscript & Verified Test Suite (75/75 Pass)
-- **Closing**: *"Securing the foundation of tomorrow's digital mines."*
+  - Full IEEE Manuscript & 77/77 Verified Automated Test Suite
+- **Closing**: *"Building sovereign technical capacity to secure the digital mines of tomorrow."*
 
 ### Speaker Notes (125 words | ~45 sec)
-> "In conclusion, 'Securing the Digital Mine' demonstrates that intelligent metaheuristic feature pruning and deep learning quantization can solve the real-time latency dilemma in industrial IoT.
+> "In conclusion, 'Securing the Digital Mine' demonstrates that metaheuristic feature pruning, spatial-temporal deep learning, and explainable AI can resolve the edge latency and interpretability dilemmas in industrial IoT.
 > 
-> By shrinking our feature set from 41 to 10 and quantizing to Float16, we achieved a 207-fold speedup, delivering sub-millisecond threat detection on low-power, 1GB RAM edge gateways.
+> By shrinking telemetry from 41 to 10 features and quantizing to Float16, we achieved a 207-fold speedup, enabling sub-millisecond edge protection with plain-language SHAP diagnostics.
 > 
-> All our artifacts - the sniffer CLI, the FastAPI inference engine, the BWOA optimizer, and the 75 automated unit tests - are publicly available on GitHub under an open-source license for global mining operators and academic researchers.
+> Most importantly, our framework is tailored for African operating realities: edge-first, offline-capable, and coupled with local technical training so that mining communities build indigenous capability rather than depending on proprietary foreign systems.
 > 
-> We extend our sincere gratitude to UNESCO and Saint Petersburg Mining University for championing young scientists in mineral resources. Thank you, and we welcome your questions."
+> All software, models, and test harnesses are published under open-source licenses. We thank UNESCO and Saint Petersburg Mining University for this honor. Thank you, and we welcome your questions."
 
 ---
 
@@ -341,7 +373,7 @@
 
 ### Question 1: "Why did you use NSL-KDD instead of a purely industrial OT dataset like TON_IoT or CIC-IDS?"
 **Answer**:
-> "NSL-KDD was chosen as the baseline because it is the most rigorously studied and reproducible intrusion benchmark in the literature, enabling direct mathematical comparison of our BWOA feature selection against existing state-of-the-art papers. However, recognizing the IT-centric nature of NSL-KDD, we explicitly performed **transfer evaluation on the SWaT physical industrial SCADA testbed**, which features 51 real physical water treatment sensor channels under 36 kinetic attack scenarios. Furthermore, as detailed in Appendix M of our paper, Phase 1 field PCAP capture is underway at Gold Fields Tarkwa in Ghana to produce a dedicated, open-source mining Modbus dataset."
+> "NSL-KDD was chosen as the starting point because it is the most rigorously studied and reproducible intrusion benchmark in the literature, enabling direct mathematical comparison of our BWOA feature selection against existing published metaheuristic benchmarks (Krishnaveni et al., 2025; Anand & Arul, 2024). However, as Kheddar et al. (2023) emphasize, industrial OT networks exhibit unique structural dynamics: deterministic polling cycles, industrial protocol fields (Modbus, DNP3, OPC-UA), and narrower attack diversity. To address this, our research explicitly evaluates cross-domain transferability on the physical SWaT SCADA facility (0.8650 AUC in 0.12 ms), and establishes Phase 1 field PCAP capture at Gold Fields Tarkwa in Ghana to retrain BWOA and CNN-LSTM on live mining OT telemetry in Phase 2."
 
 ### Question 2: "How do you explain the 7.14% drop in overall accuracy from the baseline?"
 **Answer**:
@@ -349,7 +381,7 @@
 
 ### Question 3: "Does Float16 quantization cause numerical instability or gradient underflow?"
 **Answer**:
-> "We applied post-training quantization (PTQ) rather than quantization-aware training. Because quantization is performed *after* model weights have converged, there is zero risk of gradient underflow. Float16 provides 5 bits of exponent and 10 bits of mantissa, offering a dynamic range of $6.1 \times 10^{-5}$ to $65,504$, which is more than sufficient for the bounded activations of normalized network flow attributes and tanh/sigmoid outputs. Our empirical results confirm that Float16 quantization caused exactly zero degradation in accuracy or Macro F1 compared to unquantized weights."
+> "We applied post-training quantization (PTQ) rather than quantization-aware training. Because quantization is performed after model weights have converged, there is zero risk of gradient underflow. Float16 provides 5 bits of exponent and 10 bits of mantissa, offering a dynamic range of 6.1e-5 to 65,504, which is more than sufficient for the bounded activations of normalized network flow attributes and tanh/sigmoid outputs. Our empirical results confirm that Float16 quantization caused exactly zero degradation in accuracy or Macro F1 compared to unquantized weights."
 
 ### Question 4: "What happens if the edge gateway loses internet connectivity?"
 **Answer**:
@@ -357,4 +389,12 @@
 
 ### Question 5: "How does BWOA compare to Particle Swarm Optimization (PSO) or Genetic Algorithms (GA)?"
 **Answer**:
-> "WOA possesses a unique dual-phase mathematical mechanism: shrinking encircling for exploitation and logarithmic spiral updating for exploration, governed by the linearly decaying coefficient vector $A$. Unlike standard PSO, which is prone to premature convergence in high-dimensional feature spaces, or GAs, which require computationally expensive crossover and mutation operations across large populations, our constrained BWOA with adaptive alpha decay converged in just 23 iterations, saving significant compute during retraining cycles."
+> "WOA possesses a unique dual-phase mathematical mechanism: shrinking encircling for exploitation and logarithmic spiral updating for exploration, governed by the linearly decaying coefficient vector A (Mirjalili & Lewis, 2016). Unlike standard PSO, which is prone to premature convergence in high-dimensional feature spaces, or GAs, which require computationally expensive crossover and mutation operations across large populations, our constrained BWOA with adaptive alpha decay converged in just 23 iterations, saving significant compute during retraining cycles."
+
+### Question 6: "How do you run computationally intensive SHAP explanations on a 1GB Raspberry Pi without violating the sub-100 ms SCADA latency deadline?"
+**Answer**:
+> "We employ a decoupled, event-triggered explainability architecture, following principles established by Oyedotun et al. (2025). On routine, benign network traffic, SHAP is not executed at all - inference proceeds purely through the quantized TFLite engine in 0.76 milliseconds. Only when an anomaly or attack is flagged does the system trigger the SHAP attribution calculation asynchronously in a background thread. The resulting top feature contributions and plain-language operator reasons are populated onto the operator console within several hundred milliseconds of alert generation, ensuring that real-time packet inspection is never blocked or stalled while giving non-specialist operators immediate, interpretable root-cause visibility."
+
+### Question 7: "What is your roadmap for validating this on live African mining operational technology?"
+**Answer**:
+> "We have formulated a literature-grounded three-phase roadmap. In Phase 1, we deploy our dual-instance AWS EC2 and CICFlowMeter data pipeline in collaboration with operational mining partners like Gold Fields Tarkwa in Ghana to capture labeled Modbus RTU/TCP, DNP3, and OPC-UA streams. In Phase 2, we retrain our constrained BWOA and CNN-LSTM architectures on these domain-specific industrial protocols, cross-validating on the SWaT and BATADAL datasets, and fine-tuning the SHAP explanation layer. In Phase 3, we test edge execution constraints on Raspberry Pi hardware and conduct hands-on training for local mine engineers and technicians, building long-term African technical sovereignty."

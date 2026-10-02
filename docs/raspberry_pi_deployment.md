@@ -29,19 +29,30 @@ The Raspberry Pi Edge Gateway operates directly at low-power SCADA extraction zo
 
 ```mermaid
 flowchart TD
-    subgraph Industrial OT Network (SCADA Switch)
+    subgraph OTNetwork["Industrial OT Network (SCADA Switch)"]
         A["Raw Modbus / DNP3 / OPC-UA Traffic"] --> B["SPAN / Mirror Port (eth1 / eth0)"]
     end
 
-    subgraph Raspberry Pi Edge Gateway (Pi 4 / Pi 5)
-        B --> C["Passive Promiscuous Sniffer Daemon"]
+    subgraph PiGateway["Raspberry Pi Edge Gateway (1GB / 4GB RAM)"]
+        B --> C["Passive Libpcap Sniffer Daemon (promiscuous mode)"]
         C --> D["BWOA Feature Pruner (10 Selected Features)"]
-        D --> E{"Inference Execution"}
-        E -- "Local Low-Latency Inference" --> F["Quantized TFLite Float16 Model (0.76ms)"]
-        E -- "Stream Telemetry to Cloud/SaaS" --> G["unesco-mine-sec-cli REST Stream"]
+        D --> E["Quantized TFLite Float16 Model (0.76 ms)"]
+        E --> F{"Classification Gate"}
+        F -- "Normal Flow" --> G["Operational Baseline Logger"]
+        F -- "Intrusion Flagged" --> H["Decoupled SHAP Engine (Async Worker)"]
+        H --> I["Plain-Language Operator Reason"]
+        
+        G --> NET{"Network Connectivity?"}
+        I --> NET
+        NET -- "Online" --> CLOUD["Cloud Stream (AWS EC2 / Render)"]
+        NET -- "Offline / Disconnected" --> SQLITE["Local SQLite FIFO Buffer (Zero Loss)"]
+        SQLITE -. "On Reconnection" .-> CLOUD
     end
 
-    G -- "POST /api/external/analyze" --> H["Central Dashboard / AWS EC2 Microservice"]
+    subgraph ControlRoom["Mine Control Room & Plant SCADA"]
+        CLOUD --> DASH["FastAPI + Livewire Supervisory Console"]
+        I --> LOCAL_HMI["Local Substation Alarm Panel"]
+    end
 ```
 
 ---

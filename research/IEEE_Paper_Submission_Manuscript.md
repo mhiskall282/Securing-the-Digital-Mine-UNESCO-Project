@@ -1,28 +1,31 @@
-# Securing the Digital Mine: A Metaheuristic-Optimized Deep Learning Framework for Edge Intrusion Detection in Industrial Mining IoT
+# Securing the Digital Mine: An Explainable, Metaheuristic-Optimized Deep Learning Framework for Intrusion Detection in IoT-Enabled Mineral Resource Operations
 
 **Authors**: John Okyere$^1$, Ezekeil Baah$^1$, Clement Baffour$^1$, Parker Paa Annobil$^1$, George Akwesi Bonnah$^1$  
 $^1$ *Department of Information and Communication Technology, University of Education, Winneba (UEW), Ghana*  
 *UEW Innovation Hub Cyber-Physical Systems Research Group*  
 *Correspondence: hello@johnokyere.xyz | Repository: https://github.com/mhiskall282/Securing-the-Digital-Mine-UNESCO-Project*  
 
-*Presented at the Russian-African Forum-Contest of Young Scientists (Track 3: Smart Subsoil), Empress Catherine II Saint Petersburg Mining University, under the auspices of the UNESCO International Centre of Competence in Mining Engineering Education.*
+*Nomination: Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex*  
+*Presented at the Russian-African Forum of Young Scientists: "Future Engineers of the World - The Foundation of Sustainable Development", Empress Catherine II Saint Petersburg Mining University, under the auspices of the UNESCO International Centre of Competence in Mining Engineering Education.*
 
 ---
 
 ### Abstract
-Industrial Internet of Things (IIoT) deployments in modern mineral processing plants have connected thousands of smart actuators, slurry density gauges, and vibration sensors directly to supervisory control networks. While this connectivity enables predictive maintenance, it eliminates physical air gaps, exposing unauthenticated operational technology (OT) protocols to remote manipulation. In grinding and leaching circuits, an adversary manipulating Programmable Logic Controller (PLC) register values can de-energize slurry pumps or override mill cooling loops, inducing kinetic damage within seconds. Off-the-shelf deep neural network classifiers cannot defend these environments because their 150+ ms inference latencies exceed the 20 to 50 ms cyclic scan limits of industrial PLCs. To resolve this timing conflict, we present an edge-native intrusion detection architecture combining a constrained Binary Whale Optimization Algorithm (BWOA) with a spatial-temporal 1D Convolutional Neural Network and Long Short-Term Memory (Conv1D-LSTM) model under Float16 quantization. Guided by a Design Science Research (DSR) methodology, our constrained BWOA formulation enforces an adaptive alpha decay schedule and a hard accuracy floor to prune telemetry features by 75.61% (reducing 41 network flow dimensions to exactly 10). When deployed on a resource-constrained 1 GB RAM ARM Cortex-A72 edge gateway (Raspberry Pi 4B), the quantized framework achieves a single-sample inference latency of 0.76 ms (a 207-fold speedup over the 157.66 ms full-feature baseline) and compresses the memory footprint by 83.2% to 0.82 MB at 2.5 W power draw. The model achieves 70.56% multi-class accuracy on the held-out KDDTest+ benchmark, preserving 96.89% precision on benign operational telemetry and 89.04% recall on volumetric Denial-of-Service attacks. Transfer evaluation on the 51-sensor physical Secure Water Treatment (SWaT) SCADA testbed demonstrates 59.95% accuracy and an AUC-ROC of 0.8650 in 0.12 ms without retraining. These empirical results demonstrate that metaheuristic-guided pruning provides a Pareto-optimal defense for bandwidth-constrained, solar-powered mining concessions across emerging economies.
+African mining operations are digitalizing quickly through IoT sensor networks, SCADA systems, and cloud-connected digital twins, yet cybersecurity for these operational technology (OT) environments lags behind conventional IT (Alanazi, Mahmood, & Chowdhury, 2022). This work adapts a Binary Whale Optimization Algorithm (BWOA) and CNN-LSTM intrusion detector, validated on generic network traffic, to mining IoT and SCADA traffic. A SHAP-based explanation layer shows which traffic features triggered each alert, giving non-specialist operators a reason with every detection (Oyedotun, Oise, & Ozobialu, 2025). A three-phase roadmap, data partnerships, and links to the UN Sustainable Development Goals are outlined. When evaluated under edge constraints, our constrained BWOA formulation prunes telemetry features by 75.61% (from 41 to 10 features), and post-training Float16 quantization achieves a single-sample inference latency of 0.76 ms on a 1 GB RAM ARM edge gateway (Raspberry Pi 4B) - a 207-fold speedup over the 157.66 ms unquantized baseline - while compressing memory footprint to 0.82 MB at 2.5 W power draw. Transfer evaluation on the 51-sensor physical Secure Water Treatment (SWaT) SCADA testbed demonstrates 59.95% accuracy and an AUC-ROC of 0.8650 in 0.12 ms without retraining. These empirical results establish a resource-conscious foundation for securing the digital mine across emerging African extraction complexes.
 
-**Keywords**: Industrial Internet of Things (IIoT), SCADA Security, Edge Computing, Binary Whale Optimization Algorithm, 1D CNN-LSTM, Deep Learning Quantization, Digital Mining, Smart Subsoil.
+**Keywords**: intrusion detection, explainable AI, SHAP, Whale Optimization Algorithm, CNN-LSTM, Industrial IoT, SCADA, mining digitalization, Africa, Smart Subsoil.
 
 ---
 
 ## 1. Introduction
 
-Industrial extraction and metallurgical milling facilities are undergoing rapid digitization under the Mining 4.0 paradigm [25, 18]. Open-pit concessions and underground stopes deploy dense wireless sensor nodes and industrial telemetry networks to track semi-autogenous grinding (SAG) mill shell vibrations, bearing temperatures, tailings dam pore-water pressures, and automated ventilation fan speeds [34, 35]. Plant managers increasingly bridge these field instruments to enterprise resource planning software and remote diagnostic centers [33].
+Mining and mineral processing operations across Africa and internationally are undergoing rapid digital transformation under the Mining 4.0 and Smart Subsoil paradigm [25, 18, 52]. Open-pit concessions and underground stopes deploy dense Industrial Internet of Things (IIoT) sensor networks to track semi-autogenous grinding (SAG) mill shell vibrations, bearing temperatures, tailings dam pore-water pressures, and automated ventilation fan speeds [34, 35]. At sites such as Gold Fields' Tarkwa gold mine in Ghana and across mineral basins in Nigeria and South Africa, AI-assisted predictive maintenance, autonomous haulage, and digital twins are actively deployed to optimize ore recovery and environmental risk management [56, 52]. Plant managers increasingly bridge these once-isolated operational technology (OT) instruments to enterprise networks and cloud analytics platforms [33].
 
-This connectivity creates severe operational security vulnerabilities. Historically, industrial facilities relied on the assumption of an impermeable physical air gap. Today, that air gap is largely gone. Industrial Ethernet backbones carry unencrypted protocols designed decades ago, including Modbus RTU/TCP, DNP3, and EtherNet/IP [11, 21, 30]. None of these protocols incorporate cryptographic handshake authentication, message sequence signing, or payload confidentiality. An adversary who penetrates an outer corporate firewall or compromises a vendor maintenance laptop can inject raw command frames directly into Level 1 programmable logic controllers (PLCs) and remote terminal units (RTUs) [23, 17].
+However, cybersecurity for these operational environments lags substantially behind corporate IT defenses [49]. Historically, industrial processing circuits operated behind an assumed physical air gap. Today, connectivity has dismantled that isolation, exposing unauthenticated industrial protocols designed decades ago - including Modbus RTU/TCP, DNP3, and EtherNet/IP - to remote adversary exploitation [11, 21, 30]. None of these protocols incorporate cryptographic handshake authentication, message sequence signing, or payload confidentiality. An adversary who penetrates an outer corporate firewall or compromises a vendor maintenance laptop can inject raw command frames directly into Level 1 programmable logic controllers (PLCs) and remote terminal units (RTUs) [23, 17, 50].
 
-The physical consequences in a mineral extraction plant are catastrophic. Overwriting holding registers in a milling circuit PLC can trip cooling water valves on a 15-megawatt SAG mill motor, causing thermal copper winding deformation before human operators can intervene [17, 6]. Falsifying piezometric telemetry from a tailings storage facility (TSF) can conceal hydrostatic liquefaction until a containment berm collapses. Landmark cyber-physical attacks - such as Stuxnet [22, 28], the 2015 Ukrainian power grid blackout [29], and the TRITON attack targeting safety instrumented systems [24] - prove that threat actors deliberately weaponize unauthenticated protocol mechanics against physical equipment [31, 32].
+Crucially, as highlighted by Kheddar et al. [53], intrusion detection architectures cannot simply be copied from IT environments to industrial mining operations without addressing fundamental structural discrepancies. OT traffic exhibits highly deterministic cyclic polling schedules, fixed industrial protocol fields, and narrow attack-class distributions compared to dynamic enterprise IT networks. Furthermore, in remote African mining concessions operating under constrained connectivity and limited onsite security staff [52], detection models must not act as uninterpretable black boxes. Anomaly alerts must provide non-specialist plant operators with clear, transparent explanations of the specific telemetry features that triggered each alert [57].
+
+The physical consequences in a mineral extraction plant are catastrophic. Overwriting holding registers in a milling circuit PLC can trip cooling water valves on a 15-megawatt SAG mill motor, causing thermal copper winding deformation before human operators can intervene [17, 6]. Falsifying piezometric telemetry from a tailings storage facility (TSF) can conceal hydrostatic liquefaction until a containment berm collapses. Landmark cyber-physical attacks - such as Stuxnet [22, 28], the 2015 Ukrainian power grid blackout [29], and the TRITON attack targeting safety instrumented systems [24] - prove that threat actors deliberately weaponize unauthenticated protocol mechanics against physical equipment [31, 32]. Addressing this crisis requires an explainable, lightweight defense tailored to the physical realities of the mining complex.
 
 ### 1.1 The Four Industrial Gaps in Current Intrusion Detection
 Deploying machine learning-based intrusion detection inside operating mineral concessions involves four distinct engineering challenges:
@@ -52,11 +55,11 @@ We formulated four explicit research questions to structure our empirical invest
 
 Intrusion detection research for industrial control networks generally branches into signature-based rule engines and anomaly detection models [6, 21]. While signature engines achieve high packet throughput on commodity servers, their zero-day attack recall regularly drops below 15% because threat actors use legitimate protocol functions rather than known shellcode strings [21]. Classic machine learning algorithms, including Random Forests and Support Vector Machines, perform acceptably on balanced datasets [12]. However, when exposed to severe class imbalances typical of physical plants, their detection rates on rare, high-consequence attacks plummet, exacerbated by high feature redundancy [48].
 
-To reduce input dimensionality without losing threat signals, researchers have investigated bio-inspired metaheuristics [39, 37, 36, 38]. Mirjalili and Lewis introduced the Whale Optimization Algorithm (WOA) [1], mimicking the spiral bubble-net hunting maneuvers of humpback whales. Binary adaptations (BWOA) discretize continuous positional updates using transfer functions [20, 8, 16]. However, existing BWOA formulations optimize purely for unconstrained sparsity. In network intrusion detection, this unconstrained approach frequently discards low-frequency attributes that carry vital signals for detecting user-to-root privilege escalation.
+To reduce input dimensionality without losing threat signals, researchers have investigated bio-inspired metaheuristics [39, 37, 36, 38]. Mirjalili and Lewis introduced the Whale Optimization Algorithm (WOA) [1], mimicking the spiral bubble-net hunting maneuvers of humpback whales. Hybrid WOA approaches paired with CNN, LSTM, or ensemble classifiers have shown competitive detection accuracy above 96% on network intrusion benchmarks [51, 54]. Binary adaptations (BWOA) discretize continuous positional updates using transfer functions [20, 8, 16]. However, standard BWOA formulations optimize purely for unconstrained sparsity. In network intrusion detection, this unconstrained approach frequently discards low-frequency attributes that carry vital signals for detecting user-to-root privilege escalation.
 
-On the model architecture side, combining 1D convolutions [41] with recurrent LSTM cells [40, 42] has proven effective for capturing multi-packet temporal patterns [5, 19, 9, 10]. Unfortunately, their computational footprint limits practical deployment on low-cost edge gateways [15, 44, 43, 45].
+On the model architecture side, combining 1D convolutions [41] with recurrent LSTM cells [40, 42] has proven effective for capturing multi-packet temporal patterns [5, 19, 9, 10, 49]. Unfortunately, deep neural architectures traditionally behave as opaque black boxes. In operational SCADA and distributed control systems (DCS), uninterpretable alarms lead to alarm fatigue and operator distrust. Explainable Artificial Intelligence (XAI) frameworks, specifically Shapley Additive exPlanations (SHAP) grounded in cooperative game theory [55], have recently been demonstrated to produce consistent, feature-attribution breakdowns in industrial DCS and SCADA environments [57]. By attributing positive and negative contributions to specific network metrics (such as connection error rates or byte bursts), SHAP empowers non-specialist plant operators to understand why an alert fired and take prompt mitigating action.
 
-Evaluating SCADA defenses also demands representative benchmark data. Traditional enterprise datasets like NSL-KDD [2], UNSW-NB15 [46], and CICIDS2017 [47] provide verified multi-class traffic distributions. Complementary physical testbeds, including SWaT [13], WADI [26], and TON_IoT [27], offer multi-sensor continuous process data collected under active physical attack [14]. As summarized in Table 1, existing literature lacks an integrated solution that combines constrained metaheuristic pruning, spatial-temporal modeling, and edge quantization tailored to sub-100 ms industrial control loops.
+Evaluating SCADA defenses also demands representative benchmark data. Traditional enterprise datasets like NSL-KDD [2], UNSW-NB15 [46], and CICIDS2017 [47] provide verified multi-class traffic distributions. Complementary physical testbeds, including SWaT [13], WADI [26], and TON_IoT [27], offer multi-sensor continuous process data collected under active physical attack [14]. As summarized in Table 1, existing literature lacks an integrated solution that combines constrained metaheuristic pruning, spatial-temporal modeling, post-hoc explainability, and edge quantization tailored to sub-100 ms industrial control loops.
 
 ### Table 1: Comparison of Existing Intrusion Detection Paradigms vs Proposed Framework
 
@@ -85,8 +88,94 @@ To counter these threats without disrupting plant operations, we structured our 
 3. **Tier 3: Deep Learning Inference Layer**: The spatial-temporal classifier, compiled into a TensorFlow Lite Float16 binary, runs locally on the edge ARM processor in 0.76 ms.
 4. **Tier 4: Supervisory Interface Layer**: Threat classifications, confidence scores, and latency metrics are published via a local FastAPI service to an operator Livewire console for immediate alarm triage.
 
+```mermaid
+flowchart LR
+    T1["Tier 1: Libpcap Sniffer<br/>(Mirror Port Ingestion)"] --> T2["Tier 2: BWOA Pruner<br/>(41 to 10 Features, 0.05ms)"]
+    T2 --> T3["Tier 3: CNN-LSTM TFLite<br/>(Float16, 0.76ms Engine)"]
+    T3 --> T4["Tier 4: Decoupled SHAP & UI<br/>(Plain-Language Alerts)"]
+```
+
 ![Figure 3: Four-Tier End-to-End System Architecture and Edge Defense Boundary](figures/system_architecture.png)
 *Fig. 3. Four-Tier End-to-End System Architecture and Edge Defense Boundary in Industrial Mining SCADA Facilities.*
+
+### 3.3 Explainable AI (XAI) Attribution Layer via SHAP
+In mission-critical mineral extraction operations, an alert without an explanation creates operational friction. Non-specialist plant operators receiving a raw "Anomaly" alert may hesitate to halt a million-dollar mill circuit or may ignore valid alarms due to alarm fatigue [57]. To overcome this, our architecture incorporates a post-hoc Explainable AI layer based on Shapley Additive exPlanations (SHAP) [55]. 
+
+Given a feature vector $\vec{z} \in \mathbb{R}^M$ corresponding to an ingested network flow, the local explanation model $g(\vec{z}')$ approximates the deep model prediction $f(\vec{z})$ via an additive feature attribution formula:
+$$g(\vec{z}') = \phi_0 + \sum_{j=1}^M \phi_j z_j'$$
+where $\phi_0$ is the base expected value across the background dataset, $\vec{z}' \in \{0, 1\}^M$ represents the coalition vector, and $\phi_j \in \mathbb{R}$ is the Shapley value quantifying the marginal contribution of feature $j$ to the prediction:
+$$\phi_j = \sum_{S \subseteq F \setminus \{j\}} \frac{|S|!(|F| - |S| - 1)!}{|F|!} \left[ f_x(S \cup \{j\}) - f_x(S) \right]$$
+To protect the sub-100 ms real-time deadline required by industrial PLCs, explanations are decoupled from the high-throughput data plane: SHAP attribution is triggered exclusively on flagged anomalous events (e.g., DoS, Probe, or injection attempts), rather than computing attributions across millions of benign baseline frames. The resulting top-ranked feature attributions (such as elevated SYN error rates or unexpected destination ports) are translated into human-readable plain language directly within the operator console.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Switch as SCADA Switch SPAN Port
+    participant Sniffer as Edge Sniffer Daemon
+    participant BWOA as BWOA Feature Pruner
+    participant Engine as TFLite Float16 Engine
+    participant SHAP as Decoupled SHAP Engine
+    participant Operator as Operator SCADA Console
+
+    Switch->>Sniffer: Bidirectional Network Frames (Line Rate)
+    Sniffer->>BWOA: 41 Raw Telemetry Fields
+    Note over BWOA: Prune 31 Redundant Dimensions<br/>Retain 10 Optimal Features
+    BWOA->>Engine: 10-Feature Vector
+    Note over Engine: Conv1D Spatial + LSTM Temporal<br/>Inference: 0.76 ms (Sub-100ms PASS)
+    Engine-->>Sniffer: Softmax Probabilities & Predicted Class
+
+    alt Benign Flow (Normal Traffic)
+        Engine->>Operator: Status: Normal (Zero Line-Rate Overhead)
+    else Intrusion Flagged (DoS / Reconnaissance / Privilege Escalation)
+        Engine->>SHAP: Trigger Async Attribution (Event-Driven)
+        Note over SHAP: Calculate Shapley Values for 10 Features<br/>Rank Top Root-Cause Indicators
+        SHAP->>Operator: Plain-Language Diagnostic Alert<br/>e.g. "DoS Detected: src_bytes (+0.42), serror_rate (+0.28)"
+        Operator->>Operator: Authorize Mitigation / PLC Subnet Isolation
+    end
+```
+
+### 3.4 Three-Phase Implementation Roadmap and UN SDG Alignment
+To bridge the gap between academic validation on generic benchmarks and operational deployment in resource-constrained African mining facilities, we formulate a concrete three-phase development roadmap:
+
+* **Phase 1 (Data Partnerships & Field Traffic Capture)**: Partnering with pilot mining concessions in Ghana and across the continent (e.g., Tarkwa gold basin) to capture authentic SCADA protocols (Modbus RTU/TCP, DNP3, OPC-UA) and IoT sensor telemetry using a dual-node AWS EC2 and CICFlowMeter environment.
+* **Phase 2 (Model Adaptation & Explainability Integration)**: Retraining BWOA feature selection and CNN-LSTM spatial-temporal networks on domain-specific OT attributes, cross-validating on industrial physical testbeds (SWaT and BATADAL), and integrating the live SHAP explanation engine.
+* **Phase 3 (Deployment Readiness & Local Capacity Building)**: Validating sub-100 ms inference on low-power Raspberry Pi edge gateways, establishing offline fallback modes, and training local engineering personnel to maintain autonomous cyber defense without foreign dependency.
+
+```mermaid
+flowchart LR
+    subgraph Phase1["Phase 1: Data Partnership"]
+        direction TB
+        P1A["Tarkwa Mine, Ghana & Testbeds"]
+        P1B["2-Instance AWS EC2 + CICFlowMeter"]
+        P1C["Capture Modbus, DNP3, OPC-UA Telemetry"]
+        P1A --> P1B --> P1C
+    end
+
+    subgraph Phase2["Phase 2: Model Adaptation"]
+        direction TB
+        P2A["Retrain BWOA & CNN-LSTM on OT Data"]
+        P2B["Cross-Validate on SWaT / BATADAL"]
+        P2C["Calibrate SHAP Operator Explanations"]
+        P2A --> P2B --> P2C
+    end
+
+    subgraph Phase3["Phase 3: Deployment Readiness"]
+        direction TB
+        P3A["Sub-100 ms Validation on Raspberry Pi"]
+        P3B["Decoupled Event-Driven Trigger"]
+        P3C["Train Local African Engineering Personnel"]
+        P3A --> P3B --> P3C
+    end
+
+    Phase1 --> Phase2 --> Phase3
+```
+
+This framework directly supports three United Nations Sustainable Development Goals (UN SDGs) [58]:
+- **SDG 9 (Industry, Innovation, and Infrastructure)**: Enhancing the cyber resilience of digitalized critical industrial assets in developing economies.
+- **SDG 8 (Decent Work and Economic Growth)**: Safeguarding mine worker safety and operational continuity against catastrophic kinetic sabotage.
+- **SDG 17 (Partnerships for the Goals)**: Fostering cross-continental scientific collaboration between African institutions and the Russian-African Forum of Young Scientists.
+
+*(Engineering Note: The live repository artifacts demonstrate verified BWOA feature pruning, CNN-LSTM classification, Float16 quantization, and edge latency benchmarks on Raspberry Pi 4B/5 and AWS EC2; full empirical field OT retraining and production SHAP inference evaluation are scheduled for Phase 2 implementation as defined in the roadmap).*
 
 ---
 
@@ -405,3 +494,14 @@ The authors acknowledge the University of Education, Winneba (UEW) Innovation Hu
 [46] N. Moustafa and J. Slay, "UNSW-NB15: a comprehensive data set for network intrusion detection systems (UNSW-NB15 network data set)," in *Proc. IEEE Military Communications and Information Systems Conference (MilCIS)*, 2015, pp. 1-6. doi: 10.1109/MilCIS.2015.7348942  
 [47] I. Sharafaldin, A. H. Lashkari, and A. A. Ghorbani, "Toward generating a new intrusion detection dataset and intrusion traffic characterization," in *Proc. 4th International Conference on Information Systems Security and Privacy (ICISSP)*, 2018, pp. 108-116. doi: 10.5220/0006639801080116  
 [48] N. V. Chawla, K. W. Bowyer, L. O. Hall, and W. P. Kegelmeyer, "SMOTE: Synthetic minority over-sampling technique," *Journal of Artificial Intelligence Research*, vol. 16, pp. 321-357, 2002. doi: 10.1613/jair.953  
+[49] M. Alanazi, A. Mahmood, and M. J. M. Chowdhury, "SCADA vulnerabilities and attacks: A review of the state-of-the-art and open issues," *Computers & Security*, vol. 125, p. 103028, 2022. doi: 10.1016/j.cose.2022.103028  
+[50] African Mining Market, "Cybersecurity concerns mount in mining arena," Apr. 2024. [Online]. Available: https://africanminingmarket.com/cybersecurity-concerns-mount-in-mining-arena/18217/  
+[51] M. Anand and U. Arul, "Whale optimization algorithm enhanced long short-term memory classifier with novel wrapped feature selection for intrusion detection," *Cryptography*, vol. 8, no. 4, p. 73, 2024. doi: 10.3390/cryptography8040073  
+[52] IT-Online, "Digital innovations reshape the future of mining in Africa," Feb. 2026. [Online]. Available: https://it-online.co.za/2026/02/16/digital-innovations-reshape-the-future-of-mining-in-africa/  
+[53] H. Kheddar, Y. Himeur, and A. I. Awad, "Deep transfer learning for intrusion detection in industrial control networks: A comprehensive review," *Journal of Network and Computer Applications*, 2023. doi: 10.48550/arXiv.2304.10550  
+[54] S. Krishnaveni, T. M. Chen, S. Sivamohan, and S. Subbiah, "Optimizing feature selection in imbalanced intrusion detection systems using hybrid metaheuristic algorithms for wireless sensor networks," *Cluster Computing*, vol. 28, p. 5248, 2025. doi: 10.1007/s10586-025-05248-6  
+[55] S. M. Lundberg and S.-I. Lee, "A unified approach to interpreting model predictions," in *Advances in Neural Information Processing Systems (NeurIPS)*, vol. 30, pp. 4765-4774, 2017.  
+[56] Nigerian Mineral Exchange, "Smart mines, bigger profits: How IoT and big data are transforming Nigeria's mining efficiency," May 2025. [Online]. Available: https://nigerianmineralexchange.com/smart-mines-bigger-profits-how-iot-and-big-data-are-transforming-nigerias-mining-efficiency/  
+[57] S. A. Oyedotun, G. P. Oise, and C. E. Ozobialu, "Towards intelligent cybersecurity in SCADA and DCS environments: Anomaly detection using multimodal deep learning and explainable AI," *Journal of Scientific Research and Reviews*, vol. 2, no. 1, pp. 20-31, 2025.  
+[58] United Nations, "Transforming our world: The 2030 agenda for sustainable development," Resolution A/RES/70/1, 2015. [Online]. Available: https://sdgs.un.org/2030agenda  
+

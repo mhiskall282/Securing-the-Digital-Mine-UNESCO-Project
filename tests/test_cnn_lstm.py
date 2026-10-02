@@ -18,7 +18,7 @@ except ImportError:
     TF_AVAILABLE = False
 
 
-@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed — skipping Keras model tests")
+@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed - skipping Keras model tests")
 class TestCNNLSTMModel(unittest.TestCase):
     """Tests the Keras architecture assembly and forward propagation."""
 
@@ -62,7 +62,7 @@ class TestCNNLSTMModel(unittest.TestCase):
         np.testing.assert_allclose(np.sum(predictions, axis=-1), np.ones(4), rtol=1e-5)
 
 
-@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed — skipping Keras model tests")
+@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed - skipping Keras model tests")
 class TestCNNLSTMV4(unittest.TestCase):
     """Tests the CNN-LSTM v4 strengthened architecture."""
 
@@ -98,7 +98,7 @@ class TestCNNLSTMV4(unittest.TestCase):
         np.testing.assert_allclose(np.sum(predictions, axis=-1), np.ones(4), rtol=1e-4)
 
 
-@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed — skipping Keras model tests")
+@unittest.skipIf(not TF_AVAILABLE, "tensorflow not installed - skipping Keras model tests")
 class TestCNNLSTMWithAttention(unittest.TestCase):
     """Tests the CNN-LSTM with attention architecture."""
 
