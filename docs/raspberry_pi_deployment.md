@@ -28,31 +28,48 @@ Complete all items before proceeding to Section 1.
 The Raspberry Pi Edge Gateway operates directly at low-power SCADA extraction zones or mine shafts, capturing real-time OT network telemetry and executing local TFLite inference or streaming reduced feature vectors:
 
 ```mermaid
-flowchart TD
-    subgraph OTNetwork["Industrial OT Network (SCADA Switch)"]
-        A["Raw Modbus / DNP3 / OPC-UA Traffic"] --> B["SPAN / Mirror Port (eth1 / eth0)"]
+flowchart LR
+    subgraph OTNetwork["1. Industrial Network"]
+        direction TB
+        A["📡 <b>Modbus / DNP3 Traffic</b><br/>PLCs, RTUs, Field Sensors"]
+        B["🔀 <b>Switch SPAN Port</b><br/>Passive Mirror Feed (eth1)"]
+        A --> B
     end
 
-    subgraph PiGateway["Raspberry Pi Edge Gateway (1GB / 4GB RAM)"]
-        B --> C["Passive Libpcap Sniffer Daemon (promiscuous mode)"]
-        C --> D["BWOA Feature Pruner (10 Selected Features)"]
-        D --> E["Quantized TFLite Float16 Model (0.76 ms)"]
-        E --> F{"Classification Gate"}
-        F -- "Normal Flow" --> G["Operational Baseline Logger"]
-        F -- "Intrusion Flagged" --> H["Decoupled SHAP Engine (Async Worker)"]
-        H --> I["Plain-Language Operator Reason"]
+    subgraph PiGateway["2. Edge Gateway (Pi 4B / Pi 5)"]
+        direction TB
+        C["📥 <b>Libpcap Daemon</b><br/>Promiscuous Packet Capture"]
+        D["⚡ <b>BWOA Feature Pruner</b><br/>10 High-Importance Attributes"]
+        E["🧠 <b>Quantized TFLite Engine</b><br/>0.76ms Float16 Evaluation"]
+        GATE{"Alert Gate"}
+        BASE["✅ <b>Normal Baseline</b><br/>Zero Line-Rate Delay"]
+        SHAP["🔍 <b>Decoupled SHAP Worker</b><br/>Async Plain-Language Triggers"]
+        BUFF["💾 <b>Local SQLite FIFO</b><br/>Offline Store-and-Forward"]
         
-        G --> NET{"Network Connectivity?"}
-        I --> NET
-        NET -- "Online" --> CLOUD["Cloud Stream (AWS EC2 / Render)"]
-        NET -- "Offline / Disconnected" --> SQLITE["Local SQLite FIFO Buffer (Zero Loss)"]
-        SQLITE -. "On Reconnection" .-> CLOUD
+        C --> D --> E --> GATE
+        GATE -- "Normal" --> BASE
+        GATE -- "Intrusion" --> SHAP
+        BASE & SHAP --> BUFF
     end
 
-    subgraph ControlRoom["Mine Control Room & Plant SCADA"]
-        CLOUD --> DASH["FastAPI + Livewire Supervisory Console"]
-        I --> LOCAL_HMI["Local Substation Alarm Panel"]
+    subgraph ControlRoom["3. Mine Control Center"]
+        direction TB
+        CLOUD["☁️ <b>Cloud API Stream</b><br/>AWS EC2 / Render Cluster"]
+        DASH["🖥️ <b>SCADA Supervisor Screen</b><br/>Live Threat & Health Feed"]
+        ALARM["🚨 <b>Substation Alarm Panel</b><br/>Audible Siren & PLC Isolation"]
+        CLOUD --> DASH --> ALARM
     end
+
+    B ==> C
+    BUFF -. "Sync on Link Up" .-> CLOUD
+
+    classDef n1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef n2 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+    classDef n3 fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
+
+    class A,B n1;
+    class C,D,E,GATE,BASE,SHAP,BUFF n2;
+    class CLOUD,DASH,ALARM n3;
 ```
 
 ---

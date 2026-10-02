@@ -8,24 +8,47 @@ This document details the mathematical model and search flowchart for the Binary
 The optimization lifecycle runs iteratively through encircling, exploration, and bubble-net search mechanisms:
 
 ```mermaid
-flowchart TD
-    A["Initialize n_agents whale positions (Random binary vectors length n_features)"] --> B["Evaluate fitness for each agent"]
-    B --> C["Identify best agent (leader position X_best)"]
-    C --> D{"For each iteration t"}
-    D --> E["Update a: 2 to 0 linearly"]
-    E --> F{"Random p < 0.5?"}
-    F -->|Yes| G{"abs(A) < 1?"}
-    G -->|Yes bubble-net| H["Shrinking encircling: X = X_best - A * D"]
-    G -->|No search| I["Random agent search (Exploration phase)"]
-    F -->|No spiral| J["Spiral update: X = D * exp(b * l) * cos(2 * pi * l) + X_best"]
-    H --> K["Apply V-shaped Transfer Function"]
-    I --> K
-    J --> K
-    K --> L["Flip bits probabilistically (Binary position update)"]
-    L --> M["Evaluate fitness for updated agents"]
-    M --> N{"t < max_iter?"}
-    N -->|Yes| D
-    N -->|No| O["Return best feature mask and fitness history"]
+flowchart LR
+    subgraph P1["Phase 1: Swarm Initialization"]
+        direction TB
+        A1["🐋 <b>Initialize 30 Whales</b><br/>Random bitmasks in {0,1}^41"]
+        A2["📊 <b>Evaluate Agent Fitness</b><br/>Classification error + feature ratio"]
+        A3["👑 <b>Identify Leader X_best</b><br/>Optimal feature subset so far"]
+        A1 --> A2 --> A3
+    end
+
+    subgraph P2["Phase 2: Search Dynamics (Iteration t)"]
+        direction TB
+        B1["🧭 <b>Update Parameter a</b><br/>Linear decay 2 ➔ 0"]
+        B2{"Search Decision"}
+        B3["🎯 <b>Encircling Prey (|A|<1)</b><br/>Shrinking search radius"]
+        B4["🔍 <b>Random Exploration (|A|>=1)</b><br/>Global stochastic search"]
+        B5["🌀 <b>Spiral Bubble-Net (p>=0.5)</b><br/>Logarithmic spiral path"]
+        B1 --> B2
+        B2 -- "p < 0.5, |A| < 1" --> B3
+        B2 -- "p < 0.5, |A| >= 1" --> B4
+        B2 -- "p >= 0.5" --> B5
+    end
+
+    subgraph P3["Phase 3: V-Shaped Binarization & Output"]
+        direction TB
+        C1["📐 <b>V-Shaped Transfer</b><br/>V(v) = |v / sqrt(1 + v^2)|"]
+        C2["🎲 <b>Probabilistic Bit Flip</b><br/>Discretize continuous velocity"]
+        C3["⚖️ <b>Accuracy Floor Gate</b><br/>Penalty 1.0 if Acc < 75%"]
+        C4["🏆 <b>10-Feature Mask Output</b><br/>Convergence at Iteration 23"]
+        C1 --> C2 --> C3 --> C4
+    end
+
+    A3 ==> B1
+    B3 & B4 & B5 ==> C1
+
+    classDef b1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef b2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef b3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class A1,A2,A3 b1;
+    class B1,B2,B3,B4,B5 b2;
+    class C1,C2,C3,C4 b3;
 ```
 
 ---

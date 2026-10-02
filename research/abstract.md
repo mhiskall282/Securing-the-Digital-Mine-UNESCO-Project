@@ -38,6 +38,44 @@ A three-phase framework is proposed:
 * **Phase 2 (Model Adaptation and Explainability)**: Retrain BWOA and the CNN-LSTM on OT-specific features, validate against the SWaT and BATADAL benchmarks, and attach the SHAP layer so each alert carries a ranked list of contributing features in plain language.
 * **Phase 3 (Deployment Readiness)**: Test latency and computational footprint under edge constraints, targeting sub-100 ms detection on Raspberry Pi-class hardware. To protect that target, explanations are generated only for flagged events, not for all traffic.
 
+```mermaid
+flowchart LR
+    subgraph P1["Phase 1: OT Data Partnerships"]
+        direction TB
+        A1["⛏️ <b>Pilot Mining Concessions</b><br/>Tarkwa gold basin, Ghana & testbeds"]
+        A2["☁️ <b>Dual AWS EC2 Pipeline</b><br/>CICFlowMeter packet feature labeling"]
+        A3["📡 <b>Capture SCADA Traffic</b><br/>Modbus RTU/TCP, DNP3, OPC-UA, MQTT"]
+        A1 --> A2 --> A3
+    end
+
+    subgraph P2["Phase 2: Adaptation & SHAP"]
+        direction TB
+        B1["⚡ <b>Retrain BWOA Pruner</b><br/>Extract minimal OT feature vector"]
+        B2["🔬 <b>Cross-Validate on SCADA</b><br/>Benchmarked on 51-sensor SWaT & BATADAL"]
+        B3["🔍 <b>Attach Decoupled SHAP</b><br/>Plain-language diagnostic root cause"]
+        B1 --> B2 --> B3
+    end
+
+    subgraph P3["Phase 3: Edge Deployment"]
+        direction TB
+        C1["⏱️ <b>Sub-100ms Edge Validation</b><br/>0.76ms Float16 on Raspberry Pi 4B"]
+        C2["💾 <b>Offline SQLite Buffer</b><br/>Resilient store-and-forward telemetry"]
+        C3["🎓 <b>Local Capacity Building</b><br/>Train sovereign African mine workforce"]
+        C1 --> C2 --> C3
+    end
+
+    A3 ==> B1
+    B3 ==> C1
+
+    classDef p1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef p2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef p3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class A1,A2,A3 p1;
+    class B1,B2,B3 p2;
+    class C1,C2,C3 p3;
+```
+
 *(Note: Live baseline BWOA feature selection, CNN-LSTM classification, Float16 quantization, and edge latency benchmarks on Raspberry Pi 4B/5 and AWS EC2 are confirmed in repository documentation; full empirical OT retraining and production SHAP inference evaluation are scheduled for Phase 2 implementation).*
 
 ---

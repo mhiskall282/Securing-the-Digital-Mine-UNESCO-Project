@@ -50,15 +50,42 @@
 5. **Decoupled SHAP Explainability**: Attached SHAP layer (Lundberg & Lee, 2017) generates plain-language feature attributions strictly on flagged anomaly events, maintaining the sub-100 ms real-time deadline for routine traffic.
 
 ```mermaid
-flowchart TD
-    A["Raw SCADA/OT Packets (Modbus, DNP3, OPC-UA)"] --> B["Libpcap Ingestion & Bi-Directional Flow Extraction"]
-    B --> C["Constrained BWOA Pruning (41 to 10 Features, 75.6% Pruned)"]
-    C --> D["Spatial-Temporal Inference (Conv1D + LSTM)"]
-    D --> E["Float16 TFLite Compilation (0.82 MB, 0.76 ms)"]
-    E --> F{"Classification Gate"}
-    F -- "Benign Flow (96.89% Precision)" --> G["Operational Baseline Log (Zero Overhead)"]
-    F -- "Intrusion Flagged (DoS, Probe, U2R)" --> H["Decoupled SHAP Attribution Engine (Async Thread)"]
-    H --> I["Operator SCADA Screen (Plain-Language Triggers)"]
+flowchart LR
+    subgraph S1["1. Packet Capture"]
+        direction TB
+        A["📡 <b>Raw SCADA Packets</b><br/>Modbus, DNP3, OPC-UA"]
+        B["📥 <b>Libpcap Sniffer</b><br/>Bi-Directional Flow Extraction"]
+        A --> B
+    end
+
+    subgraph S2["2. BWOA & Neural Engine"]
+        direction TB
+        C["⚡ <b>Constrained BWOA</b><br/>41 ➔ 10 Features (75.6% Drop)"]
+        D["🔬 <b>Spatial-Temporal Model</b><br/>Conv1D Spatial + LSTM Temporal"]
+        E["🧠 <b>Float16 TFLite</b><br/>0.82 MB Size / 0.76 ms Latency"]
+        C --> D --> E
+    end
+
+    subgraph S3["3. Triage & Explainability"]
+        direction TB
+        GATE{"Alert Gate"}
+        G["✅ <b>Normal Baseline Log</b><br/>Zero Overhead (<0.8 ms)"]
+        H["🔍 <b>Decoupled SHAP</b><br/>Async Feature Attribution"]
+        I["🖥️ <b>SCADA Operator Screen</b><br/>Plain-Language Attack Triggers"]
+        GATE -- "Benign" --> G
+        GATE -- "Intrusion" --> H --> I
+    end
+
+    B ==> C
+    E ==> GATE
+
+    classDef s1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef s2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef s3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class A,B s1;
+    class C,D,E s2;
+    class GATE,G,H,I s3;
 ```
 
 ---

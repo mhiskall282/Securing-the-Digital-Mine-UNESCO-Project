@@ -22,11 +22,19 @@ Historically, deploying intrusion detection on remote mining sites has been diff
 
 ```mermaid
 flowchart LR
-    A["Raw Network Traffic (Modbus / SCADA / TCP)"] --> B["unesco-mine-sec-cli Agent"]
-    B --> C["BWOA Feature Pruner (10 Key Features)"]
-    C --> D["Inference API Server (Port 8001 / Cloud)"]
-    D --> E["TFLite Float16 CNN-LSTM (0.76ms)"]
-    E --> F["Live Anomaly Feedback (Normal / DoS / Probe)"]
+    A["📡 <b>Raw Traffic</b><br/>Modbus, SCADA, TCP"] --> B["📥 <b>CLI Agent</b><br/>Adapter Sniffing"]
+    B --> C["⚡ <b>BWOA Pruner</b><br/>10 Key Features"]
+    C --> D["🛡️ <b>Inference API</b><br/>FastAPI Port 8001"]
+    D --> E["🧠 <b>Float16 CNN-LSTM</b><br/>0.76ms TFLite"]
+    E --> F["🚨 <b>Live Feedback</b><br/>Normal / DoS / Probe"]
+
+    classDef n1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef n2 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+    classDef n3 fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
+
+    class A,B n1;
+    class C,D,E n2;
+    class F n3;
 ```
 
 1. **Adapter Sniffing**: The agent hooks into the chosen network interface (Ethernet, Wi-Fi, or industrial bridge).

@@ -26,62 +26,59 @@ We built a multi-tier system to solve this. A Binary Whale Optimization Algorith
 ### End-to-End System Architecture
 
 ```mermaid
-flowchart TD
-    subgraph S1["Level 0/1: Industrial Mining Operations"]
-        M1["SAG Grinding Mills (15 MW Motors)"]
-        M2["Jaw Crushers & Conveyor Systems"]
-        M3["Froth Flotation & Leaching Circuits"]
-        M4["Tailings Storage Facility (Piezometers)"]
-        M5["Underground Ventilation-on-Demand Fans"]
+flowchart LR
+    subgraph S1["Level 0/1: Mine Assets"]
+        direction TB
+        M1["⚙️ <b>SAG Grinding Mills</b><br/>Dual 15 MW Drives & Bearings"]
+        M2["🪨 <b>Crushers & Conveyors</b><br/>Vibration & Speed Sensors"]
+        M3["🧪 <b>Flotation Circuits</b><br/>Reagent Dosing & Slurry Flow"]
+        M4["💧 <b>Tailings Dam (TSF)</b><br/>Piezometers & Level RTUs"]
+        M5["💨 <b>Ventilation Shafts</b><br/>Gas Sensors & Airflow Fans"]
     end
 
-    subgraph S2["Level 2: OT Telemetry & Control Network"]
-        PLC["Programmable Logic Controllers (PLCs) & RTUs"]
-        NET["Industrial Ethernet (Modbus TCP, DNP3, OPC-UA)"]
-        SPAN["SPAN / Mirror Port (Line-Rate Promiscuous Feed)"]
-        M1 --> PLC
-        M2 --> PLC
-        M3 --> PLC
-        M4 --> PLC
-        M5 --> PLC
-        PLC <--> NET
-        NET --> SPAN
+    subgraph S2["Level 2: OT Network"]
+        direction TB
+        PLC["🎛️ <b>PLCs & Remote RTUs</b><br/>Modbus TCP / DNP3 / OPC-UA"]
+        SW["🔀 <b>Industrial Switch</b><br/>Managed SCADA Backbone"]
+        SPAN["📡 <b>Mirror / SPAN Port</b><br/>Passive Packet Mirroring"]
+        PLC --> SW --> SPAN
     end
 
-    subgraph S3["Edge Defense Gateway (Raspberry Pi 4B / Pi 5)"]
-        SNIFF["Passive Libpcap Sniffer Daemon (Zero In-Line Delay)"]
-        BWOA["BWOA Feature Pruner (41 to 10 Features, 75.6% Reduction)"]
-        TFLITE["Quantized TFLite Spatial-Temporal Engine (0.76 ms, Float16)"]
-        XAI{"Event Classifier"}
-        SHAP["Decoupled SHAP Attribution Engine (Async Background Thread)"]
+    subgraph S3["Edge Gateway (Pi 4B)"]
+        direction TB
+        SNIFF["📥 <b>Libpcap Sniffer</b><br/>Zero In-Line Delay"]
+        BWOA["⚡ <b>BWOA Pruner</b><br/>41 ➔ 10 Features (75.6% Drop)"]
+        TFLITE["🧠 <b>Float16 CNN-LSTM</b><br/>0.76ms / 0.82MB Engine"]
+        GATE{"Alert Gate"}
+        PASS["✅ <b>Normal Baseline</b><br/>Logged (<0.8ms Total)"]
+        SHAP["🔍 <b>Decoupled SHAP</b><br/>Async Background Worker"]
         
-        SPAN --> SNIFF
-        SNIFF --> BWOA
-        BWOA --> TFLITE
-        TFLITE --> XAI
-        XAI -- "Benign Flow (96.89% Precision)" --> PASS["Log Operational Baseline (<0.8 ms Total)"]
-        XAI -- "Intrusion Flagged (DoS, Probe, Privilege)" --> SHAP
+        SNIFF --> BWOA --> TFLITE --> GATE
+        GATE -- "Benign" --> PASS
+        GATE -- "Attack" --> SHAP
     end
 
-    subgraph S4["Level 3: Mine Control Room & Supervisory Console"]
-        DASH["FastAPI Microservice + Livewire SCADA Dashboard"]
-        ALERT["Actionable Plain-Language Alert + Ranked Feature Causes"]
-        REMED["Automated Subnet Isolation & Technician Dispatch"]
-        
-        SHAP --> ALERT
-        ALERT --> DASH
-        DASH --> REMED
+    subgraph S4["Level 3: Mine Control"]
+        direction TB
+        ALERT["🚨 <b>Actionable Alert</b><br/>Ranked Feature Triggers"]
+        DASH["🖥️ <b>SCADA Console</b><br/>Livewire Telemetry Monitor"]
+        REMED["🛡️ <b>Automated Defense</b><br/>PLC Subnet Isolation"]
+        ALERT --> DASH --> REMED
     end
 
-    classDef mining fill:#e8f4fd,stroke:#1b6ec2,stroke-width:1px;
-    classDef ot fill:#fff3cd,stroke:#d39e00,stroke-width:1px;
-    classDef edge fill:#d4edda,stroke:#28a745,stroke-width:1px;
-    classDef scada fill:#f8d7da,stroke:#dc3545,stroke-width:1px;
+    M1 & M2 & M3 & M4 & M5 --> PLC
+    SPAN ==> SNIFF
+    SHAP ==> ALERT
 
-    class M1,M2,M3,M4,M5 mining;
-    class PLC,NET,SPAN ot;
-    class SNIFF,BWOA,TFLITE,XAI,SHAP,PASS edge;
-    class DASH,ALERT,REMED scada;
+    classDef l1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef l2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef l3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+    classDef l4 fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
+
+    class M1,M2,M3,M4,M5 l1;
+    class PLC,SW,SPAN l2;
+    class SNIFF,BWOA,TFLITE,GATE,PASS,SHAP l3;
+    class ALERT,DASH,REMED l4;
 ```
 
 This work was nominated for Track 3, "Smart Subsoil": Digital Transformation and Automation in the Mineral Resources Complex, at the Russian-African Forum of Young Scientists: "Future Engineers of the World - The Foundation of Sustainable Development", hosted by Empress Catherine II Saint Petersburg Mining University under UNESCO auspices.
@@ -285,16 +282,41 @@ The figures below summarize the key empirical findings from feature optimization
 The flowchart below illustrates the packet lifecycle from initial network ingestion down to edge prediction outputs:
 
 ```mermaid
-flowchart TD
-    A["Raw OT/IoT Network Traffic (SCADA, Modbus, DNP3, OPC-UA)"] --> B["CICFlowMeter Feature Extraction (80+ raw features)"]
-    B --> C["Data Preprocessing (Normalization, Encoding, Train/Test Split)"]
-    C --> D["BWOA Feature Selection (n_agents=30, max_iter=100, V-shaped Transfer Function)"]
-    D --> E["Optimal Feature Subset (Reduced Dimensionality)"]
-    E --> F["CNN-LSTM Classifier (Conv1D Spatial + LSTM Temporal)"]
-    F --> G["Attack Classification (Normal / DoS / Probe / R2L / U2R)"]
-    G --> H{"Deployment Target"}
-    H --> I["Cloud Deployment (AWS EC2)"]
-    H --> J["Edge Deployment (Raspberry Pi, sub-100ms)"]
+flowchart LR
+    subgraph P1["1. Telemetry Ingestion"]
+        direction TB
+        A["📡 <b>Raw OT/SCADA Traffic</b><br/>Modbus, DNP3, OPC-UA, MQTT"]
+        B["🔬 <b>CICFlowMeter Extractor</b><br/>Extract 80+ Raw Flow Attributes"]
+        C["🧹 <b>Data Normalizer</b><br/>StandardScaler & One-Hot Encoder"]
+        A --> B --> C
+    end
+
+    subgraph P2["2. BWOA & Neural Training"]
+        direction TB
+        D["⚡ <b>BWOA Optimizer</b><br/>30 Whales, V-Shaped Transfer"]
+        E["🎯 <b>10-Feature Mask</b><br/>75.61% Dimensionality Reduction"]
+        F["🧠 <b>CNN-LSTM Spatial-Temporal</b><br/>Conv1D + LSTM Multi-Stage Detector"]
+        D --> E --> F
+    end
+
+    subgraph P3["3. Edge Defense & Alerting"]
+        direction TB
+        G["📉 <b>Float16 Quantizer</b><br/>0.82 MB Footprint (83.2% Smaller)"]
+        H["⏱️ <b>Edge Pi 4B Gateway</b><br/>0.76 ms Inference (Sub-100ms PASS)"]
+        I["🖥️ <b>SCADA Threat Console</b><br/>Actionable Plain-Language Defense"]
+        G --> H --> I
+    end
+
+    C ==> D
+    F ==> G
+
+    classDef p1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef p2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef p3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class A,B,C p1;
+    class D,E,F p2;
+    class G,H,I p3;
 ```
 
 ---
@@ -324,25 +346,52 @@ The three phases run in parallel where possible. Phase 1 establishes the validat
 The repository contains four integrated layers. The Python ML framework (`src/`) implements the BWOA optimizer, CNN-LSTM classifier, data loaders, evaluation pipeline, and a TFLite inference service (`src/api_service.py`) that serves predictions over HTTP on port 8001. The Node.js CLI agent (`npm-packet-scanner/`) runs on edge devices, captures live network flows, extracts the 10 BWOA-selected features, and streams them to the inference service. The Laravel Livewire dashboard (`dashboard/`) provides a multi-tenant web interface for monitoring live detections, managing edge devices, and viewing reports scoped by organization. All three layers are wired together in `render.yaml`, a Render Blueprint for one-click cloud deployment that provisions a managed PostgreSQL database alongside both services automatically.
 
 ```mermaid
-flowchart TD
-    subgraph Edge["Edge Layer (Raspberry Pi / Industrial Gateway)"]
-        A["Raw SCADA/OT Packets (Modbus, DNP3, OPC-UA)"] --> B["unesco-mine-sec-cli (Node.js)"]
-        B --> C["BWOA Feature Pruner (10 features)"]
+flowchart LR
+    subgraph Edge["Edge Layer (Pi 4B / Gateway)"]
+        direction TB
+        E1["📡 <b>SCADA Telemetry</b><br/>Modbus TCP / DNP3 Packets"]
+        E2["📥 <b>Node.js CLI Scanner</b><br/>Promiscuous SPAN Sniffer"]
+        E3["⚡ <b>BWOA Feature Extractor</b><br/>10 Optimal Edge Attributes"]
+        E1 --> E2 --> E3
     end
-    subgraph API["Inference Layer (AWS EC2 / Render)"]
-        C -- "POST /api/external/analyze" --> D["ML Service (src/api_service.py)"]
-        D --> E["TFLite Float16 CNN-LSTM (0.76ms)"]
-        E --> F["JSON: prediction + confidence + latency"]
+
+    subgraph API["Inference Layer (FastAPI Service)"]
+        direction TB
+        A1["🛡️ <b>FastAPI Microservice</b><br/>Payload Validation (<64 KB)"]
+        A2["🧠 <b>Float16 TFLite Engine</b><br/>0.76ms Sub-Millisecond Speed"]
+        A3["📊 <b>Prediction Response</b><br/>Class + Confidence + Latency"]
+        A1 --> A2 --> A3
     end
-    subgraph Dashboard["Dashboard Layer (Laravel Livewire)"]
-        F --> G["Live Monitor Feed"]
-        G --> H["Alerts + Reports + Admin"]
+
+    subgraph Dashboard["Supervisory Layer (Livewire)"]
+        direction TB
+        D1["🖥️ <b>SOC Dashboard Feed</b><br/>Real-Time Anomaly Triage"]
+        D2["🚨 <b>Plain-Language Alerts</b><br/>SHAP Feature Breakdown"]
+        D3["🔒 <b>Kinetic Mitigation</b><br/>PLC Subnet Isolation"]
+        D1 --> D2 --> D3
     end
-    subgraph Research["Research Layer (Jupyter Notebooks)"]
-        I["NSL-KDD / SWaT / BATADAL"] --> J["BWOA Feature Selection"]
-        J --> K["CNN-LSTM Training + Evaluation"]
-        K --> L["TFLite Quantization + Edge Benchmark"]
+
+    subgraph Research["Research & Benchmarking"]
+        direction TB
+        R1["📚 <b>NSL-KDD & SWaT Datasets</b><br/>148k+ Training & Test Vectors"]
+        R2["⚙️ <b>BWOA Metaheuristic Lab</b><br/>Swarm Convergence & Tuning"]
+        R3["📉 <b>Quantization Pipeline</b><br/>Keras to TFLite Benchmark"]
+        R1 --> R2 --> R3
     end
+
+    E3 -- "POST /api/analyze" --> A1
+    A3 --> D1
+    R3 -. "Deploy Model Checkpoint" .-> A2
+
+    classDef c1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef c2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef c3 fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
+    classDef c4 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class E1,E2,E3 c1;
+    class A1,A2,A3 c2;
+    class D1,D2,D3 c3;
+    class R1,R2,R3 c4;
 ```
 
 ---
@@ -506,24 +555,47 @@ chmod +x scripts/deploy_ec2.sh && ./scripts/deploy_ec2.sh
 The optimization lifecycle runs iteratively through encircling, exploration, and bubble-net search mechanisms:
 
 ```mermaid
-flowchart TD
-    A["Initialize n_agents whale positions (Random binary vectors length n_features)"] --> B["Evaluate fitness for each agent"]
-    B --> C["Identify best agent (leader position X_best)"]
-    C --> D{"For each iteration t"}
-    D --> E["Update a: 2 to 0 linearly"]
-    E --> F{"Random p < 0.5?"}
-    F -->|Yes| G{"abs(A) < 1?"}
-    G -->|Yes bubble-net| H["Shrinking encircling: X = X_best - A * D"]
-    G -->|No search| I["Random agent search (Exploration phase)"]
-    F -->|No spiral| J["Spiral update: X = D * exp(b * l) * cos(2 * pi * l) + X_best"]
-    H --> K["Apply V-shaped Transfer Function"]
-    I --> K
-    J --> K
-    K --> L["Flip bits probabilistically (Binary position update)"]
-    L --> M["Evaluate fitness for updated agents"]
-    M --> N{"t < max_iter?"}
-    N -->|Yes| D
-    N -->|No| O["Return best feature mask and fitness history"]
+flowchart LR
+    subgraph P1["Phase 1: Swarm Init"]
+        direction TB
+        A1["🐋 <b>Initialize 30 Whales</b><br/>Random bitmasks in {0,1}^41"]
+        A2["📊 <b>Evaluate Fitness</b><br/>Multi-objective error + count"]
+        A3["👑 <b>Identify Leader X_best</b><br/>Current optimal feature subset"]
+        A1 --> A2 --> A3
+    end
+
+    subgraph P2["Phase 2: Search Dynamics"]
+        direction TB
+        B1["🧭 <b>Adaptive Parameter a</b><br/>Decays 2 ➔ 0 linearly"]
+        B2{"Search Decision"}
+        B3["🎯 <b>Encircling Prey (|A|<1)</b><br/>Shrinking search window"]
+        B4["🔍 <b>Random Exploration (|A|>=1)</b><br/>Global space exploration"]
+        B5["🌀 <b>Spiral Bubble-Net (p>=0.5)</b><br/>Logarithmic spiral attack"]
+        B1 --> B2
+        B2 -- "p < 0.5, |A| < 1" --> B3
+        B2 -- "p < 0.5, |A| >= 1" --> B4
+        B2 -- "p >= 0.5" --> B5
+    end
+
+    subgraph P3["Phase 3: Binarization & Output"]
+        direction TB
+        C1["📐 <b>V-Shaped Transfer</b><br/>V(v) = |v / sqrt(1 + v^2)|"]
+        C2["🎲 <b>Probabilistic Bit Flip</b><br/>Update binary position vector"]
+        C3["⚖️ <b>Accuracy Floor Gate</b><br/>Penalty 1.0 if Acc < 75%"]
+        C4["🏆 <b>10-Feature Mask Output</b><br/>Converged at Iteration 23"]
+        C1 --> C2 --> C3 --> C4
+    end
+
+    A3 ==> B1
+    B3 & B4 & B5 ==> C1
+
+    classDef b1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef b2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef b3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class A1,A2,A3 b1;
+    class B1,B2,B3,B4,B5 b2;
+    class C1,C2,C3,C4 b3;
 ```
 
 See [docs/bwoa_algorithm.md](docs/bwoa_algorithm.md) for the full mathematical formulation including the V-shaped transfer function, encircling prey equations, spiral bubble-net attack equations, and the accuracy floor fitness function in LaTeX.

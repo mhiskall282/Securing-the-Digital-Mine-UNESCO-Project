@@ -9,19 +9,40 @@ This guide provides end-to-end instructions for deploying the **Securing the Dig
 The AWS EC2 Cloud Deployment hosts the primary high-throughput inference pipeline:
 
 ```mermaid
-flowchart TD
-    subgraph Edge Layer (SCADA / Mining Site)
-        A["Industrial OT Packets (Modbus/DNP3/OPC-UA)"] --> B["unesco-mine-sec-cli / Sniffer Daemon"]
-        B --> C["BWOA Feature Extractor (10 Selected)"]
+flowchart LR
+    subgraph Edge["1. Remote Mine Site (Edge)"]
+        direction TB
+        A["📡 <b>Industrial OT Packets</b><br/>Modbus, DNP3, OPC-UA"]
+        B["📥 <b>CLI Sniffer Daemon</b><br/>Promiscuous SPAN Mirror"]
+        C["⚡ <b>BWOA Extractor</b><br/>10 High-Importance Features"]
+        A --> B --> C
     end
 
-    subgraph AWS Cloud Layer (EC2 Instance)
-        C -- "HTTP/HTTPS (Port 80/443)" --> D["Nginx Reverse Proxy"]
-        D -- "Proxy Pass (Port 8001)" --> E["FastAPI ML Inference Service (mine-sec-api.service)"]
-        E --> F["TFLite Float16 CNN-LSTM Classifier"]
-        F --> E
-        E --> G["JSON Inference Response (Prediction, Confidence, Latency)"]
+    subgraph AWS["2. AWS EC2 Cloud (t3.medium)"]
+        direction TB
+        D["🌐 <b>Nginx Reverse Proxy</b><br/>SSL Termination & Ingress (80/443)"]
+        E["🛡️ <b>FastAPI Service</b><br/>mine-sec-api.service (Port 8001)"]
+        F["🧠 <b>Float16 TFLite Engine</b><br/>1.57 ms / 617 req/s Cloud Throughput"]
+        D --> E --> F
     end
+
+    subgraph Output["3. Response & Defense"]
+        direction TB
+        G["📊 <b>JSON Response Stream</b><br/>Class + Confidence + Latency"]
+        H["🚨 <b>SOC Alarm & Quarantine</b><br/>Actionable Incident Triage"]
+        G --> H
+    end
+
+    C -- "HTTPS Stream" --> D
+    F --> G
+
+    classDef a1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef a2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef a3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class A,B,C a1;
+    class D,E,F a2;
+    class G,H a3;
 ```
 
 ---

@@ -21,49 +21,53 @@ A Binary Whale Optimization Algorithm (BWOA) combined with a spatial-temporal CN
 The framework is organized into four decoupled tiers, ensuring zero inline network latency and offline survivability:
 
 ```mermaid
-flowchart TD
-    subgraph Tier1["Tier 1: High-Speed Ingestion Layer"]
-        SPAN["SCADA Switch SPAN / Mirror Port"]
-        SNIFF["Passive Libpcap Sniffer Daemon (promiscuous mode)"]
+flowchart LR
+    subgraph Tier1["Tier 1: Line Ingestion"]
+        direction TB
+        SPAN["📡 <b>SCADA Mirror Port</b><br/>Zero In-Line Latency"]
+        SNIFF["📥 <b>Libpcap Daemon</b><br/>Promiscuous Packet Capture"]
         SPAN --> SNIFF
     end
 
-    subgraph Tier2["Tier 2: Metaheuristic Optimization Layer"]
-        RAW["Raw Telemetry Vector (41 Dimensions)"]
-        BWOA["BWOA Feature Pruner (10 Optimal Features Retained)"]
-        MASK["75.61% Dimensionality Reduction (0.05 ms)"]
-        SNIFF --> RAW
-        RAW --> BWOA
-        BWOA --> MASK
+    subgraph Tier2["Tier 2: BWOA Optimization"]
+        direction TB
+        RAW["📊 <b>Raw Vector</b><br/>41 Telemetry Dimensions"]
+        BWOA["⚡ <b>BWOA Pruner</b><br/>10 High-Value Features"]
+        MASK["🎯 <b>75.61% Reduction</b><br/>Executed in <0.05 ms"]
+        RAW --> BWOA --> MASK
     end
 
-    subgraph Tier3["Tier 3: Spatial-Temporal Inference Layer"]
-        CONV["1D CNN Layer (64 Filters, k=3, Spatial Packet Correlation)"]
-        LSTM["LSTM Layer (64 Units, Temporal Sequence Transitions)"]
-        TFLITE["TFLite Float16 Engine (0.82 MB, 0.76 ms Inference)"]
-        MASK --> CONV
-        CONV --> LSTM
-        LSTM --> TFLITE
+    subgraph Tier3["Tier 3: Spatial-Temporal Engine"]
+        direction TB
+        CONV["🔬 <b>1D CNN Layer</b><br/>Spatial Packet Correlation"]
+        LSTM["⏱️ <b>LSTM Units (64)</b><br/>Temporal Sequence Memory"]
+        TFLITE["🧠 <b>Float16 TFLite</b><br/>0.76 ms / 0.82 MB Size"]
+        CONV --> LSTM --> TFLITE
     end
 
-    subgraph Tier4["Tier 4: Supervisory & Explainability Layer"]
-        DECISION{"Alert Gate"}
-        TFLITE --> DECISION
-        DECISION -- "Normal Flow (96.89% Precision)" --> LOG["Local Baseline Buffer (<0.8 ms)"]
-        DECISION -- "Intrusion Flagged" --> SHAP["Decoupled SHAP Engine (Async Thread)"]
-        SHAP --> UI["FastAPI + Livewire SCADA Console (Plain-Language Reasons)"]
-        UI --> ISO["Automated Subnet Isolation & Technician Alert"]
+    subgraph Tier4["Tier 4: Supervisory & SHAP"]
+        direction TB
+        GATE{"Alert Gate"}
+        PASS["✅ <b>Normal Baseline</b><br/>Logged (<0.8 ms)"]
+        SHAP["🔍 <b>Decoupled SHAP</b><br/>Async Explainability"]
+        UI["🖥️ <b>SCADA Console</b><br/>Plain-Language Alerts"]
+        GATE -- "Normal" --> PASS
+        GATE -- "Intrusion" --> SHAP --> UI
     end
 
-    classDef t1 fill:#e1f5fe,stroke:#0288d1,stroke-width:1px;
-    classDef t2 fill:#fff8e1,stroke:#f57f17,stroke-width:1px;
-    classDef t3 fill:#e8f5e9,stroke:#388e3c,stroke-width:1px;
-    classDef t4 fill:#fce4ec,stroke:#c2185b,stroke-width:1px;
+    SNIFF ==> RAW
+    MASK ==> CONV
+    TFLITE ==> GATE
+
+    classDef t1 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef t2 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef t3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+    classDef t4 fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
 
     class SPAN,SNIFF t1;
     class RAW,BWOA,MASK t2;
     class CONV,LSTM,TFLITE t3;
-    class DECISION,LOG,SHAP,UI,ISO t4;
+    class GATE,PASS,SHAP,UI t4;
 ```
 
 ---
@@ -106,24 +110,23 @@ sequenceDiagram
 The diagram below maps the physical mineral extraction circuit to the operational technology network and edge intrusion detection boundary:
 
 ```mermaid
-flowchart TD
-    subgraph MiningCircuit["Level 0: Physical Mineral Extraction Circuit"]
+flowchart LR
+    subgraph MiningCircuit["Level 0: Mine Plant Circuit"]
         direction TB
-        CRUSH["Primary Jaw Crusher (Coarse Ore Breakage)"]
-        MILL["15 MW Semi-Autogenous Grinding (SAG) Mill"]
-        FLOAT["Froth Flotation & Cyanide Leaching Tanks"]
-        TSF["Tailings Storage Facility (Piezometers & Level Sensors)"]
-        VENT["Underground Ventilation-on-Demand Airflow Fans"]
+        CRUSH["🪨 <b>Primary Crusher</b><br/>Coarse Ore Breakage"]
+        MILL["⚙️ <b>SAG Grinding Mill</b><br/>15 MW Dual Drive Motor"]
+        FLOAT["🧪 <b>Flotation Tanks</b><br/>Reagents & Cyanide Leaching"]
+        TSF["💧 <b>Tailings Dam (TSF)</b><br/>Piezometers & Hydrostatic"]
+        VENT["💨 <b>Ventilation Fans</b><br/>Mine Shaft Airflow VOD"]
     end
 
-    subgraph ControlLevel["Level 1: Industrial Automation & Control"]
+    subgraph ControlLevel["Level 1: Industrial Automation"]
         direction TB
         PLC1["Crusher PLC"]
-        PLC2["SAG Mill Bearing & Cooling Loop PLC"]
-        PLC3["Flotation Reagent Dosing PLC"]
-        PLC4["Tailings Dam Hydrostatic Monitor RTU"]
-        PLC5["Shaft Airflow & Gas Scrubber PLC"]
-        
+        PLC2["SAG Mill Cooling PLC"]
+        PLC3["Reagent Dosing PLC"]
+        PLC4["Tailings RTU"]
+        PLC5["Ventilation PLC"]
         CRUSH <--> PLC1
         MILL <--> PLC2
         FLOAT <--> PLC3
@@ -131,44 +134,40 @@ flowchart TD
         VENT <--> PLC5
     end
 
-    subgraph NetworkLevel["Level 2: OT Industrial Network"]
-        SW["Industrial Ethernet Core Switch (Modbus TCP, DNP3, OPC-UA)"]
-        PLC1 <--> SW
-        PLC2 <--> SW
-        PLC3 <--> SW
-        PLC4 <--> SW
-        PLC5 <--> SW
+    subgraph NetworkLevel["Level 2: OT Network"]
+        direction TB
+        SW["🔀 <b>Industrial Switch</b><br/>Modbus, DNP3, OPC-UA"]
+        SPAN["📡 <b>Mirror / SPAN Port</b><br/>Line-Rate Promiscuous Feed"]
+        PLC1 & PLC2 & PLC3 & PLC4 & PLC5 <--> SW
+        SW --> SPAN
     end
 
-    subgraph EdgeDefense["Edge Cybersecurity Boundary (Substation Gateways)"]
-        SPAN["Switch Mirror / SPAN Port"]
-        PI["Raspberry Pi 4B Edge IDS (0.76 ms Float16 TFLite)"]
-        DB["Local SQLite Offline Alert Buffer"]
-        SW --> SPAN
-        SPAN --> PI
+    subgraph EdgeDefense["Edge IDS Defense (Pi 4B)"]
+        direction TB
+        PI["🧠 <b>TFLite Float16 IDS</b><br/>0.76 ms / Sub-100ms PASS"]
+        DB["💾 <b>SQLite FIFO Buffer</b><br/>Offline Resilient Storage"]
+        SPAN ==> PI
         PI <--> DB
     end
 
-    subgraph Level3["Level 3: Mine Operations Center (SOC / SCADA)"]
-        HMI["Central SCADA HMI Screen"]
-        DASH["FastAPI + Livewire Threat Dashboard"]
-        SHAP_VIEW["Plain-Language SHAP Operator Diagnosis"]
-        PI --> DASH
-        DASH --> HMI
-        DASH --> SHAP_VIEW
+    subgraph Level3["Level 3: Mine SOC / Control Center"]
+        direction TB
+        DASH["🖥️ <b>Livewire Threat Screen</b><br/>Real-Time Telemetry Feed"]
+        SHAP_VIEW["🔍 <b>Plain-Language SHAP</b><br/>Root-Cause Diagnostic Alert"]
+        PI ==> DASH --> SHAP_VIEW
     end
 
-    classDef circuit fill:#f0f4c3,stroke:#9e9d24,stroke-width:1px;
-    classDef plc fill:#fff9c4,stroke:#fbc02d,stroke-width:1px;
-    classDef net fill:#bbdefb,stroke:#1976d2,stroke-width:1px;
-    classDef edge fill:#c8e6c9,stroke:#388e3c,stroke-width:1px;
-    classDef scada fill:#ffcdd2,stroke:#d32f2f,stroke-width:1px;
+    classDef c0 fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef c1 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef c2 fill:#1e293b,stroke:#6366f1,stroke-width:2px,color:#f8fafc;
+    classDef c3 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+    classDef c4 fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
 
-    class CRUSH,MILL,FLOAT,TSF,VENT circuit;
-    class PLC1,PLC2,PLC3,PLC4,PLC5 plc;
-    class SW net;
-    class SPAN,PI,DB edge;
-    class HMI,DASH,SHAP_VIEW scada;
+    class CRUSH,MILL,FLOAT,TSF,VENT c0;
+    class PLC1,PLC2,PLC3,PLC4,PLC5 c1;
+    class SW,SPAN c2;
+    class PI,DB c3;
+    class DASH,SHAP_VIEW c4;
 ```
 
 ---

@@ -166,11 +166,22 @@ flowchart LR
   - **Plain-Language Operator Reason**: Non-specialist operators receive plain English diagnostics with every alert (e.g., *'Alert: DoS flood detected. Main triggers: src_bytes (+0.42), serror_rate (+0.28). Recommended: check PLC cooling loop'*).
 
 ```mermaid
-flowchart TD
+flowchart LR
     DEC{"Event Decision"}
-    DEC -- "Benign Flow (96.89% Prec)" --> OK["Baseline Operational Log (0.76 ms)"]
-    DEC -- "Intrusion Flagged" --> SHAP["Async SHAP Attribution Engine"]
-    SHAP --> REASON["Plain-Language Operator Reason<br/>'DoS: src_bytes (+0.42), serror_rate (+0.28)'"]
+    OK["✅ <b>Baseline Log</b><br/>Zero Overhead (0.76ms)"]
+    SHAP["🔍 <b>Async SHAP Engine</b><br/>Additive Feature Attribution"]
+    REASON["🖥️ <b>Plain-Language Reason</b><br/>'DoS: src_bytes (+0.42), serror_rate (+0.28)'"]
+
+    DEC -- "Benign Flow (96.89% Prec)" --> OK
+    DEC -- "Intrusion Flagged" --> SHAP --> REASON
+
+    classDef d1 fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef d2 fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+    classDef d3 fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
+
+    class DEC d1;
+    class OK d2;
+    class SHAP,REASON d3;
 ```
 
 ### Speaker Notes (140 words | ~1 min 15 sec)

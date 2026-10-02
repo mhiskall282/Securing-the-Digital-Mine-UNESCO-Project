@@ -28,14 +28,32 @@ This directory documents the formal scholarly and engineering deliverables produ
 ## 🏛️ Design Science Research (DSR) Chapter Alignment
 
 ```mermaid
-flowchart TD
-    DSR1["1. Problem Identification<br/>(Mining 4.0, Loss of Air-Gap)"] --> DSR2["2. Define Objectives<br/>(Sub-100ms Latency, 75%+ Pruning)"]
-    DSR2 --> DSR3["3. Knowledge Base / Lit Review<br/>(BWOA, ICS DL, SCADA Protocols)"]
-    DSR3 --> DSR4["4. Design & Architecture<br/>(4-Tier Edge System, ER, UML)"]
-    DSR4 --> DSR5["5. Development & Implementation<br/>(Python, TFLite Float16, Sniffer CLI)"]
-    DSR5 --> DSR6["6. Demonstration<br/>(Live Mirror Port Ingestion & API)"]
-    DSR6 --> DSR7["7. Empirical Evaluation<br/>(NSL-KDD, SWaT SCADA, Pi 4B Benchmarks)"]
-    DSR7 --> DSR8["8. Scholarly Communication<br/>(UNESCO Russian-African Proceedings)"]
+flowchart LR
+    subgraph DSR_A["Stage A: Research Foundations & Design"]
+        direction TB
+        D1["1️⃣ <b>Problem Identification</b><br/>Mining 4.0 & Air-Gap Dissolution"]
+        D2["2️⃣ <b>Objective Definition</b><br/>Sub-100ms Latency & 75%+ Pruning"]
+        D3["3️⃣ <b>Knowledge Base & Review</b><br/>BWOA Metaheuristics & SCADA AI"]
+        D4["4️⃣ <b>System Architecture</b><br/>4-Tier Edge Defense & XAI Framework"]
+        D1 --> D2 --> D3 --> D4
+    end
+
+    subgraph DSR_B["Stage B: Development & Evaluation"]
+        direction TB
+        D5["5️⃣ <b>Artifact Implementation</b><br/>Python, Float16 TFLite, Node Scanner"]
+        D6["6️⃣ <b>Industrial Demonstration</b><br/>SPAN Port Sniffing & REST API"]
+        D7["7️⃣ <b>Empirical Benchmarks</b><br/>NSL-KDD, SWaT, Raspberry Pi 4B"]
+        D8["8️⃣ <b>Scholarly Communication</b><br/>UNESCO Russian-African Forum"]
+        D5 --> D6 --> D7 --> D8
+    end
+
+    D4 ==> D5
+
+    classDef da fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef db fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class D1,D2,D3,D4 da;
+    class D5,D6,D7,D8 db;
 ```
 
 ```
