@@ -1,0 +1,5 @@
+class,confidence,top_features
+DoS,0.9999699592590332,"same_srv_rate (+0.314), flag (+0.292), dst_host_diff_srv_rate (+0.027)"
+Probe,0.9989596605300903,"dst_host_diff_srv_rate (+0.658), serror_rate (+0.167), same_srv_rate (+0.042)"
+R2L,0.8783525228500366,"service (+0.395), flag (+0.143), same_srv_rate (+0.122)"
+U2R,0.43218496441841125,"hot (+0.257), service (+0.189), flag (+0.115)"

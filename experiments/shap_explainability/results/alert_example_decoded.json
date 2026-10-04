@@ -1,0 +1,58 @@
+{
+  "row": 13,
+  "attack": "neptune",
+  "p_dos": 0.9925138354301453,
+  "base_dos": 0.33901146446436564,
+  "features": [
+    {
+      "name": "protocol_type",
+      "value": "tcp",
+      "shap": 0.022357409717592053
+    },
+    {
+      "name": "service",
+      "value": "telnet",
+      "shap": 0.02335362625223576
+    },
+    {
+      "name": "flag",
+      "value": "S0",
+      "shap": 0.3081172872995032
+    },
+    {
+      "name": "src_bytes",
+      "value": "0",
+      "shap": 6.247027393901927e-05
+    },
+    {
+      "name": "hot",
+      "value": "0",
+      "shap": 0.0015589152148696797
+    },
+    {
+      "name": "su_attempted",
+      "value": "0",
+      "shap": 0.00020907259206284483
+    },
+    {
+      "name": "serror_rate",
+      "value": "1.0",
+      "shap": 0.31100897605498345
+    },
+    {
+      "name": "same_srv_rate",
+      "value": "1.0",
+      "shap": -0.04721506200386786
+    },
+    {
+      "name": "diff_srv_rate",
+      "value": "0.0",
+      "shap": 0.005937627641224727
+    },
+    {
+      "name": "dst_host_diff_srv_rate",
+      "value": "0.07",
+      "shap": 0.028112047923236586
+    }
+  ]
+}

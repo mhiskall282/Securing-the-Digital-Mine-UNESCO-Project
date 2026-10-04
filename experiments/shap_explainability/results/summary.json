@@ -1,0 +1,30 @@
+{
+  "reproduced_acc_BWOA10_deployed": 0.7441891412349184,
+  "shap_ms_per_alert_laptop_cpu": 1687.8,
+  "shap_selection_seconds": 6.6,
+  "shap_top10": [
+    "src_bytes",
+    "count",
+    "dst_bytes",
+    "dst_host_same_src_port_rate",
+    "service",
+    "dst_host_srv_count",
+    "dst_host_diff_srv_rate",
+    "dst_host_serror_rate",
+    "protocol_type",
+    "duration"
+  ],
+  "bwoa10": [
+    "protocol_type",
+    "service",
+    "flag",
+    "src_bytes",
+    "hot",
+    "su_attempted",
+    "serror_rate",
+    "same_srv_rate",
+    "diff_srv_rate",
+    "dst_host_diff_srv_rate"
+  ],
+  "shap_top10_jaccard_mean": 0.679
+}
