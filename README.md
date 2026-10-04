@@ -135,9 +135,12 @@ This repository provides complete, formal academic and engineering documentation
 
 | Hardware Platform | Quantization | Mean Latency | P95 Latency | Throughput | Peak RAM | Verdict (<100ms SCADA Limit) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Raspberry Pi 3B (1GB RAM)** | TFLite Float16 | 32.53 ms | 40.82 ms | 30.7 req/s | 290.00 MB | **PASS** (2.5x safety margin) |
 | **Raspberry Pi 4B (1GB RAM)** | TFLite Float16 | 0.76 ms | 1.10 ms | 1,315 req/s | 290.31 MB | **PASS** (131x safety margin) |
 | **Raspberry Pi 5 (4GB RAM)** | TFLite Float16 | 0.42 ms | 0.68 ms | 2,380 req/s | 295.10 MB | **PASS** (238x safety margin) |
 | **AWS EC2 Cloud (`t3.medium`)** | TFLite Float16 | **1.57 ms** | **1.71 ms** | **617.13 req/s** | **18.10 MB** | **PASS** (63.5x safety margin) |
+
+> *Note: Raspberry Pi 3B limits verified empirically on ARM64 Cortex-A53 (4 cores, 1GB RAM, no swap, Python 3.11, numpy 1.26.4, tflite-runtime 2.14.0) by Prince Larbi (26 September 2026).*
 
 > Empirical deployment artifacts from the live AWS EC2 instance are exported to `research/reports/`:
 > - [`ec2_benchmark_complete_results.xlsx`](research/reports/ec2_benchmark_complete_results.xlsx) (Formatted 6-sheet Excel workbook)
@@ -449,20 +452,20 @@ curl http://localhost:8001/api/health
 # List the 10 BWOA-selected features
 curl http://localhost:8001/api/features
 
-# Test with a simulated DoS flow (high serror_rate)
+# Test with a simulated DoS flow (SYN flood: flag=S0, serror_rate=0.95)
 curl -X POST http://localhost:8001/api/analyze \
   -H "Content-Type: application/json" \
   -d '{
-    "serror_rate": 0.88,
-    "same_srv_rate": 0.95,
-    "src_bytes": 1032,
-    "protocol_type": 1,
-    "service": 21,
-    "flag": 10,
+    "protocol_type": "tcp",
+    "service": "http",
+    "flag": "S0",
+    "src_bytes": 0,
     "hot": 0,
     "su_attempted": 0,
-    "diff_srv_rate": 0.05,
-    "dst_host_diff_srv_rate": 0.02
+    "serror_rate": 0.95,
+    "same_srv_rate": 0.08,
+    "diff_srv_rate": 0.0,
+    "dst_host_diff_srv_rate": 0.0
   }'
 ```
 
@@ -471,7 +474,18 @@ Expected response:
 ```json
 {
   "prediction": "DoS",
-  "confidence": 96.0,
+  "confidence": 100.0,
+  "class_probabilities": {
+    "DoS": 100.0,
+    "Normal": 0.0,
+    "Probe": 0.0,
+    "R2L": 0.0,
+    "U2R": 0.0
+  },
+  "features_used": [
+    "protocol_type", "service", "flag", "src_bytes", "hot",
+    "su_attempted", "serror_rate", "same_srv_rate", "diff_srv_rate", "dst_host_diff_srv_rate"
+  ],
   "latency_ms": 0.76,
   "model_version": "v3.0.0-tflite-quantized"
 }
@@ -664,7 +678,7 @@ See [docs/bwoa_algorithm.md](docs/bwoa_algorithm.md) for the full mathematical f
 |   |-- dataset_guide.md                    # NSL-KDD, SWaT, BATADAL, custom OT dataset setup
 |   |-- experiment_guide.md                 # How to reproduce all experiments step by step
 |   |-- presentation_results.md             # Slide content for Saint Petersburg 2026 forum
-|   |-- raspberry_pi_deployment.md          # Raspberry Pi edge deployment guide (11 sections)
+|   |-- raspberry_pi_deployment.md          # Raspberry Pi edge deployment guide (12 sections)
 |   |-- results.md                          # Confirmed results tables with per-class breakdown
 |   `-- speaker_notes.md                    # Timed presentation script and jury Q&A prep
 |-- figures/
@@ -776,6 +790,30 @@ sequenceDiagram
         Console->>Console: Operator Triggers Kinetic Check / PLC Isolation
     end
 ```
+
+#### Empirical SHAP Results & Benchmark Validation
+
+*In collaboration with Muhammad Zain Uddin and Dr. Faisal Iradat (Department of Computer Science, Institute of Business Administration, IBA Karachi), citing Uddin & Iradat (2026), AI4DEMONS'26.*
+
+The post-hoc explanation layer was empirically validated on the deployed BWOA-10 model using KernelSHAP with exact enumeration (1,024 coalitions for 10 features) over 50 k-means background centroids from KDDTrain+ on 300 stratified KDDTest+ samples (`experiments/shap_explainability/`):
+
+1. **Empirical Justification for Decoupling**: Exact KernelSHAP calculation requires **1,687.8 ms (~1.7 s)** per explanation on a laptop CPU. Executing SHAP in-line would violate the sub-100 ms SCADA deadline. By decoupling SHAP to execute asynchronously strictly upon anomalous classifications, routine traffic evaluates in 0.76 ms (sub-100ms PASS), while operators receive rich root-cause diagnostics within seconds of an incident.
+2. **Feature Attribution per Attack Class**:
+   - **DoS**: Driven predominantly by `flag` (SHAP +0.31) and `serror_rate` (SHAP +0.31). In a decoded SYN-flood record (`experiments/shap_explainability/results/A4_alert_decoded.png`), `flag=S0` and `serror_rate=1.0` raise $P(\text{DoS})$ from the 0.34 baseline to 0.99.
+   - **Probe**: Driven by `dst_host_diff_srv_rate` and `diff_srv_rate`, capturing reconnaissance sweeps across diverse industrial services.
+   - **R2L / U2R**: Driven by `service` and `hot`, isolating unauthorized service misuse and privilege escalation attempts.
+3. **BWOA vs SHAP Feature Selection**:
+   Evaluating feature subsets across identical classifiers on KDDTest+:
+
+| Feature Set | Random Forest Acc | XGBoost Acc | XGBoost Macro-F1 | Retrained CNN-LSTM Acc | Retrained CNN-LSTM Macro-F1 |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **BWOA-10 (Ours)** | **76.2%** | 73.3% | 0.475 | 71.5% | 0.511 |
+| **SHAP-10 (TreeSHAP)** | 74.1% | 74.1% | 0.532 | **73.5%** | **0.541** |
+| **Mutual Information (10)** | 74.9% | 76.0% | 0.520 | - | - |
+| **Random (10 features, mean)** | 71.5% | 71.9% | 0.478 | - | - |
+| **All 41 Features** | 75.5% | 76.8% | 0.565 | 77.7% | 0.757 |
+
+*Key finding: BWOA-10 and SHAP-10 share 4 fundamental core features: `protocol_type`, `service`, `src_bytes`, and `dst_host_diff_srv_rate`. On Random Forest, BWOA-10 (76.2%) surpasses the full 41-feature set (75.5%).*
 
 ### Three-Phase Implementation Roadmap
 1. **Phase 1: Data Partnership & Ingestion**: Capture live operational technology traffic at partner mining sites (e.g., Gold Fields' Tarkwa concession in Ghana) and testbeds, deploying a two-instance AWS EC2 + CICFlowMeter architecture to capture and label Modbus RTU/TCP, DNP3, OPC-UA, and sensor telemetry.

@@ -1,4 +1,5 @@
 Hardware Platform,Quantization,Mean Latency,P95 Latency,Peak RAM,Power Draw,Verdict
+Raspberry Pi 3B (1GB RAM),TFLite Float16,32.53ms,40.82ms,290.00MB,1.8W,PASS (Sub-100ms)
 Raspberry Pi 4B (1GB RAM),TFLite Float16,0.76ms,1.10ms,290.31MB,2.5W,PASS (Sub-100ms)
 Raspberry Pi 5 (4GB RAM),TFLite Float16,0.42ms,0.68ms,295.10MB,3.8W,PASS (Sub-100ms)
 AWS EC2 Cloud Node (t3.medium),TFLite Float16,1.57ms,1.71ms,18.10MB,Cloud Managed (617 req/s),PASS (Sub-100ms)

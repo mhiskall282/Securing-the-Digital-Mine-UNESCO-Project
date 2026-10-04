@@ -62,6 +62,14 @@ class TestAPIServiceEndpoints(unittest.TestCase):
         self.assertIn("src_bytes", missing)
         self.assertIn("serror_rate", missing)
 
+    def test_shap_explainer_integration(self):
+        """Verify _get_explainer returns SHAPExplainer instance."""
+        from src.api_service import _get_explainer
+        explainer = _get_explainer()
+        self.assertIsNotNone(explainer)
+        self.assertTrue(hasattr(explainer, "explain"))
+        self.assertTrue(hasattr(explainer, "summary_data"))
+
 
 if __name__ == "__main__":
     unittest.main()

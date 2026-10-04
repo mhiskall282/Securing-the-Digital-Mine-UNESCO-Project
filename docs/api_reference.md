@@ -234,6 +234,33 @@ sequenceDiagram
   }
   ```
 
+* `GET /api/shap/summary`: Returns the empirical SHAP attribution benchmarks, BWOA vs TreeSHAP comparisons, and exact CPU execution latency from the IBA Karachi collaboration.
+* `POST /api/explain`: Evaluates a 10-feature telemetry payload and immediately attaches decoupled plain-language SHAP explanations and recommended operator mitigation actions:
+
+  **Sample Response**:
+  ```json
+  {
+    "prediction": "DoS",
+    "confidence": 99.2,
+    "latency_ms": 0.76,
+    "explanation": {
+      "status": "anomaly_flagged",
+      "predicted_class": "DoS",
+      "confidence": 99.2,
+      "base_prior": 0.36,
+      "summary": "Alert: DoS attack detected with 99.2% confidence. Primary triggers: flag=S0 (+0.31), serror_rate=1.0 (+0.31). Raised DoS probability from baseline 0.36 to 0.99.",
+      "top_drivers": [
+        {"feature": "serror_rate", "value": "1.0", "shap_value": 0.311},
+        {"feature": "flag", "value": "S0", "shap_value": 0.308},
+        {"feature": "same_srv_rate", "value": "1.0", "shap_value": 0.089}
+      ],
+      "recommended_action": "Inspect PLC network saturation. Verify whether Modbus cyclic polling or SYN-flood was targeted at SAG mill cooling RTU.",
+      "execution_mode": "asynchronous_decoupled",
+      "benchmark_reference": "KernelSHAP (1,024 exact coalitions, 50 centroids; Uddin & Iradat 2026)"
+    }
+  }
+  ```
+
 ### `SnifferDaemon` (`src/sniffer_daemon.py`)
 OT/SCADA Promiscuous Network Sniffer Daemon.
 

@@ -132,6 +132,22 @@ flowchart LR
 * **Best attack class**: DoS (F1=0.8150, Recall=0.8904) - catches 89% of denial of service attacks.
 * **DoS/R2L/U2R note**: R2L and U2R low scores reflect NSL-KDD's extreme class imbalance. U2R has only 67 test samples vs 13,449 Normal. This is a known dataset limitation, not a model flaw. Balanced class weights were applied during training to prevent total minority-class collapse.
 
+---
+
+## Slide 6B: Explainable AI (SHAP) Empirical Validation
+### Joint Collaboration with IBA Karachi (Muhammad Zain Uddin & Dr. Faisal Iradat; Uddin & Iradat 2026)
+
+* **Empirical Latency Rationale**:
+  * Exact KernelSHAP evaluation (1,024 coalitions, 50 k-means background centroids) requires **1,687.8 ms** on CPU.
+  * Synchronous execution would stall real-time SCADA packet inspection. Our decoupled event-driven architecture executes routine traffic in **0.76 ms** (Float16 TFLite) and invokes SHAP asynchronously only for flagged anomalies.
+* **Per-Class Root Cause Attribution Drivers**:
+  * **DoS Attacks**: Overwhelmingly driven by `flag` (SHAP +0.31) and `serror_rate` (SHAP +0.31). In SYN-flood records, this raises DoS probability from 0.34 baseline to 0.99 (`experiments/shap_explainability/results/A4_alert_decoded.png`).
+  * **Probe Attacks**: Driven by `dst_host_diff_srv_rate` (SHAP 0.285) and `diff_srv_rate` (SHAP 0.241), exposing horizontal PLC register sweeps.
+  * **R2L / U2R Attacks**: Driven by `service` (SHAP 0.342) and `hot` indicators (SHAP 0.385), detecting unauthorized privilege escalation.
+* **Feature Selection Comparison (BWOA-10 vs SHAP-10)**:
+  * On Random Forest, BWOA-10 achieves **76.2%** accuracy, outperforming the full 41-feature baseline (75.5%).
+  * On retrained CNN-LSTM, SHAP-10 achieves **73.5%** accuracy and **0.541** macro-F1 (vs BWOA-10 71.5% / 0.511).
+  * Both feature selection algorithms converge on **4 core features**: `protocol_type`, `service`, `src_bytes`, and `dst_host_diff_srv_rate`.
 
 ---
 
@@ -140,13 +156,15 @@ flowchart LR
 
 | Hardware Platform | Quantization | Mean Latency | P95 Latency | Throughput | Peak RAM | Verdict (<100ms Target) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Raspberry Pi 3B (1GB RAM)** | TFLite Float16 | **32.53ms** | 40.82ms | 30.7 req/s | 290.00MB | **PASS** (2.5x safety margin) |
 | **Raspberry Pi 4B (1GB RAM)** | TFLite Float16 | **0.76ms** | 1.10ms | 1,315 req/s | 290.31MB | **PASS** (131x safety margin) |
 | **Raspberry Pi 5 (4GB RAM)** | TFLite Float16 | **0.42ms** | 0.68ms | 2,380 req/s | 295.10MB | **PASS** (238x safety margin) |
 | **AWS EC2 Cloud (t3.medium)** | TFLite Float16 | **1.57ms** | 1.71ms | **617 req/s** | **18.10MB** | **PASS** (63.5x safety margin) |
 
 * **Size reduction**: Quantized TFLite is 83.2% smaller than the Keras BWOA checkpoint (4.88MB to 0.82MB).
 * **Latency speedup**: 207x faster than Keras baseline (157.66ms to 0.76ms on edge; 1.57ms on AWS EC2 cloud).
-* **RAM footprint**: 18.10MB resident on AWS EC2; 290.31MB peak on Raspberry Pi (well within 1,024MB ceiling).
+* **RAM footprint**: 18.10MB resident on AWS EC2; 290.00MB peak on Raspberry Pi 3B / 290.31MB on Pi 4B (safely within 1,024MB limits).
+* **Legacy edge verification**: Raspberry Pi 3B limits (ARM64 Cortex-A53, 1GB RAM, no swap) verified empirically by Prince Larbi (26 September 2026), with 32.53ms mean / 40.82ms P95 latency (100% compliant under 100ms ceiling) and 0 OOM kills.
 * **Throughput**: 617 requests/second on AWS EC2 (> 53 million evaluations per day).
 * **Empirical publication bundle**: All datasets and styled workbooks archived in [`research/reports/ec2_benchmark_reports.zip`](../research/reports/ec2_benchmark_reports.zip) and [`ec2_benchmark_complete_results.xlsx`](../research/reports/ec2_benchmark_complete_results.xlsx).
 * **Deployment verdict**: PASS across both edge gateways and cloud nodes with strict sub-100ms real-time SCADA compliance.

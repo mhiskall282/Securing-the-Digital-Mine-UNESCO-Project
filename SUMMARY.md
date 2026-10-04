@@ -14,6 +14,7 @@
 
 ## Empirical Benchmarks & Experiments
 * [Experimental Results & Hardware Benchmarks](docs/results.md)
+* [SHAP Explainability & Feature Attribution](experiments/shap_explainability/README.md)
 * [Dataset Processing & Benchmark Guide](docs/dataset_guide.md)
 * [Experiment Replication Runbook](docs/experiment_guide.md)
 

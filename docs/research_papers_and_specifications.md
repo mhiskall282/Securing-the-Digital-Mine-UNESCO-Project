@@ -22,6 +22,7 @@ This directory documents the formal scholarly and engineering deliverables produ
 | **Conference Presentation Script** | [`research/conference_presentation.md`](../research/conference_presentation.md) | Markdown (14 Slides + Q&A) | Full 15-minute presentation script, slide visual content, speaker notes, and comprehensive jury defense cheat-sheet. |
 | **Presentation Slide Deck** | [`research/DigitalMine_Presentation (1).pdf`](../research/DigitalMine_Presentation%20(1).pdf) | Conference Slide Deck (PDF) | Official slide deck for the UNESCO Russian-African Forum 2026. |
 | **Formal Abstract** | [`research/Abstract_DigitalMine_Final (2).pdf`](../research/Abstract_DigitalMine_Final%20(2).pdf) | Conference Abstract (PDF) | Official abstract approved for the forum proceedings. |
+| **SHAP Explainability Study** | [`experiments/shap_explainability/README.md`](../experiments/shap_explainability/README.md) | Notebooks, CSVs, Figures | Joint study with IBA Karachi (Uddin & Iradat 2026): KernelSHAP exact attribution (1,024 coalitions, 50 centroids), per-class drivers, and BWOA-10 vs SHAP-10 benchmarking. |
 
 ---
 
@@ -126,7 +127,7 @@ where $\phi_i$ denotes the Shapley contribution of feature $i$, and $f_x(S)$ is 
 * `research/tables/table2_per_class_metrics.csv` - Per-Class Precision, Recall, and F1 Metrics.
 * `research/tables/table3_bwoa_selected_features.csv` - Detailed Breakdown of the 10 Selected Features.
 * `research/tables/table4_edge_hardware_latency.csv` - Latency, RAM, and Power on Raspberry Pi 4B, Pi 5, and AWS EC2.
-* `research/tables/table5_edge_deployment_benchmarks.csv` - Live Edge & Cloud Deployment Benchmarks (Pi 4B, Pi 5, and AWS EC2).
+* `research/tables/table5_edge_deployment_benchmarks.csv` - Live Edge & Cloud Deployment Benchmarks (Pi 3B, Pi 4B, Pi 5, and AWS EC2).
 * `research/tables/table5_transfer_learning_swat.csv` - SWaT Transfer Learning Benchmark.
 * `research/tables/table6_economic_roi_breakdown.csv` - Financial Risk Mitigation & Downtime ROI.
 * `research/tables/table7_user_acceptance_testing.csv` - Quantitative Likert UAT Evaluation Scores.

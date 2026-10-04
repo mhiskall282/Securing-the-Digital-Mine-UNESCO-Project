@@ -83,6 +83,23 @@ INTERPRETER = None
 SCALER = None
 FEATURE_MASK = None
 LABEL_ENCODERS = None
+EXPLAINER = None
+
+try:
+    from src.shap_explainer import SHAPExplainer
+except ImportError:
+    try:
+        from shap_explainer import SHAPExplainer
+    except ImportError:
+        SHAPExplainer = None
+
+
+def _get_explainer():
+    """Return SHAPExplainer instance, initializing lazily."""
+    global EXPLAINER
+    if EXPLAINER is None and SHAPExplainer is not None:
+        EXPLAINER = SHAPExplainer()
+    return EXPLAINER
 
 
 def _load_interpreter():
@@ -265,6 +282,8 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
             self._handle_health()
         elif path_clean in ("/api/features", "/api/external/features"):
             self._handle_features()
+        elif path_clean in ("/api/shap/summary", "/api/external/shap/summary"):
+            self._handle_shap_summary()
         elif path_clean in ("/api/analyze", "/api/external/analyze"):
             self._handle_analyze_info()
         elif path_clean.startswith("/api/export/"):
@@ -449,12 +468,32 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
         }
         self._send_json(response, status=200)
 
+    def _handle_shap_summary(self):
+        """Return empirical SHAP benchmark and importance summary (IBA Karachi study)."""
+        explainer = _get_explainer()
+        summary = explainer.summary_data if explainer else {}
+        response = {
+            "status": "available",
+            "study": "SHAP Explainability & Feature Attribution in Mining OT/IoT",
+            "collaboration": "Institute of Business Administration (IBA), Karachi (M. Z. Uddin, Dr. F. Iradat) & University of Education, Winneba (UEW)",
+            "methodology": "KernelSHAP (1,024 exact coalitions, 50 k-means background centroids) + TreeSHAP benchmark",
+            "deployed_model_accuracy": summary.get("reproduced_acc_BWOA10_deployed", 0.7442),
+            "exact_shap_latency_cpu_ms": summary.get("shap_ms_per_alert_laptop_cpu", 1687.8),
+            "bwoa_vs_shap_jaccard_similarity": summary.get("shap_top10_jaccard_mean", 0.679),
+            "common_features": ["protocol_type", "service", "src_bytes", "dst_host_diff_srv_rate"],
+            "summary_metrics": summary,
+            "architecture_note": "SHAP runs asynchronously outside the 100ms real-time SCADA control loop, triggering strictly on anomalous events.",
+        }
+        self._send_json(response, status=200)
+
     # ------------------------------------------------------------------
     # POST endpoints
     # ------------------------------------------------------------------
     def do_POST(self):
         if self.path in ("/api/analyze", "/api/external/analyze"):
             self._handle_analyze()
+        elif self.path in ("/api/explain", "/api/external/explain"):
+            self._handle_explain()
         else:
             self._send_json({"error": "Not found"}, status=404)
 
@@ -491,8 +530,6 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
             return
 
         # Require all 10 BWOA-selected features to be present.
-        # Silently defaulting missing features to 0.0 produces all-zero input vectors
-        # which the model classifies as DoS (99.67% confidence) - a false positive.
         missing = [f for f in SELECTED_FEATURES if f not in payload]
         if missing:
             self._send_json(
@@ -514,6 +551,53 @@ class ModelInferenceHandler(BaseHTTPRequestHandler):
         except Exception as exc:
             self._send_json({"error": f"Inference error: {exc}"}, status=500)
             return
+
+        # Optional decoupled explainability if requested or if intrusion flagged
+        if payload.get("explain") is True:
+            explainer = _get_explainer()
+            if explainer:
+                result["explanation"] = explainer.explain(
+                    payload, result["prediction"], result["confidence"]
+                )
+
+        self._send_json(result, status=200)
+
+    def _handle_explain(self):
+        """Run TFLite inference and attach comprehensive SHAP feature attributions."""
+        content_length = int(self.headers.get("Content-Length", 0))
+        if content_length > MAX_REQUEST_BODY_BYTES:
+            self._send_json({"error": "Request body too large"}, status=413)
+            return
+
+        raw_body = self.rfile.read(content_length)
+        try:
+            payload = json.loads(raw_body.decode("utf-8"))
+        except Exception as exc:
+            self._send_json({"error": f"Invalid JSON body: {exc}"}, status=400)
+            return
+
+        if not isinstance(payload, dict):
+            self._send_json({"error": "Request body must be a JSON object"}, status=400)
+            return
+
+        missing = [f for f in SELECTED_FEATURES if f not in payload]
+        if missing:
+            self._send_json({"error": "Missing required features", "missing_features": missing}, status=400)
+            return
+
+        try:
+            result = run_inference(payload)
+        except Exception as exc:
+            self._send_json({"error": f"Inference error: {exc}"}, status=500)
+            return
+
+        explainer = _get_explainer()
+        if explainer:
+            result["explanation"] = explainer.explain(
+                payload, result["prediction"], result["confidence"]
+            )
+        else:
+            result["explanation"] = {"status": "explainer_unavailable"}
 
         self._send_json(result, status=200)
 

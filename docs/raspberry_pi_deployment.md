@@ -359,3 +359,101 @@ sudo journalctl -u mine-sec-agent.service -f --since "1 hour ago"
 sudo journalctl -u mine-sec-agent.service --since "1 hour ago" | grep -v '"prediction": "Normal"'
 ```
 
+---
+
+## 12. Empirical Raspberry Pi 3B Edge Test Results and Hardening (26 September 2026)
+
+To validate operational viability on the most constrained legacy edge hardware found in remote African mining concessions, a comprehensive empirical test pass was conducted on Raspberry Pi 3B limits by Prince Larbi (Commit `a4badfd`, 26 September 2026).
+
+```mermaid
+flowchart LR
+    subgraph Env["1. Hardware Testbed (Pi 3B Limits)"]
+        direction TB
+        E1["<b>CPU</b>: ARM64 Cortex-A53 (4 Cores)"]
+        E2["<b>RAM</b>: 1 GB LPDDR2 (No Swap)"]
+        E3["<b>Runtime</b>: Python 3.11 + numpy 1.26.4"]
+        E4["<b>Inference Engine</b>: tflite-runtime 2.14.0"]
+        E1 --- E2 --- E3 --- E4
+    end
+
+    subgraph Metrics["2. Empirical Performance Findings"]
+        direction TB
+        M1["<b>Raw TFLite Invoke</b><br/>17.13 ms (1T) / 15.81 ms (4T)"]
+        M2["<b>Sequential API Latency</b><br/>32.53 ms mean / 40.82 ms P95"]
+        M3["<b>SCADA Compliance</b><br/>100% requests &lt; 100 ms threshold"]
+        M4["<b>Peak Memory Usage</b><br/>290 MB API / 375 MB total (0 OOM)"]
+        M1 --> M2 --> M3 --> M4
+    end
+
+    subgraph Hardening["3. Implemented Edge Hardening"]
+        direction TB
+        H1["✅ <b>NumPy ABI Lock</b>: numpy&lt;2 pinned in requirements"]
+        H2["✅ <b>Liveness Probe</b>: GET /api/health tests live interpreter"]
+        H3["✅ <b>Payload Validation</b>: 10 features enforced, HTTP 400 on omission"]
+        H4["✅ <b>Body Cap</b>: 64 KB limit enforced, HTTP 413 on overflow"]
+        H1 --- H2 --- H3 --- H4
+    end
+
+    Env ==> Metrics ==> Hardening
+
+    classDef darkBox fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef metricBox fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+    classDef hardenBox fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+
+    class E1,E2,E3,E4 darkBox;
+    class M1,M2,M3,M4 metricBox;
+    class H1,H2,H3,H4 hardenBox;
+```
+
+### Empirical Test Execution Summary
+
+* **Platform Environment**: ARM64 architecture, Cortex-A53 CPU model, 4 cores, 1 GB RAM, no swap partition (exact Raspberry Pi 3B hardware limits).
+* **Software Stack**: Python 3.11, `numpy==1.26.4`, `tflite-runtime==2.14.0` (zero full TensorFlow dependencies).
+* **Test Suite Verification**: 75 unit tests pass (4 Keras training tests skipped as intended on edge inference runtime).
+* **Stress & Concurrency Profile**: 200/200 sequential benchmark requests and 200/200 concurrent requests completed successfully with zero out-of-memory (OOM) kernel terminations.
+* **Memory Headroom**: API peak memory reached 290 MB; entire execution run peaked at 375 MB of 1 GB total capacity (62.5% headroom available for OS and network buffers).
+* **Model Footprint**: Quantized Float16 model confirmed at exactly 0.82 MB (861,036 bytes), matching the 83.1% compression factor.
+
+### Latency Profile (Raspberry Pi 3B Limits)
+
+| Measurement Stage | Execution Latency | SCADA Control Loop Budget (<100 ms) | Status |
+| :--- | :---: | :---: | :---: |
+| **Raw TFLite Invoke (1 thread)** | 17.13 ms | 17.1% of budget | PASS |
+| **Raw TFLite Invoke (4 threads)** | 15.81 ms | 15.8% of budget | PASS |
+| **API Server-Side Latency (mean)** | 17.23 ms | 17.2% of budget | PASS |
+| **API Sequential Round-Trip (mean)** | 32.53 ms | 32.5% of budget | PASS |
+| **API Sequential Round-Trip (P95)** | **40.82 ms** | **40.8% of budget** | **PASS (100% compliant)** |
+| **API 4 Parallel Clients (P95)** | 123.01 ms | Exceeds single-core budget | Managed via async FIFO queue |
+
+### Edge Hardening Resolutions
+
+The empirical test pass identified key edge robustness items that have been fully resolved across the codebase:
+
+1. **NumPy 2.x ABI Incompatibility**:
+   * *Issue*: Unbounded `numpy>=1.24.0` resolved to NumPy 2.x on fresh installs, triggering an `AttributeError: _ARRAY_API not found` crash in `tflite-runtime 2.14.0`.
+   * *Fix*: Pinned `numpy>=1.24.0,<2.0.0` in `requirements.txt`. Tested with NumPy 1.26.4 with 100% request success.
+
+2. **Liveness Check vs Active Interpreter Failure**:
+   * *Issue*: `GET /api/health` previously checked file existence on disk, returning `"healthy"` even when the interpreter failed to construct.
+   * *Fix*: `src/api_service.py` now constructs the TFLite interpreter during `GET /api/health`. On failure, it returns HTTP 503 degraded with error diagnostics.
+
+3. **Silent Zero-Defaulting of Missing Features**:
+   * *Issue*: Incomplete payloads defaulted missing features to 0.0, mapping `{"protocol_type":"tcp"}` to a false-positive DoS alert with 99.67% confidence.
+   * *Fix*: Strict schema validation requires all 10 BWOA-selected features. Missing keys immediately return HTTP 400 with a detailed `missing_features` list.
+
+4. **Request Body Memory Exhaustion Guard**:
+   * *Issue*: Uncapped `Content-Length` ingestion left the 1 GB edge gateway vulnerable to heap exhaustion.
+   * *Fix*: Implemented `MAX_REQUEST_BODY_BYTES = 64 * 1024` (64 KB). Requests exceeding this limit receive HTTP 413 without reading the body into memory.
+
+5. **Benchmark Verdict & Exit Code Integrity**:
+   * *Issue*: Benchmark reporting scripts previously recorded latency compliance even when HTTP 500 errors occurred, exiting with code 0.
+   * *Fix*: `scripts/benchmark_and_export.py` gates verdicts on both non-zero inference success and latency, exiting with code 1 upon any deadline or execution failure.
+
+6. **Accurate Synthetic DoS Payload Vector**:
+   * *Issue*: Prior README DoS examples used connection parameters that the model classified as R2L (97.72%).
+   * *Fix*: Corrected sample payload to reflect true SYN flood attack characteristics (`flag: "S0"`, `serror_rate: 0.95`, `same_srv_rate: 0.08`, `src_bytes: 0`), resulting in confirmed 100.0% DoS classification.
+
+7. **Honest Fallback Logging on Sniffer Disconnection**:
+   * *Issue*: `src/sniffer_daemon.py` generated synthetic high-confidence results when the local inference API was down.
+   * *Fix*: Sniffer records an explicit `Fallback` status with 50.0% confidence and zero artificial latency when the model service is unreachable.
+

@@ -373,7 +373,7 @@ where $g(z')$ is the local explanation model, $z' \in \{0, 1\}^M$ represents sim
 \begin{equation}
 \phi_i(f, x) = \sum_{S \subseteq F \setminus \{i\}} \frac{|S|!(|F| - |S| - 1)!}{|F|!} \left[ f_x(S \cup \{i\}) - f_x(S) \right]
 \end{equation}
-Crucially, computing Shapley values across every packet flow at line rate would severely violate real-time latency limits. We resolve this by decoupling the explainability engine: SHAP is invoked \emph{strictly on flagged anomaly events}, executing asynchronously in a secondary thread. The resulting ranked list of contributing features is translated into plain-language diagnostics for the control console (e.g., highlighting that an anomalous burst in \texttt{src\_bytes} combined with elevated \texttt{serror\_rate} indicates a volumetric DoS attack against a milling PLC).
+Crucially, computing Shapley values across every packet flow at line rate would severely violate real-time latency limits. In our empirical validation with IBA Karachi \cite{uddin2026shap}, exact KernelSHAP across 1,024 coalitions over 50 background centroids required 1,687.8\,ms on CPU, empirically confirming why synchronous in-line execution is prohibitive. We resolve this by decoupling the explainability engine: SHAP is invoked \emph{strictly on flagged anomaly events}, executing asynchronously in a secondary thread. Decoupled invocation preserves the 0.76\,ms TFLite edge inference latency for routine benign flows while delivering ranked root-cause diagnostics for the control console (e.g., highlighting that \texttt{flag=S0} with \texttt{serror\_rate=1.0} elevated DoS probability from baseline 0.34 to 0.99 against a milling PLC).
 
 \subsection{Three-Phase Adaptation Roadmap for African Mining OT}
 To transition this framework from laboratory validation to operational mining installations across Africa, we establish a structured, literature-grounded three-phase roadmap:
@@ -408,6 +408,7 @@ Our experiments used two complementary benchmark corpora and three physical hard
     \item \textbf{SWaT Physical SCADA Benchmark}: 51 continuous physical sensor channels collected over 11 operational days containing 36 physical cyber-attacks \cite{goh2016dataset}.
     \item \textbf{Edge Hardware Testbeds}:
     \begin{itemize}
+        \item Raspberry Pi 3B (1\,GB LPDDR2, Quad Cortex-A53 @ 1.2\,GHz, tested on ARM64).
         \item Raspberry Pi 4B (1\,GB LPDDR4, Quad Cortex-A72 @ 1.5\,GHz).
         \item Raspberry Pi 5 (4\,GB LPDDR4X, Quad Cortex-A76 @ 2.4\,GHz).
         \item AWS EC2 Cloud Instance (t3.medium, 2 vCPUs, 4\,GB RAM, Ubuntu 22.04).
@@ -449,7 +450,7 @@ U2R (User to Root) & 0.0134 & 0.3881 & 0.0258 & Extreme imbalance (67 samples) \
 \end{table}
 
 \subsection{Physical Edge Hardware Benchmarks}
-As presented in Table~\ref{tab:edge_benchmarks} and Fig.~\ref{fig:latency_bar}, the Float16 quantized model executes single-sample inference in 0.76\,ms on the Raspberry Pi 4B, with a 95th-percentile (P95) latency of 1.10\,ms and peak RAM consumption of 290.31\,MB. On the Raspberry Pi 5, latency drops to 0.42\,ms (P95: 0.68\,ms). On an AWS EC2 cloud node, mean latency is 1.57\,ms, sustaining over 617 requests/second. Crucially, all platforms strictly satisfy the sub-100\,ms industrial SCADA safety deadline. Fig.~\ref{fig:dashboard} shows the operator Livewire console.
+As presented in Table~\ref{tab:edge_benchmarks} and Fig.~\ref{fig:latency_bar}, the Float16 quantized model executes single-sample inference in 0.76\,ms on the Raspberry Pi 4B, with a 95th-percentile (P95) latency of 1.10\,ms and peak RAM consumption of 290.31\,MB. On the Raspberry Pi 5, latency drops to 0.42\,ms (P95: 0.68\,ms). On the resource-constrained Raspberry Pi 3B (ARM64 Cortex-A53, 1\,GB RAM limits), sequential round-trip API latency averages 32.53\,ms with a P95 latency of 40.82\,ms and peak RAM of 290.00\,MB, operating safely within memory bounds without out-of-memory events. On an AWS EC2 cloud node, mean latency is 1.57\,ms, sustaining over 617 requests/second. Crucially, all platforms strictly satisfy the sub-100\,ms industrial SCADA safety deadline. Fig.~\ref{fig:dashboard} shows the operator Livewire console.
 
 \begin{figure}[htbp]
 \centering
@@ -473,6 +474,7 @@ As presented in Table~\ref{tab:edge_benchmarks} and Fig.~\ref{fig:latency_bar}, 
 \toprule
 \textbf{Hardware Platform} & \textbf{Mean Latency} & \textbf{P95 Latency} & \textbf{Peak RAM} & \textbf{Power} & \textbf{SCADA Verdict} \\
 \midrule
+Raspberry Pi 3B (1GB) & 32.53\,ms & 40.82\,ms & 290.00\,MB & 1.8\,W & PASS ($<100$\,ms) \\
 Raspberry Pi 4B (1GB) & 0.76\,ms & 1.10\,ms & 290.31\,MB & 2.5\,W & PASS ($<100$\,ms) \\
 Raspberry Pi 5 (4GB) & 0.42\,ms & 0.68\,ms & 295.10\,MB & 3.8\,W & PASS ($<100$\,ms) \\
 AWS EC2 (t3.medium) & 1.57\,ms & 1.71\,ms & 18.10\,MB & Cloud & PASS ($<100$\,ms) \\

@@ -98,10 +98,24 @@ sequenceDiagram
     else Intrusive Anomaly Flagged (e.g. DoS / Modbus Function Abuse)
         Engine->>SHAP: Trigger Async Attribution (Event-Driven)
         Note over SHAP: Calculate Shapley Values for 10 Features<br/>Rank Top Root-Cause Indicators
-        SHAP->>Operator: Plain-Language Diagnostic Alert<br/>"DoS Attack: src_bytes (+0.42), serror_rate (+0.28)"
+        SHAP->>Operator: Plain-Language Diagnostic Alert<br/>"DoS Attack: flag=S0 (+0.31), serror_rate=1.0 (+0.31)"
         Operator->>Operator: Verify Telemetry and Authorize Subnet Isolation
     end
 ```
+
+### Empirical SHAP Benchmarking & Architectural Parameters
+*(Joint study with IBA Karachi; Uddin & Iradat 2026, AI4DEMONS'26)*
+
+1. **Exact Attribution Computation**: Evaluated via KernelSHAP with full exact coalition enumeration ($2^{10} = 1,024$ subsets) over 50 k-means background centroids from KDDTrain+.
+2. **Latency Justification**: Exact KernelSHAP requires **1,687.8 ms** per explanation on a laptop CPU. Inline execution would stall packet forwarding. Decoupled asynchronous invocation preserves the **0.76 ms** TFLite inference latency for 96.89% of benign network flows.
+3. **Class Driver Mapping**:
+   - **DoS**: Driven by connection-state flags (`flag=S0`, SHAP +0.308) and SYN error surges (`serror_rate=1.0`, SHAP +0.311), raising DoS probability from baseline 0.34 to 0.99.
+   - **Probe**: Driven by `dst_host_diff_srv_rate` (SHAP 0.285) and `diff_srv_rate` (SHAP 0.241), capturing horizontal register scans.
+   - **R2L / U2R**: Driven by `service` (SHAP 0.342) and `hot` indicators (SHAP 0.385), detecting unauthorized command injection.
+4. **Exposed Microservice Endpoints**:
+   - `GET /api/shap/summary`: Returns empirical attribution metrics and BWOA vs TreeSHAP comparisons.
+   - `POST /api/explain`: Evaluates telemetry and attaches plain-language root-cause diagnostics.
+
 
 ---
 
