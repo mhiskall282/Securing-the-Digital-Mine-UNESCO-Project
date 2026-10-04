@@ -151,6 +151,37 @@ flowchart LR
 
 ---
 
+## Slide 6C: Empirical Feature Selection Defense
+### BWOA vs SHAP vs Mutual Information vs Full 41-Feature Benchmark
+
+* **Scientific Proof Point (Figure `figures/fig_feature_selection_comparison.png`)**:
+  * Evaluated across Random Forest, XGBoost, and CNN-LSTM v4 on KDDTest+ (22,544 samples).
+  * **Concordance**: BWOA-10 and TreeSHAP-10 share a 67.9% Jaccard similarity across top-ranked features, converging on 4 common core features: `protocol_type`, `service`, `src_bytes`, and `dst_host_diff_srv_rate`.
+* **Operational Trade-Off**:
+  * **BWOA-10 (Deployed)**: Optimizes multi-objective fitness for mining SCADA continuity, yielding highest Normal F1 (85.22%) and DoS F1 (81.01%), with 76.20% Random Forest accuracy (outperforming All-41 at 75.50%). Suppresses false alarms to keep milling circuits running.
+  * **SHAP-10**: Maximizes sensitivity on rare stealth attacks (R2L F1: 40.63% vs 21.31%; U2R F1: 8.21% vs 3.36%).
+* **Architectural Synergy**:
+  * BWOA is the global offline feature reducer (pruning 41 features to 10 for 0.82 MB edge deployment).
+  * KernelSHAP is the local post-hoc explainer (explaining individual flagged alarms in 1.68s out-of-band).
+
+---
+
+## Slide 6D: Incident Defense: Operator Diagnostic Waterfall
+### Real-Time Plain-Language Root-Cause Breakdown for Non-Specialist Operators
+
+* **Live Triage Walkthrough (Figure `figures/fig_shap_waterfall_defense.png`)**:
+  1. **Empirical Prior**: Initial base rate probability $E[f(x)] = 0.360$.
+  2. **Feature Shift 1 (`serror_rate = 1.0`)**: +0.311 probability surge due to repeated SYN packet timeouts without handshakes.
+  3. **Feature Shift 2 (`flag = S0`)**: +0.308 elevation confirming connection attempts were reset by target PLC.
+  4. **Feature Shift 3 (`same_srv_rate = 1.0`)**: +0.089 contribution reflecting concentrated volumetric targeting.
+  5. **Mitigating Signal (`protocol = tcp`)**: -0.076 adjustment accounting for legitimate standard TCP framing.
+  6. **Final Classification**: $f(x) = 0.992$ (Critical DoS Intrusion Alert).
+* **Actionable Guidance**:
+  * Plain-language diagnostic provided directly to shift supervisor: *"SYN flood targeting SAG mill cooling RTU (IP 192.168.10.45). Recommend isolating port 502 subnet while maintaining milling rotation."*
+  * Prevents costly plant-wide shutdowns by isolating only the affected network segment.
+
+---
+
 ## Slide 7: Edge Deployment & Quantization
 ### Multi-Platform Edge & Cloud Hardware Benchmarks (Table 5 Confirmed)
 

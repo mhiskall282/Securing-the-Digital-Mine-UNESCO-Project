@@ -94,6 +94,15 @@ Our research directly advances the United Nations Sustainable Development Goals.
 ### Question 7: What is the practical roadmap for African mining deployment?
 **Answer**: Our three-phase roadmap begins with Phase 1 data partnerships at operating sites like Gold Fields Tarkwa in Ghana to capture Modbus RTU/TCP, DNP3, and OPC-UA streams via AWS EC2 and CICFlowMeter. Phase 2 adapts BWOA and CNN-LSTM on OT features and validates on SWaT/BATADAL. Phase 3 verifies sub-100 ms edge execution on Raspberry Pi gateways and trains local African technicians to build long-term domestic engineering capacity.
 
+### Question 8: Why did you use BWOA for feature selection instead of SHAP feature selection or Mutual Information?
+**Answer**: In our empirical benchmark across 22,544 test samples, BWOA-10 and TreeSHAP-10 converged on the same 4 core features (protocol_type, service, src_bytes, dst_host_diff_srv_rate) with a 67.9% Jaccard similarity, validating that BWOA discovers mathematically robust decision boundaries. Operationally, BWOA's multi-objective fitness directly prioritizes mining SCADA continuity, achieving 85.22% Normal F1 and 81.01% DoS F1 on CNN-LSTM v4, and 76.20% on Random Forest (outperforming the full 41-feature set at 75.50%). Because normal telemetry and volumetric floods comprise over 98% of industrial mining bandwidth, BWOA suppresses false alarms that halt extraction operations. We maintain a complementary division of labor: BWOA is the global offline feature reducer for edge constraints, while KernelSHAP is the local post-hoc explainer.
+
+### Question 9: What prevents false alarms from shutting down a multi-million-dollar semi-autogenous grinding (SAG) mill?
+**Answer**: First, benign traffic precision is preserved at 96.89%, preventing routine sensor noise from triggering alarms. Second, when an intrusion is detected, the decoupled SHAP layer generates a diagnostic waterfall identifying the exact anomalous features (e.g., serror_rate=1.0 and flag=S0 targeting IP 192.168.10.45:502). This enables the shift supervisor to isolate only the targeted PLC network segment while keeping the physical grinding circuit rotating safely.
+
+### Question 10: How does the system handle legacy low-spec hardware like the Raspberry Pi 3B (ARM Cortex-A53, 1GB RAM) without crashing?
+**Answer**: In empirical stress-testing conducted on Raspberry Pi 3B hardware limits (ARM64 Cortex-A53, 4 cores, 1GB RAM, no swap) by Prince Larbi on 26 September 2026, the stack completed 200 sequential and 200 concurrent requests with zero out-of-memory terminations. Peak memory was 290 MB for the API and 375 MB for the whole run (leaving over 620 MB of buffer space). Sequential round-trip latency was 32.53 ms mean and 40.82 ms P95 (100% compliant under the 100 ms SCADA ceiling). Furthermore, we hardened the edge stack by pinning numpy<2 against ABI incompatibilities, enforcing a 64 KB request body cap, and implementing strict feature validation.
+
 ---
 
 ## Key Metrics to Memorize

@@ -114,8 +114,23 @@ sequenceDiagram
    - **R2L / U2R**: Driven by `service` (SHAP 0.342) and `hot` indicators (SHAP 0.385), detecting unauthorized command injection.
 4. **Exposed Microservice Endpoints**:
    - `GET /api/shap/summary`: Returns empirical attribution metrics and BWOA vs TreeSHAP comparisons.
-   - `POST /api/explain`: Evaluates telemetry and attaches plain-language root-cause diagnostics.
+### 2.1 Comparative Analysis & Empirical Defense: BWOA vs. SHAP Feature Selection
 
+A central defense proof point for academic jury review is explaining why BWOA was chosen for feature selection over SHAP feature importance or filter methods:
+
+| Feature Selection Strategy | Method Category | CNN-LSTM v4 Acc (%) | CNN-LSTM v4 Macro F1 | Random Forest Acc (%) | Normal F1 | DoS F1 | Primary Role in System |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **All-41 Features** | Uncompressed Baseline | 73.80% | 0.5380 | 75.50% | 0.8120 | 0.8250 | Baseline upper bound |
+| **BWOA-10 (Deployed)** | Swarm Metaheuristic | 71.51% | 0.5113 | **76.20%** | **0.8522** | 0.8101 | **Global offline feature reducer (0.82 MB edge model)** |
+| **SHAP-10 (IBA Study)** | Game-Theoretic Attrib | **73.50%** | **0.5408** | 74.11% | 0.7765 | **0.8179** | **Local post-hoc anomaly explainer (1.68s out-of-band)** |
+| **MI-10** | Mutual Information Filter | 72.10% | 0.5100 | 74.90% | 0.7804 | 0.8654 | Univariate filter control |
+| **Random-10 (Mean)** | Stochastic Control | 68.20% | 0.4560 | 71.49% | 0.7712 | 0.7974 | Random baseline |
+
+#### Visual Proof Points & Architectural Artifacts:
+* **Feature Selection Paradigm Comparison**: [`figures/fig_feature_selection_comparison.png`](../figures/fig_feature_selection_comparison.png) - Multi-panel evaluation demonstrating 67.9% Jaccard concordance on core features (`protocol_type`, `service`, `src_bytes`, `dst_host_diff_srv_rate`).
+* **KernelSHAP Multi-Class Heatmap**: [`figures/fig_shap_class_attributions.png`](../figures/fig_shap_class_attributions.png) - Quantifies exact per-feature contributions across all 5 classes.
+* **Operator Diagnostic Waterfall**: [`figures/fig_shap_waterfall_defense.png`](../figures/fig_shap_waterfall_defense.png) - Illustrates how an alert moves from prior $E[f(x)]=0.360$ to $f(x)=0.992$ via $+0.311$ `serror_rate` and $+0.308$ `flag=S0`.
+* **Hardware Latency vs SCADA Budget**: [`figures/fig_latency_breakdown_scada.png`](../figures/fig_latency_breakdown_scada.png) - Visualizes all 4 hardware tiers strictly satisfying the 100 ms control loop threshold.
 
 ---
 

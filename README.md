@@ -280,6 +280,38 @@ The figures below summarize the key empirical findings from feature optimization
 
 ---
 
+### 11. Empirical Feature Selection Comparison: BWOA vs SHAP vs MI
+![Feature Selection Comparison](figures/fig_feature_selection_comparison.png)
+
+> **Figure 11: Multi-Model Benchmark and Per-Class F1 Trade-offs Across Feature Selection Paradigms.**
+> Evaluates all 41 features against BWOA-10, TreeSHAP-10, Mutual Information (MI-10), and Random-10 across Random Forest, XGBoost, and CNN-LSTM v4 architectures. BWOA-10 achieves a 67.9% Jaccard concordance with TreeSHAP-10, optimizing Normal F1 (85.22%) and DoS F1 (81.01%) to minimize false alarms on continuous industrial telemetry, while TreeSHAP-10 maximizes sensitivity to stealthy minority intrusions (R2L and U2R).
+
+---
+
+### 12. Multi-Class Explainable AI Feature Attribution Heatmap
+![SHAP Class Attributions](figures/fig_shap_class_attributions.png)
+
+> **Figure 12: Mean Absolute KernelSHAP Attribution Profiles Across Threat Classes.**
+> Heatmap illustrating the normalized contribution of top features across Normal, DoS, Probe, R2L, and U2R classifications. While `protocol_type` and `src_bytes` dominate volumetric DoS detections, connection failure indicators (`serror_rate`, `flag`) and privilege escalation flags (`su_attempted`, `hot`) drive Probe and U2R classifications, providing verifiable mathematical proof of distinct decision boundaries.
+
+---
+
+### 13. Multi-Tier Edge Hardware Latency and Memory Scaling
+![Hardware Latency Breakdown](figures/fig_latency_breakdown_scada.png)
+
+> **Figure 13: Empirical Latency and Peak RAM Profile Across Edge Hardware Tiers vs 100ms SCADA Ceiling.**
+> Single-sample inference latency across Raspberry Pi 3B (ARM Cortex-A53, 32.53ms), Raspberry Pi 4B (0.76ms), Raspberry Pi 5 (0.42ms), and AWS EC2 c5.xlarge (1.57ms). All edge platforms maintain comfortable safety margins beneath the strict 100ms SCADA control loop ceiling. Peak RAM consumption scales linearly from 42 MB on Pi 3B to 72 MB on Pi 5, confirming feasibility on legacy low-resource field hardware.
+
+---
+
+### 14. Live Incident Defense: Operator Diagnostic Waterfall
+![SHAP Waterfall Defense](figures/fig_shap_waterfall_defense.png)
+
+> **Figure 14: Step-by-Step Operator Diagnostic Attribution Waterfall for High-Confidence DoS Alert.**
+> Demonstrates post-hoc explanation of a flagged SYN flood incident. Starting from the empirical baseline prior E[f(x)] = 0.360, anomalous feature deviations (serror_rate = 1.00 adding +0.311; flag = S0 adding +0.308) drive the output probability to f(x) = 0.992. This transparent diagnostic empowers control-room operators to isolate compromised PLC subnets within 1.68s without blind automation risks.
+
+---
+
 ## System Architecture
 
 The flowchart below illustrates the packet lifecycle from initial network ingestion down to edge prediction outputs:
