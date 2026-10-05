@@ -57,36 +57,65 @@ flowchart LR
 
 The BWOA models the social behaviors of humpback whales using three distinct movement mechanisms:
 
-### Encircling Prey
-Whales identify the location of prey and encircle them. The position update is formulated as:
-$$\mathbf{D} = \left| \mathbf{C} \cdot \mathbf{X}^*(t) - \mathbf{X}(t) \right|$$
-$$\mathbf{X}(t+1) = \mathbf{X}^*(t) - \mathbf{A} \cdot \mathbf{D}$$
+---
 
-Where:
-* $t$ represents the current iteration.
-* $\mathbf{X}^*(t)$ is the position vector of the best solution (prey/leader) obtained so far.
-* $\mathbf{X}(t)$ is the position vector of the current agent.
-* $\mathbf{A}$ and $\mathbf{C}$ are coefficient vectors:
-  $$\mathbf{A} = 2a\mathbf{r} - a$$
-  $$\mathbf{C} = 2\mathbf{r}$$
-  Here, $a$ decreases linearly from 2 to 0 over iterations, and $\mathbf{r}$ is a random vector in $[0, 1]$.
+### 2.1 Encircling Prey
 
-### Bubble-Net Attack (Spiral Update)
-Whales swim around the prey in a shrinking circle and along a spiral-shaped path. The spiral equation is:
-$$\mathbf{X}(t+1) = \mathbf{D}' \cdot e^{bl} \cdot \cos(2\pi l) + \mathbf{X}^*(t)$$
+Whales identify the location of prey and encircle them. The distance to the best solution is first computed, then used to update the agent's position:
 
-Where:
-* $\mathbf{D}' = \left| \mathbf{X}^*(t) - \mathbf{X}(t) \right|$ represents the distance of the whale to the prey.
-* $b$ is a constant defining the logarithmic spiral shape.
-* $l$ is a random number in $[-1, 1]$.
+$$\mathbf{D} = \left| \mathbf{C} \cdot \mathbf{X}^{*}(t) - \mathbf{X}(t) \right|$$
 
-Whales choose between shrinking encircling and the spiral model with a 50% probability:
-$$\mathbf{X}(t+1) = \begin{cases} \mathbf{X}^*(t) - \mathbf{A} \cdot \mathbf{D} & \text{if } p < 0.5 \\ \mathbf{D}' \cdot e^{bl} \cdot \cos(2\pi l) + \mathbf{X}^*(t) & \text{if } p \ge 0.5 \end{cases}$$
+$$\mathbf{X}(t+1) = \mathbf{X}^{*}(t) - \mathbf{A} \cdot \mathbf{D}$$
 
-### Exploration (Search for Prey)
-When $|\mathbf{A}| \ge 1$, whales perform a random search based on the position of a randomly chosen agent $\mathbf{X}_{\text{rand}}$:
+The coefficient vectors $\mathbf{A}$ and $\mathbf{C}$ are defined as:
+
+$$\mathbf{A} = 2a\mathbf{r} - a \qquad \mathbf{C} = 2\mathbf{r}$$
+
+| Symbol | Description |
+|--------|-------------|
+| $t$ | Current iteration |
+| $\mathbf{X}^{*}(t)$ | Position vector of the best (leader) solution found so far |
+| $\mathbf{X}(t)$ | Position vector of the current search agent |
+| $a$ | Control parameter, decreases linearly from $2 \to 0$ over iterations |
+| $\mathbf{r}$ | Random vector, each element drawn from $\mathcal{U}[0,\,1]$ |
+
+---
+
+### 2.2 Bubble-Net Attack (Spiral Update)
+
+Whales simultaneously shrink the encircling circle and follow a logarithmic spiral path around the prey. The two mechanisms are selected with equal probability $p \sim \mathcal{U}[0,1]$:
+
+$$\mathbf{X}(t+1) = \begin{cases} \mathbf{X}^{*}(t) - \mathbf{A} \cdot \mathbf{D} & \text{if } p < 0.5 \\[6pt] \mathbf{D}' \cdot e^{\,bl} \cdot \cos(2\pi l) + \mathbf{X}^{*}(t) & \text{if } p \ge 0.5 \end{cases}$$
+
+where the spiral distance $\mathbf{D}'$ and the spiral update are given by:
+
+$$\mathbf{D}' = \left| \mathbf{X}^{*}(t) - \mathbf{X}(t) \right|$$
+
+$$\mathbf{X}(t+1) = \mathbf{D}' \cdot e^{\,bl} \cdot \cos(2\pi l) + \mathbf{X}^{*}(t)$$
+
+| Symbol | Description |
+|--------|-------------|
+| $\mathbf{D}'$ | Distance between the current whale and the prey |
+| $b$ | Constant defining the logarithmic spiral shape |
+| $l$ | Random number drawn from $\mathcal{U}[-1,\,1]$ |
+| $p$ | Random probability value drawn from $\mathcal{U}[0,\,1]$ |
+
+---
+
+### 2.3 Exploration (Search for Prey)
+
+When $|\mathbf{A}| \ge 1$, whales deviate from the current best agent and perform a global stochastic search guided by a randomly selected agent $\mathbf{X}_{\text{rand}}$:
+
 $$\mathbf{D} = \left| \mathbf{C} \cdot \mathbf{X}_{\text{rand}} - \mathbf{X}(t) \right|$$
+
 $$\mathbf{X}(t+1) = \mathbf{X}_{\text{rand}} - \mathbf{A} \cdot \mathbf{D}$$
+
+| Symbol | Description |
+|--------|-------------|
+| $\mathbf{X}_{\text{rand}}$ | Position vector of a randomly selected agent in the current population |
+| $\mathbf{A}$, $\mathbf{C}$ | Coefficient vectors (same as §2.1) |
+
+> **Exploration vs. Exploitation switch**: When $|\mathbf{A}| \ge 1$ the algorithm explores (global search); when $|\mathbf{A}| < 1$ it exploits (local refinement around $\mathbf{X}^{*}$).
 
 ---
 
