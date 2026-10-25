@@ -1,9 +1,13 @@
-FROM php:8.2-cli-alpine
+FROM php:8.2.35-cli-alpine
 
 # Install fast pre-compiled extension installer helper
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 # Install system utilities & PostgreSQL extensions
+# PHP2Shell (CVE-2026-109618 & CVE-2026-109619) Core Mitigation
+RUN echo session.upload_progress.enabled = 0 > $PHP_INI_DIR/conf.d/security.ini \
+    && echo session.upload_progress.cleanup = 1 >> $PHP_INI_DIR/conf.d/security.ini
+
 RUN apk add --no-cache git nodejs npm zip unzip curl \
     && install-php-extensions pdo_pgsql pgsql
 
